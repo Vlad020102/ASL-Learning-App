@@ -1,0 +1,15 @@
+//
+//  asl_mobile_appApp.swift
+//  asl-mobile-app
+//
+
+import SwiftUI
+
+@main
+struct asl_mobile_appApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
