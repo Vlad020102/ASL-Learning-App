@@ -9,7 +9,7 @@ import SwiftUI
 struct LoginPage: View {
     var body: some View {
             NavigationView {
-                ZStack {
+                ZStack (alignment: .top){
                     Color(fromInt: 0x11384a)
                         .ignoresSafeArea ()
                     Circle()
@@ -18,19 +18,24 @@ struct LoginPage: View {
                     Circle()
                         .scale (1.35)
                         .foregroundColor(.white.opacity(0.1))
-                    VStack(){
+                    VStack{
                         Spacer()
-                        Image(systemName: "hand.raised.fingers.spread.fill") // Replace with actual Duolingo logo image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .foregroundColor(Color(fromInt: 0x2f9ccf))
                         
-                        Text("ASLearning")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color(fromInt: 0x2f9ccf))
-                            .monospaced(true)
+                        VStack(){
+                            Image(systemName: "hand.raised.app")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                                .foregroundColor(Color(fromInt: 0x2f9ccf))
+                            
+                            Text("ASLearning")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(Color(fromInt: 0x2f9ccf))
+                                .monospaced(true)
+                        }
+                        .offset(y: 100)
+                
                         
                         Image("illustration")
                             .resizable()
@@ -38,9 +43,8 @@ struct LoginPage: View {
                             .frame(height: 200)
                             .padding()
                         
-                        // Tagline
                         Text("The free, fun, and effective way to learn \nAmerican Sign Language!")
-                            .font(.title3)
+                            .font(Font.system(size: 18, weight: .light))
                             .multilineTextAlignment(.center)
                             .padding()
                             .foregroundColor(.white)
@@ -48,7 +52,6 @@ struct LoginPage: View {
                         
                         Spacer()
                         
-                        // Buttons
                         VStack {
                             Button(action: {
                                 print("Get Started tapped")
@@ -59,6 +62,7 @@ struct LoginPage: View {
                                     .background(Color(fromInt: 0x2f9ccf))
                                     .foregroundColor(.white)
                                     .cornerRadius(10)
+                                    .monospaced(true)
                             }
                             
                             Button(action: {
@@ -67,7 +71,9 @@ struct LoginPage: View {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .frame(maxWidth: .infinity)
                                     .padding()
+                                    .monospaced(true)
                                     .foregroundColor(.white)
+                                    .underline(true)
                             }
                         }
                         .padding(.horizontal, 20)
