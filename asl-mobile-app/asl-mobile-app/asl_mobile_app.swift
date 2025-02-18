@@ -6,10 +6,10 @@
 import SwiftUI
 
 @main
-struct asl_mobile_appApp: App {
+struct asl_mobile_app: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginPage()
         }
     }
 }

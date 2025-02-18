@@ -6,8 +6,28 @@
 	<dict>
 		<key>asl-mobile-app.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>3578E3092D62406D003660F8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3578E3192D62406E003660F8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3578E3232D62406E003660F8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
