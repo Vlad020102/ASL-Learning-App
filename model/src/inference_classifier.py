@@ -72,7 +72,6 @@ def run_model():
                 flattened_data_aux = [item for sublist in data_aux for item in sublist]
                 prediction = model.predict([flattened_data_aux])
                 prediction_proba = model.predict_proba([flattened_data_aux])
-                print(prediction_proba)
                 prediction_proba = prediction_proba.max()
                 score = prediction_proba if prediction_proba > threshold else 'Inconclusive'
                 predicted_character = prediction[0] if score != 'Inconclusive' else ""
