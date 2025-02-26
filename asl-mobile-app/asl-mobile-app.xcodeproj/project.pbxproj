@@ -47,16 +47,22 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3578E30C2D62406D003660F8 /* asl-mobile-app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = "asl-mobile-app";
 			sourceTree = "<group>";
 		};
 		3578E31D2D62406E003660F8 /* asl-mobile-appTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = "asl-mobile-appTests";
 			sourceTree = "<group>";
 		};
 		3578E3272D62406E003660F8 /* asl-mobile-appUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = "asl-mobile-appUITests";
 			sourceTree = "<group>";
 		};
@@ -146,7 +152,6 @@
 				3578E3062D62406D003660F8 /* Sources */,
 				3578E3072D62406D003660F8 /* Frameworks */,
 				3578E3082D62406D003660F8 /* Resources */,
-				81E719F74B708801A99EAE2D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -190,7 +195,6 @@
 				3578E3202D62406E003660F8 /* Sources */,
 				3578E3212D62406E003660F8 /* Frameworks */,
 				3578E3222D62406E003660F8 /* Resources */,
-				A91870A436CBD6D83B428DC4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -274,40 +278,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		81E719F74B708801A99EAE2D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app/Pods-asl-mobile-app-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app/Pods-asl-mobile-app-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app/Pods-asl-mobile-app-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A91870A436CBD6D83B428DC4 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		BE166C7B761C7A8305E71C23 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
