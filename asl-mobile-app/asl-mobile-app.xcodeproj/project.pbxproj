@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4E4FAA3D025248B47529C4F7 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D507315076B2C97D17F8F15 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework */; };
+		DBE15E56609D40810E4778C1 /* Pods_asl_mobile_appTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DA165319D8EF7938EA61255 /* Pods_asl_mobile_appTests.framework */; };
+		F08683CC32080908750815F7 /* Pods_asl_mobile_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7FB5C01C732F6D0B3E6A5F2 /* Pods_asl_mobile_app.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		3578E31B2D62406E003660F8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,9 +30,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		03F33B210E48AEAF80E1EDF1 /* Pods-asl-mobile-appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-appTests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-appTests/Pods-asl-mobile-appTests.release.xcconfig"; sourceTree = "<group>"; };
+		18A39A6EFAEB837D5B2AFC9F /* Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; sourceTree = "<group>"; };
 		3578E30A2D62406D003660F8 /* asl-mobile-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "asl-mobile-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3578E31A2D62406E003660F8 /* asl-mobile-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "asl-mobile-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3578E3242D62406E003660F8 /* asl-mobile-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "asl-mobile-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		41CCD7C4AF565285F9DE6CBA /* Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		5DA165319D8EF7938EA61255 /* Pods_asl_mobile_appTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_asl_mobile_appTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D507315076B2C97D17F8F15 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_asl_mobile_app_asl_mobile_appUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		88CFC6D76F0599F780A34823 /* Pods-asl-mobile-app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app/Pods-asl-mobile-app.release.xcconfig"; sourceTree = "<group>"; };
+		A7FB5C01C732F6D0B3E6A5F2 /* Pods_asl_mobile_app.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_asl_mobile_app.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C32761FB76092096F6CA2935 /* Pods-asl-mobile-app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app.debug.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app/Pods-asl-mobile-app.debug.xcconfig"; sourceTree = "<group>"; };
+		E1B9FF11BBDAE09B695AFD35 /* Pods-asl-mobile-appTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-appTests.debug.xcconfig"; path = "Target Support Files/Pods-asl-mobile-appTests/Pods-asl-mobile-appTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F08683CC32080908750815F7 /* Pods_asl_mobile_app.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBE15E56609D40810E4778C1 /* Pods_asl_mobile_appTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E4FAA3D025248B47529C4F7 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +97,8 @@
 				3578E31D2D62406E003660F8 /* asl-mobile-appTests */,
 				3578E3272D62406E003660F8 /* asl-mobile-appUITests */,
 				3578E30B2D62406D003660F8 /* Products */,
+				86BDBC8A7B954078A4F67B29 /* Pods */,
+				5AE7C2C0E2E7F272CCC61714 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,6 +112,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		5AE7C2C0E2E7F272CCC61714 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A7FB5C01C732F6D0B3E6A5F2 /* Pods_asl_mobile_app.framework */,
+				7D507315076B2C97D17F8F15 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework */,
+				5DA165319D8EF7938EA61255 /* Pods_asl_mobile_appTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		86BDBC8A7B954078A4F67B29 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C32761FB76092096F6CA2935 /* Pods-asl-mobile-app.debug.xcconfig */,
+				88CFC6D76F0599F780A34823 /* Pods-asl-mobile-app.release.xcconfig */,
+				41CCD7C4AF565285F9DE6CBA /* Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig */,
+				18A39A6EFAEB837D5B2AFC9F /* Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig */,
+				E1B9FF11BBDAE09B695AFD35 /* Pods-asl-mobile-appTests.debug.xcconfig */,
+				03F33B210E48AEAF80E1EDF1 /* Pods-asl-mobile-appTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -99,9 +142,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3578E32E2D62406E003660F8 /* Build configuration list for PBXNativeTarget "asl-mobile-app" */;
 			buildPhases = (
+				CF511C4364139FB2896CE8FE /* [CP] Check Pods Manifest.lock */,
 				3578E3062D62406D003660F8 /* Sources */,
 				3578E3072D62406D003660F8 /* Frameworks */,
 				3578E3082D62406D003660F8 /* Resources */,
+				81E719F74B708801A99EAE2D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -111,8 +156,6 @@
 				3578E30C2D62406D003660F8 /* asl-mobile-app */,
 			);
 			name = "asl-mobile-app";
-			packageProductDependencies = (
-			);
 			productName = "asl-mobile-app";
 			productReference = 3578E30A2D62406D003660F8 /* asl-mobile-app.app */;
 			productType = "com.apple.product-type.application";
@@ -121,6 +164,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3578E3312D62406E003660F8 /* Build configuration list for PBXNativeTarget "asl-mobile-appTests" */;
 			buildPhases = (
+				BE166C7B761C7A8305E71C23 /* [CP] Check Pods Manifest.lock */,
 				3578E3162D62406E003660F8 /* Sources */,
 				3578E3172D62406E003660F8 /* Frameworks */,
 				3578E3182D62406E003660F8 /* Resources */,
@@ -134,8 +178,6 @@
 				3578E31D2D62406E003660F8 /* asl-mobile-appTests */,
 			);
 			name = "asl-mobile-appTests";
-			packageProductDependencies = (
-			);
 			productName = "asl-mobile-appTests";
 			productReference = 3578E31A2D62406E003660F8 /* asl-mobile-appTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -144,9 +186,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3578E3342D62406E003660F8 /* Build configuration list for PBXNativeTarget "asl-mobile-appUITests" */;
 			buildPhases = (
+				D0C80D4DBD040B6103A037DE /* [CP] Check Pods Manifest.lock */,
 				3578E3202D62406E003660F8 /* Sources */,
 				3578E3212D62406E003660F8 /* Frameworks */,
 				3578E3222D62406E003660F8 /* Resources */,
+				A91870A436CBD6D83B428DC4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -157,8 +201,6 @@
 				3578E3272D62406E003660F8 /* asl-mobile-appUITests */,
 			);
 			name = "asl-mobile-appUITests";
-			packageProductDependencies = (
-			);
 			productName = "asl-mobile-appUITests";
 			productReference = 3578E3242D62406E003660F8 /* asl-mobile-appUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -230,6 +272,109 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		81E719F74B708801A99EAE2D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app/Pods-asl-mobile-app-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app/Pods-asl-mobile-app-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app/Pods-asl-mobile-app-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A91870A436CBD6D83B428DC4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BE166C7B761C7A8305E71C23 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-asl-mobile-appTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CF511C4364139FB2896CE8FE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-asl-mobile-app-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D0C80D4DBD040B6103A037DE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-asl-mobile-app-asl-mobile-appUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3578E3062D62406D003660F8 /* Sources */ = {
@@ -306,7 +451,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -369,7 +514,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -390,6 +535,7 @@
 		};
 		3578E32F2D62406E003660F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C32761FB76092096F6CA2935 /* Pods-asl-mobile-app.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -419,6 +565,7 @@
 		};
 		3578E3302D62406E003660F8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 88CFC6D76F0599F780A34823 /* Pods-asl-mobile-app.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -448,6 +595,7 @@
 		};
 		3578E3322D62406E003660F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E1B9FF11BBDAE09B695AFD35 /* Pods-asl-mobile-appTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -467,6 +615,7 @@
 		};
 		3578E3332D62406E003660F8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 03F33B210E48AEAF80E1EDF1 /* Pods-asl-mobile-appTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -486,6 +635,7 @@
 		};
 		3578E3352D62406E003660F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41CCD7C4AF565285F9DE6CBA /* Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -503,6 +653,7 @@
 		};
 		3578E3362D62406E003660F8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 18A39A6EFAEB837D5B2AFC9F /* Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
