@@ -1,6 +1,0 @@
-framework module Pods_asl_mobile_app_asl_mobile_appUITests {
-  umbrella header "Pods-asl-mobile-app-asl-mobile-appUITests-umbrella.h"
-
-  export *
-  module * { export * }
-}
