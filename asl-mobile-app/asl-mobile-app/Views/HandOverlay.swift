@@ -44,6 +44,7 @@ struct HandOverlayView: View {
     
     /// Transforms overlay points to match SwiftUI coordinate system
     private func transformOverlays(for viewSize: CGSize) -> [HandOverlay] {
+        print("Image Size: \(imageSize)")
         let scaleFactor = min(viewSize.width / imageSize.width, viewSize.height / imageSize.height)
         let xOffset = (viewSize.width - imageSize.width * scaleFactor) / 2
         let yOffset = (viewSize.height - imageSize.height * scaleFactor) / 2
