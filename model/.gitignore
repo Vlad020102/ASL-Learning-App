@@ -1,2 +1,4 @@
-./data/*
-./.idea/*
+data
+.idea
+.venv
+src/*__pycache__/*

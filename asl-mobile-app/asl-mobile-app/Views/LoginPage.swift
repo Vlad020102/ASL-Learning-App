@@ -66,7 +66,7 @@ struct LoginPage: View {
                             }
                             
                             Button(action: {
-                                print("Already have an account tapped")
+                                //load another view
                             }) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .frame(maxWidth: .infinity)

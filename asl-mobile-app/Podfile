@@ -5,6 +5,7 @@ target 'asl-mobile-app' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   pod 'JWTDecode', '~> 3.1'
+  pod 'MediaPipeTasksVision', '0.10.14'
   # Pods for asl-mobile-app
 
   target 'asl-mobile-appTests' do
