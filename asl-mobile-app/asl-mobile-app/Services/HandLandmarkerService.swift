@@ -120,7 +120,7 @@ class HandLandmarkerService: NSObject {
     minHandPresenceConfidence: Float,
     minTrackingConfidence: Float,
     liveStreamDelegate: HandLandmarkerServiceLiveStreamDelegate?,
-    delegate: HandLandmarkerDelegate) -> HandLandmarkerService? {
+delegate: HandLandmarkerDelegate) -> HandLandmarkerService? {
     let handLandmarkerService = HandLandmarkerService(
       modelPath: modelPath,
       runningMode: .liveStream,
