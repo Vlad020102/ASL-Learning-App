@@ -542,7 +542,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"asl-mobile-app/Preview Content\"";
-				DEVELOPMENT_TEAM = 3F74QMWA5M;
+				DEVELOPMENT_TEAM = SW8PV68P39;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app uses the camera for the gesture recognition feature ";
@@ -557,7 +557,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app-1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -574,7 +574,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"asl-mobile-app/Preview Content\"";
-				DEVELOPMENT_TEAM = 3F74QMWA5M;
+				DEVELOPMENT_TEAM = SW8PV68P39;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app uses the camera for the gesture recognition feature ";
@@ -589,7 +589,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app-1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
