@@ -1,11 +1,11 @@
 {
-  "id": "ebd51d90-e09c-4d7c-9a57-3c1c08fd2498",
+  "id": "0546b456-6d1a-4a48-b9d5-50bcaaabe484",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.posts": {
-      "name": "posts",
+    "public.users": {
+      "name": "users",
       "schema": "",
       "columns": {
         "id": {
@@ -14,23 +14,23 @@
           "primaryKey": true,
           "notNull": true
         },
-        "author_id": {
-          "name": "author_id",
-          "type": "integer",
+        "username": {
+          "name": "username",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "content": {
-          "name": "content",
+        "password": {
+          "name": "password",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "media_url": {
-          "name": "media_url",
+        "email": {
+          "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",

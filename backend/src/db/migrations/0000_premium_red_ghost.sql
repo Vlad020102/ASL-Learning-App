@@ -1,8 +1,8 @@
-CREATE TABLE "posts" (
+CREATE TABLE "users" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"author_id" integer NOT NULL,
-	"content" text,
-	"media_url" text,
+	"username" text NOT NULL,
+	"password" text NOT NULL,
+	"email" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );

@@ -8,9 +8,4 @@ export class AppController {
   getHello() {
     return this.appService.getHello();
   }
-
-  @Post()
-  insertPost() {
-    return this.appService.insertPost();
-  }
 }
