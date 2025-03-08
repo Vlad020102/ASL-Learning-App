@@ -10,14 +10,14 @@ struct LoginPage: View {
     var body: some View {
             NavigationView {
                 ZStack (alignment: .top){
-                    Color(fromInt: 0x11384a)
+                    AppColors.accent2
                         .ignoresSafeArea ()
                     Circle()
                         .scale(1.7)
-                        .foregroundColor (.white.opacity (0.1))
+                        .foregroundColor (.white.opacity (0.3))
                     Circle()
                         .scale (1.35)
-                        .foregroundColor(.white.opacity(0.1))
+                        .foregroundColor(.white.opacity(0.5))
                     VStack{
                         Spacer()
                         
@@ -26,13 +26,12 @@ struct LoginPage: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 100, height: 100)
-                                .foregroundColor(Color(fromInt: 0x2f9ccf))
+                                .foregroundColor(AppColors.primary)
                             
                             Text("ASLearning")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundColor(Color(fromInt: 0x2f9ccf))
-                                .monospaced(true)
+                                .foregroundColor(AppColors.primary)
                         }
                         .offset(y: 100)
                 
@@ -47,22 +46,21 @@ struct LoginPage: View {
                             .font(Font.system(size: 18, weight: .light))
                             .multilineTextAlignment(.center)
                             .padding()
-                            .foregroundColor(.white)
-                            .monospaced(true)
+                            .foregroundColor(AppColors.text)
+                            .bold(true)
                         
                         Spacer()
                         
                         VStack {
-                            Button(action: {
-                                print("Get Started tapped")
-                            }) {
+                            NavigationLink(destination: RegistrationFlow()) {
                                 Text("GET STARTED")
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(Color(fromInt: 0x2f9ccf))
-                                    .foregroundColor(.white)
+                                    .background(AppColors.primary)
+                                    .foregroundColor(AppColors.textSecondary)
                                     .cornerRadius(10)
-                                    .monospaced(true)
+                                    .bold(true)
+                                
                             }
                             
                             Button(action: {
@@ -71,9 +69,11 @@ struct LoginPage: View {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .monospaced(true)
-                                    .foregroundColor(.white)
+                                    .bold(true)
+                                    .cornerRadius(10)
                                     .underline(true)
+                                    .foregroundColor(AppColors.accent3)
+                                    .background(AppColors.selectedBackground)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -83,7 +83,6 @@ struct LoginPage: View {
 
                 }}
                 .navigationBarHidden (true)
-            // Logo
     }
 }
 
