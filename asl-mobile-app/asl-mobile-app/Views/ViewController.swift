@@ -29,7 +29,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var handLandmarkerService: HandLandmarkerService?
     private var currentTimeStamp: Int = 0
     
-      
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         checkPermission()
@@ -41,7 +41,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.captureSession.startRunning()
         }
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         // Reset layers when view reappears
     }
@@ -56,16 +56,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     func checkPermission() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
             // Permission has been granted before
-            case .authorized:
-                permissionGranted = true
-                
+        case .authorized:
+            permissionGranted = true
+            
             // Permission has not been requested yet
-            case .notDetermined:
-                requestPermission()
-                    
-            default:
-                permissionGranted = false
-            }
+        case .notDetermined:
+            requestPermission()
+            
+        default:
+            permissionGranted = false
+        }
     }
     
     func requestPermission() {
@@ -78,12 +78,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     func setupCaptureSession() {
         // Camera input
-        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,for: .video, position: .back) else { return }
+        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,for: .video, position: .front) else { return }
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
-           
+        
         guard captureSession.canAddInput(videoDeviceInput) else { return }
         captureSession.addInput(videoDeviceInput)
-                         
+        
         // Preview layer
         screenRect = UIScreen.main.bounds
         
@@ -94,8 +94,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         // Detector
         videoOutput.videoSettings = [
-                kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
-            ]
+            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
+        ]
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
         captureSession.addOutput(videoOutput)
         
@@ -109,30 +109,28 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     func setupHandLandmarker() {
         print("Setting up hand landmarker")
-            // You'll need to provide a path to the hand landmarker model
-            let modelPath = Bundle.main.path(forResource: "hand_landmarker", ofType: "task")
-            // Create a delegate for the hand landmarker (you'll need to implement this)
-            let handLandmarkerDelegate = HandLandmarkerDelegate(name: "CPU")!
-            
-            // Create the hand landmarker service
-            handLandmarkerService = HandLandmarkerService.liveStreamHandLandmarkerService(
-                modelPath: modelPath,
-                numHands: 2,
-                minHandDetectionConfidence: 0.5,
-                minHandPresenceConfidence: 0.5,
-                minTrackingConfidence: 0.5,
-                liveStreamDelegate: self,
-                delegate: handLandmarkerDelegate
-            )
+        // You'll need to provide a path to the hand landmarker model
+        let modelPath = Bundle.main.path(forResource: "hand_landmarker", ofType: "task")
+        // Create a delegate for the hand landmarker (you'll need to implement this)
+        let handLandmarkerDelegate = HandLandmarkerDelegate(name: "CPU")!
+        
+        // Create the hand landmarker service
+        handLandmarkerService = HandLandmarkerService.liveStreamHandLandmarkerService(
+            modelPath: modelPath,
+            numHands: 2,
+            minHandDetectionConfidence: 0.3,
+            minHandPresenceConfidence: 0.5,
+            minTrackingConfidence: 0.5,
+            liveStreamDelegate: self,
+            delegate: handLandmarkerDelegate
+        )
     }
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         // Get the sample buffer timestamp
-        print("Capture output")
         currentTimeStamp = Int(Date().timeIntervalSince1970 * 1000)
-        print(currentTimeStamp)
         
         // Process the sample buffer with the hand landmarker service
-         handLandmarkerService?.detectAsync(
+        handLandmarkerService?.detectAsync(
             sampleBuffer: sampleBuffer,
             orientation: .up, // Adjust this based on device orientation
             timeStamps: currentTimeStamp
@@ -147,151 +145,215 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         // Process the hand landmarks
         processHandLandmarks(handLandmarkerResult, in: self)
+        do{
+            let config = MLModelConfiguration()
+            let model = try ASLClassifier(configuration: config)
+            
+            let input: ASLClassifierInput = try ASLClassifierInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
+            print("Input: \(input.input)")
+            let prediction: ASLClassifierOutput = try model.prediction(input: input)
+            print("Prediction: \(prediction.classLabel)")
+            print("Confidence: \(prediction.classProbability)")
+        }
+        catch(let error){
+            print("Error: \(error)")
+        }
+    }
+    
+    func convertLandmarksToMLMultiArray(results: HandLandmarkerResult?) throws -> MLMultiArray {
+        guard let multiHandLandmarks = results?.landmarks, !multiHandLandmarks.isEmpty else {
+            let multiArray = try MLMultiArray(shape: [42], dataType: .double)
+                
+                // Initialize all values to 0
+                for i in 0..<42 {
+                    multiArray[i] = 0.0 as NSNumber
+                }
+            return multiArray
+        }
+        // Process each hand's landmarks
+        for handLandmarks in results!.landmarks {
+            // Find minimum x and y to normalize positions
+            var minY: Float = Float.greatestFiniteMagnitude
+            var minX: Float = Float.greatestFiniteMagnitude
+            
+            // Find the minimum x and y values across all landmarks in this hand
+            for landmark in handLandmarks {
+                minY = min(minY, landmark.y)
+                minX = min(minX, landmark.x)
+            }
+            
+            // Create normalized data by subtracting min values
+            var dataAux: [[Float]] = []
+            for landmark in handLandmarks {
+                dataAux.append([landmark.y - minY, landmark.x - minX])
+            }
+            
+            // Flatten the data (equivalent to flattened_data_aux in Python)
+            var flattenedDataAux: [Float] = []
+            for point in dataAux {
+                flattenedDataAux.append(contentsOf: point)
+            }
+            
+            // Print the flattened data for debugging
+            print(flattenedDataAux)
+            
+            // Convert the flattened data to MLMultiArray
+            let multiArray = try MLMultiArray(shape: [NSNumber(value: flattenedDataAux.count)], dataType: .float32)
+            
+            // Fill the MLMultiArray with the normalized values
+            for i in 0..<flattenedDataAux.count {
+                multiArray[i] = NSNumber(value: flattenedDataAux[i])
+            }
+            
+            return multiArray
+        }
+        let multiArray = try MLMultiArray(shape: [42], dataType: .double)
+            
+            // Initialize all values to 0
+            for i in 0..<42 {
+                multiArray[i] = 0.0 as NSNumber
+            }
+        return multiArray
     }
     func processHandLandmarks(_ result: HandLandmarkerResult?, in viewController: UIViewController) {
         // Get the result and pass it to main thread for UI updates
-            if let handLandmarks = result?.landmarks {
-                DispatchQueue.main.async {
-                    // Get the view from the view controller on the main thread
-                    let view = viewController.view!
-                    
-                    // Clear previous drawings
-                    view.layer.sublayers?.removeAll(where: { $0.name == "handLandmarksLayer" })
-                    
-                    if !handLandmarks.isEmpty {
-                        for (index, landmarks) in handLandmarks.enumerated() {
-                            print("Hand \(index + 1) landmarks:")
-                            for (i, landmark) in landmarks.enumerated() {
-                                print("Landmark \(i): x=\(landmark.x), y=\(landmark.y), z=\(landmark.z)")
-                            }
-                            
-                            // Draw the landmarks
-                            drawHandLandmarks(landmarks, in: view, handIndex: index)
-                        }
-                    } else {
-                        print("No hand landmarks found")
+        if let handLandmarks = result?.landmarks {
+            DispatchQueue.main.async {
+                // Get the view from the view controller on the main thread
+                let view = viewController.view!
+                
+                // Clear previous drawings
+                view.layer.sublayers?.removeAll(where: { $0.name == "handLandmarksLayer" })
+                
+                if !handLandmarks.isEmpty {
+                    for (index, landmarks) in handLandmarks.enumerated() {
+                        // Draw the landmarks
+                        drawHandLandmarks(landmarks, in: view, handIndex: index)
                     }
+                } else {
+                    print("No hand landmarks found")
                 }
-            } else {
-                print("No hand landmarks found")
             }
+        } else {
+            print("No hand landmarks found")
+        }
     }
 }
-
-struct HostedViewController: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> UIViewController {
-        return ViewController()
+    
+    struct HostedViewController: UIViewControllerRepresentable {
+        func makeUIViewController(context: Context) -> UIViewController {
+            return ViewController()
         }
-
+        
         func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         }
-}
+    }
+    
+    struct CaptureButtonView: View {
+        @State private var animationAmount: CGFloat = 1
+        var body: some View {
+            Image(systemName: "video").font(.largeTitle)
+                .background(Color.red)
+                .foregroundColor(.white)
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .stroke(Color.red)
+                        .scaleEffect(animationAmount)
+                        .opacity(Double(2 - animationAmount))
+                        .animation(Animation.easeOut(duration: 1)
+                            .repeatForever(autoreverses: false))
+                )
+                .onAppear
+            {
+                self.animationAmount = 2
+            }
+        }
+    }
+    
+    struct CameraView: View {
+        @State var didTapCapture: Bool = false
+        var body: some View {
+            HostedViewController()
+                .ignoresSafeArea()
+            CaptureButtonView().onTapGesture {
+                self.didTapCapture = true
+            }
+        }
+    }
+    
+    func drawHandLandmarks(_ landmarks: [NormalizedLandmark], in view: UIView, handIndex: Int) {
+        // Create a shape layer for drawing
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.name = "handLandmarksLayer"
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.lineWidth = 2.0
+        shapeLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
 
-struct CaptureButtonView: View {
-    @State private var animationAmount: CGFloat = 1
-    var body: some View {
-        Image(systemName: "video").font(.largeTitle)
-            .background(Color.red)
-            .foregroundColor(.white)
-            .clipShape(Circle())
-            .overlay(
-                Circle()
-                    .stroke(Color.red)
-                    .scaleEffect(animationAmount)
-                    .opacity(Double(2 - animationAmount))
-                    .animation(Animation.easeOut(duration: 1)
-                        .repeatForever(autoreverses: false))
+        // Add layer to the view
+        view.layer.addSublayer(shapeLayer)
+
+        // Convert normalized coordinates to view coordinates
+        let points = landmarks.map { landmark -> CGPoint in
+            return CGPoint(
+                x: CGFloat(landmark.x) * view.bounds.width,
+                y: CGFloat(landmark.y) * view.bounds.height
             )
-            .onAppear
-        {
-            self.animationAmount = 2
+        }
+
+        // Draw landmarks as circles
+        for point in points {
+            let circlePath = UIBezierPath(arcCenter: point, radius: 5, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
+
+            let circleLayer = CAShapeLayer()
+            circleLayer.name = "handLandmarksLayer"
+            circleLayer.path = circlePath.cgPath
+            circleLayer.fillColor = (handIndex == 0) ? UIColor.red.withAlphaComponent(0.5).cgColor : UIColor.blue.withAlphaComponent(0.5).cgColor
+
+            view.layer.addSublayer(circleLayer)
+        }
+
+        // Draw connections between landmarks (hand skeleton)
+        drawHandConnections(points: points, in: view, handIndex: handIndex)
+    }
+
+    func drawHandConnections(points: [CGPoint], in view: UIView, handIndex: Int) {
+        // Define the connections for a hand
+        // These index pairs represent which landmarks should be connected with lines
+        // Based on MediaPipe hand landmark model (21 landmarks)
+        let connections = [
+            // Thumb
+            [0, 1], [1, 2], [2, 3], [3, 4],
+            // Index finger
+            [0, 5], [5, 6], [6, 7], [7, 8],
+            // Middle finger
+            [0, 9], [9, 10], [10, 11], [11, 12],
+            // Ring finger
+            [0, 13], [13, 14], [14, 15], [15, 16],
+            // Pinky
+            [0, 17], [17, 18], [18, 19], [19, 20],
+            // Palm connections
+            [5, 9], [9, 13], [13, 17]
+        ]
+
+        for connection in connections {
+            // Ensure indices are valid
+            guard connection[0] < points.count, connection[1] < points.count else { continue }
+
+            let startPoint = points[connection[0]]
+            let endPoint = points[connection[1]]
+
+            let path = UIBezierPath()
+            path.move(to: startPoint)
+            path.addLine(to: endPoint)
+
+            let lineLayer = CAShapeLayer()
+            lineLayer.name = "handLandmarksLayer"
+            lineLayer.path = path.cgPath
+            lineLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
+            lineLayer.lineWidth = 2.0
+            lineLayer.fillColor = UIColor.clear.cgColor
+
+            view.layer.addSublayer(lineLayer)
         }
     }
-}
-
-struct CameraView: View {
-    @State var didTapCapture: Bool = false
-    var body: some View {
-        HostedViewController()
-            .ignoresSafeArea()
-        CaptureButtonView().onTapGesture {
-            self.didTapCapture = true
-        }
-    }
-}
-
-func drawHandLandmarks(_ landmarks: [NormalizedLandmark], in view: UIView, handIndex: Int) {
-    // Create a shape layer for drawing
-    let shapeLayer = CAShapeLayer()
-    shapeLayer.name = "handLandmarksLayer"
-    shapeLayer.fillColor = UIColor.clear.cgColor
-    shapeLayer.lineWidth = 2.0
-    shapeLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
-    
-    // Add layer to the view
-    view.layer.addSublayer(shapeLayer)
-    
-    // Convert normalized coordinates to view coordinates
-    let points = landmarks.map { landmark -> CGPoint in
-        return CGPoint(
-            x: CGFloat(landmark.x) * view.bounds.width,
-            y: CGFloat(landmark.y) * view.bounds.height
-        )
-    }
-    
-    // Draw landmarks as circles
-    for point in points {
-        let circlePath = UIBezierPath(arcCenter: point, radius: 5, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
-        
-        let circleLayer = CAShapeLayer()
-        circleLayer.name = "handLandmarksLayer"
-        circleLayer.path = circlePath.cgPath
-        circleLayer.fillColor = (handIndex == 0) ? UIColor.red.withAlphaComponent(0.5).cgColor : UIColor.blue.withAlphaComponent(0.5).cgColor
-        
-        view.layer.addSublayer(circleLayer)
-    }
-    
-    // Draw connections between landmarks (hand skeleton)
-    drawHandConnections(points: points, in: view, handIndex: handIndex)
-}
-
-func drawHandConnections(points: [CGPoint], in view: UIView, handIndex: Int) {
-    // Define the connections for a hand
-    // These index pairs represent which landmarks should be connected with lines
-    // Based on MediaPipe hand landmark model (21 landmarks)
-    let connections = [
-        // Thumb
-        [0, 1], [1, 2], [2, 3], [3, 4],
-        // Index finger
-        [0, 5], [5, 6], [6, 7], [7, 8],
-        // Middle finger
-        [0, 9], [9, 10], [10, 11], [11, 12],
-        // Ring finger
-        [0, 13], [13, 14], [14, 15], [15, 16],
-        // Pinky
-        [0, 17], [17, 18], [18, 19], [19, 20],
-        // Palm connections
-        [5, 9], [9, 13], [13, 17]
-    ]
-    
-    for connection in connections {
-        // Ensure indices are valid
-        guard connection[0] < points.count, connection[1] < points.count else { continue }
-        
-        let startPoint = points[connection[0]]
-        let endPoint = points[connection[1]]
-        
-        let path = UIBezierPath()
-        path.move(to: startPoint)
-        path.addLine(to: endPoint)
-        
-        let lineLayer = CAShapeLayer()
-        lineLayer.name = "handLandmarksLayer"
-        lineLayer.path = path.cgPath
-        lineLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
-        lineLayer.lineWidth = 2.0
-        lineLayer.fillColor = UIColor.clear.cgColor
-        
-        view.layer.addSublayer(lineLayer)
-    }
-}
