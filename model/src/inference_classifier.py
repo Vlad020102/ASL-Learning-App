@@ -70,6 +70,7 @@ def run_model():
                 y2 = int(max_y * H) - 10
 
                 flattened_data_aux = [item for sublist in data_aux for item in sublist]
+                print(flattened_data_aux)
                 prediction = model.predict([flattened_data_aux])
                 prediction_proba = model.predict_proba([flattened_data_aux])
                 prediction_proba = prediction_proba.max()
