@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  asl-mobile-app
 //
-//  Created by Rares Achim on 03.03.2025.
+//  Created by Rares Achim on 03.03.2025
 //
 
 
