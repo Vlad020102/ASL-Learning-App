@@ -1,6 +1,0 @@
-framework module Pods_asl_mobile_app {
-  umbrella header "Pods-asl-mobile-app-umbrella.h"
-
-  export *
-  module * { export * }
-}
