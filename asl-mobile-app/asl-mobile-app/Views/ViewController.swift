@@ -34,6 +34,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     override func viewDidLoad() {
         super.viewDidLoad()
         checkPermission()
+        print("Setup Hand Landmarker called")
         setupHandLandmarker()
         
         sessionQueue.async { [unowned self] in
@@ -78,8 +79,15 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     func setupCaptureSession() {
+        captureSession.stopRunning()
+        
+        // Remove existing inputs
+        if let currentInput = captureSession.inputs.first {
+            captureSession.removeInput(currentInput)
+        }
         // Camera input
-        guard let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: isFrontCamera ? .front : .back) else { return }
+        guard let videoDevice = AVCaptureDevice.default(isFrontCamera ? .builtInWideAngleCamera : .builtInDualWideCamera, for: .video, position: isFrontCamera ? .front : .back) else { return }
+
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
         
         guard captureSession.canAddInput(videoDeviceInput) else { return }
@@ -122,19 +130,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let deviceType: AVCaptureDevice.DeviceType = position == .back ? .builtInDualWideCamera : .builtInWideAngleCamera
             
             guard let videoDevice = AVCaptureDevice.default(deviceType, for: .video, position: position) else {
-                // Fallback to wide angle if dual camera is not available
-                guard let fallbackDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position) else {
-                    print("No camera available")
-                    return
-                }
-                configureCamera(fallbackDevice)
                 return
             }
-            
-            configureCamera(videoDevice)
-        }
-        
-        private func configureCamera(_ videoDevice: AVCaptureDevice) {
             do {
                 let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
                 
@@ -152,7 +149,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                     }
                     
                     // Update the hand landmark processing to account for camera type
-                    // This assumes your MediaPipe processing code is updated to handle the front camera flag
+                    // This assumes your MediaPipe processing code is updated to handle the front camera flag\
+                    // You can also pass the camera type to the hand landmarker service
+                    setupHandLandmarker()
+                    
                 }
             } catch {
                 print("Could not create video device input: \(error)")
@@ -191,20 +191,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     func handLandmarkerService(_ handLandmarkerService: HandLandmarkerService, didFinishDetection result: ResultBundle?, error: Error?) {
         guard let result = result, let handLandmarkerResult = result.handLandmarkerResults.first as? HandLandmarkerResult else {
-            print("No hand landmarks detected")
             return
         }
-        
         processHandLandmarks(handLandmarkerResult, in: self, isFrontCamera: isFrontCamera)
         do{
             let config = MLModelConfiguration()
             let model = try ASLClassifier(configuration: config)
             
             let input: ASLClassifierInput = try ASLClassifierInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
-            print("Input: \(input.input)")
             let prediction: ASLClassifierOutput = try model.prediction(input: input)
-            print("Prediction: \(prediction.classLabel)")
-            print("Confidence: \(prediction.classProbability)")
+            print(prediction.classLabel)
         }
         catch(let error){
             print("Error: \(error)")
@@ -244,10 +240,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             for point in dataAux {
                 flattenedDataAux.append(contentsOf: point)
             }
-            
-            // Print the flattened data for debugging
-            print(flattenedDataAux)
-            
             // Convert the flattened data to MLMultiArray
             let multiArray = try MLMultiArray(shape: [NSNumber(value: flattenedDataAux.count)], dataType: .float32)
             
@@ -281,12 +273,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                         // Draw the landmarks
                         drawHandLandmarks(landmarks, in: view, handIndex: index, isFrontCamera: isFrontCamera)
                     }
-                } else {
-                    print("No hand landmarks found")
                 }
             }
-        } else {
-            print("No hand landmarks found")
         }
     }
 }
@@ -342,7 +330,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         var body: some View {
             Button(action: {
                 // Toggle camera
-                isFrontCamera.toggle()
+//                isFrontCamera.toggle()
+                print("Not implemented yet!")
             }) {
                 Image(systemName: "camera.rotate.fill")
                     .font(.system(size: 24))
@@ -357,7 +346,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     struct CameraView: View {
         @State var didTapCapture: Bool = false
-        @State var isFrontCamera: Bool = false
+        @State var isFrontCamera: Bool = true
         var body: some View {
             ZStack {
                 // Camera view controller
@@ -398,11 +387,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         // Convert normalized coordinates to view coordinates
         let points = landmarks.map { landmark -> CGPoint in
             // For front camera, flip the x coordinate horizontally
-            let xCoordinate = isFrontCamera ? 1.0 - CGFloat(landmark.x) : CGFloat(landmark.x)
+            print(isFrontCamera)
+            let xCoordinate = 1.0 - CGFloat(landmark.x)
+            let yCoordinate = CGFloat(landmark.y)
             
             return CGPoint(
                 x: xCoordinate * view.bounds.width,
-                y: CGFloat(landmark.y) * view.bounds.height
+                y: yCoordinate * view.bounds.height
             )
         }
         
