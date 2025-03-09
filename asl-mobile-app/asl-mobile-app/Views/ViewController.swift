@@ -19,6 +19,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
+    var isFrontCamera: Bool = false
     var screenRect: CGRect! = nil // For view dimensions
     
     // Detector
@@ -78,7 +79,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     func setupCaptureSession() {
         // Camera input
-        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,for: .video, position: .back) else { return }
+        guard let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: isFrontCamera ? .front : .back) else { return }
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
         
         guard captureSession.canAddInput(videoDeviceInput) else { return }
@@ -106,6 +107,57 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self!.view.layer.addSublayer(self!.previewLayer)
         }
     }
+    
+    func switchCamera() {
+            // Stop the current session
+            captureSession.stopRunning()
+            
+            // Remove existing inputs
+            if let currentInput = captureSession.inputs.first {
+                captureSession.removeInput(currentInput)
+            }
+            
+            // Get the appropriate camera device
+            let position: AVCaptureDevice.Position = isFrontCamera ? .front : .back
+            let deviceType: AVCaptureDevice.DeviceType = position == .back ? .builtInDualWideCamera : .builtInWideAngleCamera
+            
+            guard let videoDevice = AVCaptureDevice.default(deviceType, for: .video, position: position) else {
+                // Fallback to wide angle if dual camera is not available
+                guard let fallbackDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position) else {
+                    print("No camera available")
+                    return
+                }
+                configureCamera(fallbackDevice)
+                return
+            }
+            
+            configureCamera(videoDevice)
+        }
+        
+        private func configureCamera(_ videoDevice: AVCaptureDevice) {
+            do {
+                let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
+                
+                if captureSession.canAddInput(videoDeviceInput) {
+                    captureSession.addInput(videoDeviceInput)
+                    
+                    // Configure the preview layer for the selected camera
+                    if let connection = previewLayer.connection {
+                        connection.videoOrientation = .portrait
+                    }
+                    
+                    // Start the session
+                    DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                        self?.captureSession.startRunning()
+                    }
+                    
+                    // Update the hand landmark processing to account for camera type
+                    // This assumes your MediaPipe processing code is updated to handle the front camera flag
+                }
+            } catch {
+                print("Could not create video device input: \(error)")
+            }
+        }
     
     func setupHandLandmarker() {
         print("Setting up hand landmarker")
@@ -143,8 +195,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             return
         }
         
-        // Process the hand landmarks
-        processHandLandmarks(handLandmarkerResult, in: self)
+        processHandLandmarks(handLandmarkerResult, in: self, isFrontCamera: isFrontCamera)
         do{
             let config = MLModelConfiguration()
             let model = try ASLClassifier(configuration: config)
@@ -215,7 +266,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
         return multiArray
     }
-    func processHandLandmarks(_ result: HandLandmarkerResult?, in viewController: UIViewController) {
+    func processHandLandmarks(_ result: HandLandmarkerResult?, in viewController: UIViewController, isFrontCamera: Bool = false) {
         // Get the result and pass it to main thread for UI updates
         if let handLandmarks = result?.landmarks {
             DispatchQueue.main.async {
@@ -228,7 +279,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 if !handLandmarks.isEmpty {
                     for (index, landmarks) in handLandmarks.enumerated() {
                         // Draw the landmarks
-                        drawHandLandmarks(landmarks, in: view, handIndex: index)
+                        drawHandLandmarks(landmarks, in: view, handIndex: index, isFrontCamera: isFrontCamera)
                     }
                 } else {
                     print("No hand landmarks found")
@@ -241,13 +292,28 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 }
     
     struct HostedViewController: UIViewControllerRepresentable {
+        var isFrontCamera: Bool
+        
         func makeUIViewController(context: Context) -> UIViewController {
-            return ViewController()
+            let viewController = ViewController()
+            // Pass the camera selection to your ViewController
+            if let cameraVC = viewController as? ViewController {
+                cameraVC.isFrontCamera = isFrontCamera
+            }
+            return viewController
         }
         
         func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+            // Update camera when the isFrontCamera property changes
+            if let cameraVC = uiViewController as? ViewController {
+                if cameraVC.isFrontCamera != isFrontCamera {
+                    cameraVC.isFrontCamera = isFrontCamera
+                    cameraVC.switchCamera()  // Assuming you'll add this method to ViewController
+                }
+            }
         }
     }
+
     
     struct CaptureButtonView: View {
         @State private var animationAmount: CGFloat = 1
@@ -270,90 +336,130 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
         }
     }
+    struct CameraFlipButton: View {
+        @Binding var isFrontCamera: Bool
+        
+        var body: some View {
+            Button(action: {
+                // Toggle camera
+                isFrontCamera.toggle()
+            }) {
+                Image(systemName: "camera.rotate.fill")
+                    .font(.system(size: 24))
+                    .padding(12)
+                    .background(Color.black.opacity(0.6))
+                    .foregroundColor(.white)
+                    .clipShape(Circle())
+            }
+            .padding([.top, .trailing], 20)
+        }
+    }
     
     struct CameraView: View {
         @State var didTapCapture: Bool = false
+        @State var isFrontCamera: Bool = false
         var body: some View {
-            HostedViewController()
-                .ignoresSafeArea()
-            CaptureButtonView().onTapGesture {
-                self.didTapCapture = true
+            ZStack {
+                // Camera view controller
+                HostedViewController(isFrontCamera: isFrontCamera)
+                    .ignoresSafeArea()
+                
+                // UI Overlay
+                VStack {
+                    HStack {
+                        Spacer()
+                        CameraFlipButton(isFrontCamera: $isFrontCamera)
+                    }
+                    
+                    Spacer()
+                    
+                    // Capture button at the bottom
+                    CaptureButtonView()
+                        .onTapGesture {
+                            self.didTapCapture = true
+                        }
+                        .padding(.bottom, 20)
+                }
             }
         }
     }
     
-    func drawHandLandmarks(_ landmarks: [NormalizedLandmark], in view: UIView, handIndex: Int) {
+    func drawHandLandmarks(_ landmarks: [NormalizedLandmark], in view: UIView, handIndex: Int, isFrontCamera: Bool = false) {
         // Create a shape layer for drawing
         let shapeLayer = CAShapeLayer()
         shapeLayer.name = "handLandmarksLayer"
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.lineWidth = 2.0
         shapeLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
-
+        
         // Add layer to the view
         view.layer.addSublayer(shapeLayer)
-
+        
         // Convert normalized coordinates to view coordinates
         let points = landmarks.map { landmark -> CGPoint in
+            // For front camera, flip the x coordinate horizontally
+            let xCoordinate = isFrontCamera ? 1.0 - CGFloat(landmark.x) : CGFloat(landmark.x)
+            
             return CGPoint(
-                x: CGFloat(landmark.x) * view.bounds.width,
+                x: xCoordinate * view.bounds.width,
                 y: CGFloat(landmark.y) * view.bounds.height
             )
         }
-
+        
         // Draw landmarks as circles
         for point in points {
             let circlePath = UIBezierPath(arcCenter: point, radius: 5, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
-
+            
             let circleLayer = CAShapeLayer()
             circleLayer.name = "handLandmarksLayer"
             circleLayer.path = circlePath.cgPath
             circleLayer.fillColor = (handIndex == 0) ? UIColor.red.withAlphaComponent(0.5).cgColor : UIColor.blue.withAlphaComponent(0.5).cgColor
-
+            
             view.layer.addSublayer(circleLayer)
         }
-
+        
         // Draw connections between landmarks (hand skeleton)
         drawHandConnections(points: points, in: view, handIndex: handIndex)
     }
 
-    func drawHandConnections(points: [CGPoint], in view: UIView, handIndex: Int) {
-        // Define the connections for a hand
-        // These index pairs represent which landmarks should be connected with lines
-        // Based on MediaPipe hand landmark model (21 landmarks)
-        let connections = [
-            // Thumb
-            [0, 1], [1, 2], [2, 3], [3, 4],
-            // Index finger
-            [0, 5], [5, 6], [6, 7], [7, 8],
-            // Middle finger
-            [0, 9], [9, 10], [10, 11], [11, 12],
-            // Ring finger
-            [0, 13], [13, 14], [14, 15], [15, 16],
-            // Pinky
-            [0, 17], [17, 18], [18, 19], [19, 20],
-            // Palm connections
-            [5, 9], [9, 13], [13, 17]
-        ]
 
-        for connection in connections {
-            // Ensure indices are valid
-            guard connection[0] < points.count, connection[1] < points.count else { continue }
-
-            let startPoint = points[connection[0]]
-            let endPoint = points[connection[1]]
-
-            let path = UIBezierPath()
-            path.move(to: startPoint)
-            path.addLine(to: endPoint)
-
-            let lineLayer = CAShapeLayer()
-            lineLayer.name = "handLandmarksLayer"
-            lineLayer.path = path.cgPath
-            lineLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
-            lineLayer.lineWidth = 2.0
-            lineLayer.fillColor = UIColor.clear.cgColor
-
-            view.layer.addSublayer(lineLayer)
-        }
+func drawHandConnections(points: [CGPoint], in view: UIView, handIndex: Int) {
+    // Define the connections for a hand
+    // These index pairs represent which landmarks should be connected with lines
+    // Based on MediaPipe hand landmark model (21 landmarks)
+    let connections = [
+        // Thumb
+        [0, 1], [1, 2], [2, 3], [3, 4],
+        // Index finger
+        [0, 5], [5, 6], [6, 7], [7, 8],
+        // Middle finger
+        [0, 9], [9, 10], [10, 11], [11, 12],
+        // Ring finger
+        [0, 13], [13, 14], [14, 15], [15, 16],
+        // Pinky
+        [0, 17], [17, 18], [18, 19], [19, 20],
+        // Palm connections
+        [5, 9], [9, 13], [13, 17]
+    ]
+    
+    for connection in connections {
+        // Ensure indices are valid
+        guard connection[0] < points.count, connection[1] < points.count else { continue }
+        
+        let startPoint = points[connection[0]]
+        let endPoint = points[connection[1]]
+        
+        let path = UIBezierPath()
+        path.move(to: startPoint)
+        path.addLine(to: endPoint)
+        
+        let lineLayer = CAShapeLayer()
+        lineLayer.name = "handLandmarksLayer"
+        lineLayer.path = path.cgPath
+        lineLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
+        lineLayer.lineWidth = 2.0
+        lineLayer.fillColor = UIColor.clear.cgColor
+        
+        view.layer.addSublayer(lineLayer)
     }
+}
