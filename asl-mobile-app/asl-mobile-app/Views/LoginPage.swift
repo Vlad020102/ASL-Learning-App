@@ -12,44 +12,43 @@ struct LoginPage: View {
                 ZStack (alignment: .top){
                     AppColors.accent2
                         .ignoresSafeArea ()
+            
+                    Circle()
+                        .scale(2)
+                        .foregroundColor (.white.opacity (0.1))
                     Circle()
                         .scale(1.7)
-                        .foregroundColor (.white.opacity (0.3))
+                        .foregroundColor (.white.opacity (0.1))
                     Circle()
                         .scale (1.35)
-                        .foregroundColor(.white.opacity(0.5))
+                        .foregroundColor(.white.opacity(0.1))
+                    Circle()
+                        .scale(1)
+                        .foregroundColor(.white.opacity(0.1))
+                    Circle()
+                        .scale(0.65)
+                        .foregroundColor(AppColors.primary.opacity(0.3))
                     VStack{
-                        Spacer()
                         
+                        Spacer()
+                    
                         VStack(){
-                            Image(systemName: "hand.raised.app")
+                            Image(systemName: "hand.raised.fill")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 100, height: 100)
-                                .foregroundColor(AppColors.primary)
+                                .foregroundColor(AppColors.accent2)
                             
                             Text("ASLearning")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundColor(AppColors.primary)
-                        }
-                        .offset(y: 100)
-                
-                        
+                                .foregroundColor(AppColors.accent2)
+                        }.offset(y: 80)
                         Image("illustration")
                             .resizable()
                             .scaledToFit()
                             .frame(height: 200)
                             .padding()
-                        
-                        Text("The free, fun, and effective way to learn \nAmerican Sign Language!")
-                            .font(Font.system(size: 18, weight: .light))
-                            .multilineTextAlignment(.center)
-                            .padding()
-                            .foregroundColor(AppColors.text)
-                            .bold(true)
-                        
-                        Spacer()
                         
                         VStack {
                             NavigationLink(destination: RegistrationFlow()) {
@@ -60,11 +59,9 @@ struct LoginPage: View {
                                     .foregroundColor(AppColors.textSecondary)
                                     .cornerRadius(10)
                                     .bold(true)
-                                
                             }
-                            
                             Button(action: {
-                                //load another view
+                            
                             }) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .frame(maxWidth: .infinity)
@@ -77,10 +74,9 @@ struct LoginPage: View {
                             }
                         }
                         .padding(.horizontal, 20)
-                        
                         Spacer()
                     }
-
+                    .offset(y: 100)
                 }}
                 .navigationBarHidden (true)
     }
