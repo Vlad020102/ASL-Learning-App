@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct LoginPage: View {
+struct HomePage: View {
     var body: some View {
             NavigationView {
                 ZStack (alignment: .top){
@@ -60,9 +60,7 @@ struct LoginPage: View {
                                     .cornerRadius(10)
                                     .bold(true)
                             }
-                            Button(action: {
-                            
-                            }) {
+                            NavigationLink(destination: LoginScreen()) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .frame(maxWidth: .infinity)
                                     .padding()
@@ -84,6 +82,6 @@ struct LoginPage: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginPage()
+        HomePage()
     }
 }

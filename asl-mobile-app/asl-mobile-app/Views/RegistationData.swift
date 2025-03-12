@@ -206,7 +206,7 @@ struct DailyGoalView: View {
                         HStack {
                             Text(name)
                                 .font(.headline)
-                                .foregroundColor(.black)
+                                .foregroundColor(AppColors.accent3)
                             
                             Spacer()
                             
