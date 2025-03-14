@@ -39,7 +39,7 @@ struct SignLanguageLesson: View {
                     Image(systemName: "heart.fill")
                         .foregroundColor(.red)
                     Text("\(numberOfLifes)")
-                        .foregroundColor(.gray)
+                        .foregroundColor(.red)
                 }
                 .padding(.trailing)
             }
@@ -80,9 +80,9 @@ struct SignLanguageLesson: View {
                 
                 Button(action: {
                     // Clear the current selection
-                    selectedWords = []
+                    selectedWords.popLast()
                 }) {
-                    Image(systemName: "return")
+                    Image(systemName: "delete.backward")
                         .padding()
                 }
             }
