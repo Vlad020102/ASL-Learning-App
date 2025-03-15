@@ -1,24 +1,28 @@
 PODS:
   - JWTDecode (3.2.0)
+  - KeychainAccess (4.2.2)
   - MediaPipeTasksCommon (0.10.14)
   - MediaPipeTasksVision (0.10.14):
     - MediaPipeTasksCommon (= 0.10.14)
 
 DEPENDENCIES:
   - JWTDecode (~> 3.1)
+  - KeychainAccess (~> 4.2)
   - MediaPipeTasksVision (= 0.10.14)
 
 SPEC REPOS:
   trunk:
     - JWTDecode
+    - KeychainAccess
     - MediaPipeTasksCommon
     - MediaPipeTasksVision
 
 SPEC CHECKSUMS:
   JWTDecode: 7dae24cb9bf9b608eae61e5081029ec169bb5527
+  KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
   MediaPipeTasksCommon: 5660099c2dd81f7ac4a7a5f51055785ead8e0e64
   MediaPipeTasksVision: 0fac0db83c0b45e4d7811a9227be5e571403cf83
 
-PODFILE CHECKSUM: aa1394ed6763a1ac9661b0d91a95f4339b3b3640
+PODFILE CHECKSUM: 1e6191ccfac04d3bd4c51f931676d394fe11f951
 
 COCOAPODS: 1.16.2
