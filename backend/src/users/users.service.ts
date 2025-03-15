@@ -1,5 +1,10 @@
 // 2. Create users.service.ts
-import { Injectable, ConflictException, NotFoundException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  Inject,
+} from '@nestjs/common';
 import { users } from '../db/schema/schema';
 import { eq } from 'drizzle-orm';
 import * as bcrypt from 'bcrypt';
@@ -16,7 +21,7 @@ export class UsersService {
     return result[0] || null;
   }
 
-  async create(userData: CreateUserDto){
+  async create(userData: CreateUserDto) {
     const existingUser = await this.findByUsername(userData.username);
     if (existingUser) {
       throw new ConflictException('Username already exists');
@@ -24,10 +29,13 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-    const result = await this.db.insert(users).values({
-      ...userData,
-      password: hashedPassword,
-    }).returning()
+    const result = await this.db
+      .insert(users)
+      .values({
+        ...userData,
+        password: hashedPassword,
+      })
+      .returning();
 
     return result[0];
   }
@@ -36,19 +44,20 @@ export class UsersService {
   }
 
   async findByUsername(username: string) {
-    if (username === "")
-      return null;
-    const result = await this.db.select().from(users).where(eq(users.username, username));
+    if (username === '') return null;
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
     return result[0] || null;
   }
 
   async findByEmail(email: string) {
-    if (email === "")
-      return null;
-    const result = await this.db.select().from(users).where(
-      eq(users.email, email)
-    );
+    if (email === '') return null;
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
     return result[0] || null;
   }
-
 }

@@ -1,5 +1,5 @@
 //
-//  RegistrationData.swift
+//  RegistrationViewModel.swift
 //  asl-mobile-app
 //
 //  Created by "Vlad Achim, Vodafone" on 03.03.2025.
@@ -9,23 +9,72 @@
 import SwiftUI
 
 // Model to store user registration information
-class RegistrationData: ObservableObject {
+class RegistrationViewModel: ObservableObject {
+    @Published var email: String = ""
+    @Published var username: String = ""
+    @Published var password: String = ""
+    @Published var confirmPassword: String = ""
     @Published var source: String = ""
     @Published var dailyGoal: Int = 10
     @Published var learningReason: String = ""
     @Published var experience: String = "Beginner"
     @Published var currentStep: Int = 1
     @Published var maxSteps: Int = 4
+    @Published var showPassword: Bool = false
+  @Published var showConfirmPassword: Bool = false
     
     var progressPercentage: Double {
         return Double(currentStep) / Double(maxSteps)
     }
     
-   
+    func register() {
+        print("registering")
+        let data: RegisterData = .init(
+            email: self.email,
+            username: self.username,
+            password: self.password,
+            confirmPassword: self.confirmPassword,
+            source: self.source,
+            dailyGoal: self.dailyGoal,
+            learningReason: self.learningReason,
+            experience: self.experience
+        )
+        
+        NetworkService.shared.register(data:data){[weak self] result in DispatchQueue.main.async {
+                switch result {
+                case .success(let response):
+                    print("Success: \(response)")
+                case .failure(let error):
+                    print("Error: \(error)")
+                }
+            
+            }
+        }
+    }
+    var isEmailValid: Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
+    }
+    var isUsernameValid: Bool {
+        return username.count >= 3
+    }
+        
+    var isPasswordValid: Bool {
+        return password.count >= 8
+    }
+    
+    var doPasswordsMatch: Bool {
+        return password == confirmPassword
+    }
+    
+    var canProceedToNextStep: Bool {
+        return isEmailValid && isUsernameValid && isPasswordValid && doPasswordsMatch
+    }
 }
 
 struct RegistrationFlow: View {
-    @StateObject private var registrationData = RegistrationData()
+    @StateObject private var registrationViewModel = RegistrationViewModel()
     @State private var navigateToHome = false
     @Environment(\.presentationMode) var presentationMode
     
@@ -45,7 +94,7 @@ struct RegistrationFlow: View {
                                 
                                 Rectangle()
                                     .foregroundColor(AppColors.primary)
-                                    .frame(width: geometry.size.width * registrationData.progressPercentage, height: 8)
+                                    .frame(width: geometry.size.width * registrationViewModel.progressPercentage, height: 8)
                             }
                             .clipShape(Capsule())
                         }
@@ -53,15 +102,17 @@ struct RegistrationFlow: View {
                         .padding(.horizontal)
                         
                         // Current step view
-                        switch registrationData.currentStep {
+                        switch registrationViewModel.currentStep {
                         case 1:
-                            SourceView(registrationData: registrationData)
+                            CredentialsView(registrationViewModel: registrationViewModel)
                         case 2:
-                            DailyGoalView(registrationData: registrationData)
+                            SourceView(registrationViewModel: registrationViewModel)
                         case 3:
-                            ReasonView(registrationData: registrationData)
+                            DailyGoalView(registrationViewModel: registrationViewModel)
                         case 4:
-                            ExperienceView(registrationData: registrationData)
+                            ReasonView(registrationViewModel: registrationViewModel)
+                        case 5:
+                            ExperienceView(registrationViewModel: registrationViewModel)
                         default:
                             Text("Error: Unknown step")
                         }
@@ -70,12 +121,12 @@ struct RegistrationFlow: View {
                         
                         // Continue button
                         Button(action: {
-                            if registrationData.currentStep < registrationData.maxSteps {
+                            if registrationViewModel.currentStep < registrationViewModel.maxSteps {
                                 withAnimation {
-                                    registrationData.currentStep += 1
+                                    registrationViewModel.currentStep += 1
                                 }
                             } else {
-                                navigateToHome = true
+                                registrationViewModel.register()
                             }
                         }) {
                             Text("CONTINUE")
@@ -92,16 +143,16 @@ struct RegistrationFlow: View {
                     }
                     .navigationBarItems(leading: 
                         Button(action: {
-                            if registrationData.currentStep > 1 {
+                            if registrationViewModel.currentStep > 1 {
                                 withAnimation {
-                                    registrationData.currentStep -= 1
+                                    registrationViewModel.currentStep -= 1
                                 }
                             }
                         }) {
                             Image(systemName: "chevron.left")
                                 .foregroundColor(.gray)
                         }
-                        .opacity(registrationData.currentStep > 1 ? 1.0 : 0.0)
+                        .opacity(registrationViewModel.currentStep > 1 ? 1.0 : 0.0)
                     )
                 }
             }
@@ -120,9 +171,152 @@ struct RegistrationFlow: View {
     }
 }
 
+struct CredentialsView: View {
+    @ObservedObject var registrationViewModel: RegistrationViewModel
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Create your account")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .multilineTextAlignment(.center)
+                .padding(.top, 30)
+                .padding(.horizontal)
+                .foregroundColor(AppColors.primary)
+            
+            Text("Enter your details to get started")
+                .font(.subheadline)
+                .foregroundColor(AppColors.accent3)
+                .padding(.bottom, 20)
+            
+            ScrollView {
+                VStack(spacing: 16) {
+                    // Email Field
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Email")
+                            .font(.headline)
+                            .foregroundColor(AppColors.accent3)
+                        
+                        TextField("Enter your email", text: $registrationViewModel.email)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                            .autocapitalization(.none)
+                            .keyboardType(.emailAddress)
+                        
+                        if !registrationViewModel.email.isEmpty && !registrationViewModel.isEmailValid {
+                            Text("Please enter a valid email address")
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                    }
+                    
+                    // Username Field
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Username")
+                            .font(.headline)
+                            .foregroundColor(AppColors.accent3)
+                        
+                        TextField("Choose a username", text: $registrationViewModel.username)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                            .autocapitalization(.none)
+                        
+                        if !registrationViewModel.username.isEmpty && !registrationViewModel.isUsernameValid {
+                            Text("Username must be at least 3 characters")
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                    }
+                    
+                    // Password Field
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Password")
+                            .font(.headline)
+                            .foregroundColor(AppColors.accent3)
+                        
+                        HStack {
+                            if registrationViewModel.showPassword {
+                                TextField("Create a password", text: $registrationViewModel.password)
+                                    .padding()
+                                    .autocapitalization(.none)
+                            } else {
+                                SecureField("Create a password", text: $registrationViewModel.password)
+                                    .padding()
+                                    .autocapitalization(.none)
+                            }
+                            
+                            Button(action: {
+                                registrationViewModel.showPassword.toggle()
+                            }) {
+                                Image(systemName: registrationViewModel.showPassword ? "eye.slash" : "eye")
+                                    .foregroundColor(AppColors.accent1)
+                            }
+                            .padding(.trailing)
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                        
+                        if !registrationViewModel.password.isEmpty && !registrationViewModel.isPasswordValid {
+                            Text("Password must be at least 8 characters")
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                    }
+                    
+                    // Confirm Password Field
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Confirm Password")
+                            .font(.headline)
+                            .foregroundColor(AppColors.accent3)
+                        
+                        HStack {
+                            if registrationViewModel.showConfirmPassword {
+                                TextField("Confirm your password", text: $registrationViewModel.confirmPassword)
+                                    .padding()
+                                    .autocapitalization(.none)
+                            } else {
+                                SecureField("Confirm your password", text: $registrationViewModel.confirmPassword)
+                                    .padding()
+                                    .autocapitalization(.none)
+                            }
+                            
+                            Button(action: {
+                                registrationViewModel.showConfirmPassword.toggle()
+                            }) {
+                                Image(systemName: registrationViewModel.showConfirmPassword ? "eye.slash" : "eye")
+                                    .foregroundColor(AppColors.accent1)
+                            }
+                            .padding(.trailing)
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                        
+                        if !registrationViewModel.confirmPassword.isEmpty && !registrationViewModel.doPasswordsMatch {
+                            Text("Passwords do not match")
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+}
+
 // Step 1: How did you hear about us?
 struct SourceView: View {
-    @ObservedObject var registrationData: RegistrationData
+    @ObservedObject var registrationViewModel: RegistrationViewModel
     
     let sources = [
         ("Friends/family", "person.2.fill"),
@@ -149,7 +343,7 @@ struct SourceView: View {
                 VStack(spacing: 0) {
                     ForEach(sources, id: \.0) { source, icon in
                         Button(action: {
-                            registrationData.source = source
+                            registrationViewModel.source = source
                         }) {
                             HStack {
                                 Image(systemName: icon)
@@ -164,7 +358,7 @@ struct SourceView: View {
                                 
                                 Spacer()
                                 
-                                if registrationData.source == source {
+                                if registrationViewModel.source == source {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(AppColors.accent1)
                                 }
@@ -174,7 +368,7 @@ struct SourceView: View {
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                     .background(
-                                        registrationData.source == source ? 
+                                        registrationViewModel.source == source ?
                                         AppColors.secondary : AppColors.accent2
                                     )
                             )
@@ -191,7 +385,7 @@ struct SourceView: View {
 
 // Step 2: Choose a daily goal
 struct DailyGoalView: View {
-    @ObservedObject var registrationData: RegistrationData
+    @ObservedObject var registrationViewModel: RegistrationViewModel
     
     let goals = [
         ("Casual", 5),
@@ -212,7 +406,7 @@ struct DailyGoalView: View {
             VStack(spacing: 0) {
                 ForEach(goals, id: \.0) { name, minutes in
                     Button(action: {
-                        registrationData.dailyGoal = minutes
+                        registrationViewModel.dailyGoal = minutes
                     }) {
                         HStack {
                             Text(name)
@@ -227,9 +421,9 @@ struct DailyGoalView: View {
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(registrationData.dailyGoal == minutes ? Color.blue : Color.gray.opacity(0.3), lineWidth: 1)
+                                .stroke(registrationViewModel.dailyGoal == minutes ? Color.blue : Color.gray.opacity(0.3), lineWidth: 1)
                                 .background(
-                                    registrationData.dailyGoal == minutes ? 
+                                    registrationViewModel.dailyGoal == minutes ?
                                     Color.blue.opacity(0.1) : Color.white
                                 )
                         )
@@ -246,7 +440,7 @@ struct DailyGoalView: View {
 
 // Step 3: Why are you learning ASL?
 struct ReasonView: View {
-    @ObservedObject var registrationData: RegistrationData
+    @ObservedObject var registrationViewModel: RegistrationViewModel
     
     let reasons = [
         "For work or school",
@@ -270,7 +464,7 @@ struct ReasonView: View {
                 VStack(spacing: 0) {
                     ForEach(reasons, id: \.self) { reason in
                         Button(action: {
-                            registrationData.learningReason = reason
+                            registrationViewModel.learningReason = reason
                         }) {
                             HStack {
                                 Text(reason)
@@ -279,7 +473,7 @@ struct ReasonView: View {
                                 
                                 Spacer()
                                 
-                                if registrationData.learningReason == reason {
+                                if registrationViewModel.learningReason == reason {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(.blue)
                                 }
@@ -289,7 +483,7 @@ struct ReasonView: View {
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                     .background(
-                                        registrationData.learningReason == reason ? 
+                                        registrationViewModel.learningReason == reason ?
                                         Color.blue.opacity(0.1) : Color.white
                                     )
                             )
@@ -306,7 +500,7 @@ struct ReasonView: View {
 
 // Step 4: What's your ASL experience?
 struct ExperienceView: View {
-    @ObservedObject var registrationData: RegistrationData
+    @ObservedObject var registrationViewModel: RegistrationViewModel
     
     let experienceLevels = [
         "Beginner",
@@ -327,7 +521,7 @@ struct ExperienceView: View {
             VStack(spacing: 0) {
                 ForEach(experienceLevels, id: \.self) { level in
                     Button(action: {
-                        registrationData.experience = level
+                        registrationViewModel.experience = level
                     }) {
                         HStack {
                             Text(level)
@@ -336,7 +530,7 @@ struct ExperienceView: View {
                             
                             Spacer()
                             
-                            if registrationData.experience == level {
+                            if registrationViewModel.experience == level {
                                 Image(systemName: "checkmark")
                                     .foregroundColor(.blue)
                             }
@@ -346,7 +540,7 @@ struct ExperienceView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                 .background(
-                                    registrationData.experience == level ? 
+                                    registrationViewModel.experience == level ?
                                     Color.blue.opacity(0.1) : Color.white
                                 )
                             )
