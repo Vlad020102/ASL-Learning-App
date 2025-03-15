@@ -2,20 +2,20 @@ import { Controller, Post, Body, UseGuards, Request, Get, UnauthorizedException 
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { get } from 'http';
+import { LoginUserDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
   
   @Post('login')
-  async login(@Body() loginDto: { username: string; password: string }) {
+  async login(@Body() loginUserDto: LoginUserDto) {
     const user = await this.authService.validateUser(
-      loginDto.username,
-      loginDto.password,
+      loginUserDto.emailOrUsername ? loginUserDto.emailOrUsername : "",
+      loginUserDto.password,
     );
-    
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('No user was found with the provided credentials');
     }
     
     return this.authService.login(user);

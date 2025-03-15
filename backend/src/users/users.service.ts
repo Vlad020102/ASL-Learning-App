@@ -36,7 +36,18 @@ export class UsersService {
   }
 
   async findByUsername(username: string) {
+    if (username === "")
+      return null;
     const result = await this.db.select().from(users).where(eq(users.username, username));
+    return result[0] || null;
+  }
+
+  async findByEmail(email: string) {
+    if (email === "")
+      return null;
+    const result = await this.db.select().from(users).where(
+      eq(users.email, email)
+    );
     return result[0] || null;
   }
 

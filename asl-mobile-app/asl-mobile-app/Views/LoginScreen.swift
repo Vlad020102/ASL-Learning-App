@@ -5,6 +5,7 @@
 //  Created by "Vlad Achim, Vodafone" on 12.03.2025.
 //
 import SwiftUI
+import KeychainAccess
 
 struct LoginScreen: View {
     @StateObject private var viewModel = LoginViewModel()
@@ -13,10 +14,9 @@ struct LoginScreen: View {
     
     var body: some View {
         ZStack {
-            AppColors.accent2.ignoresSafeArea()
+            AppColors.accent2.opacity(0.9).ignoresSafeArea()
             
             VStack(spacing: 20) {
-                // Logo and app name
                 VStack {
                     Image(systemName: "hand.raised.fill")
                         .resizable()
@@ -33,43 +33,47 @@ struct LoginScreen: View {
                 
                 // Login form
                 VStack(spacing: 20) {
-                    Text("Login")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    // Email field
-                    TextField("Email", text: $viewModel.email)
+                    TextField("Email / Username", text: $viewModel.emailOrUsername)
                         .padding()
-                        .background(AppColors.primary.opacity(0.2))
+                        .background(AppColors.accent3)
                         .cornerRadius(10)
                         .autocapitalization(.none)
-                        .keyboardType(.emailAddress)
-                    
-                    // Password field
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppColors.primary, lineWidth: 2)
+                        )
                     HStack {
                         if isSecured {
                             SecureField("Password", text: $viewModel.password)
+                            
                         } else {
                             TextField("Password", text: $viewModel.password)
                         }
+                        
                         
                         Button(action: {
                             isSecured.toggle()
                         }) {
                             Image(systemName: isSecured ? "eye.slash" : "eye")
-                                .foregroundColor(AppColors.accent3)
+                                .foregroundColor(AppColors.accent2)
                         }
                     }
+                    
                     .padding()
-                    .background(AppColors.selectedBackground)
+                    .background(AppColors.accent3)
                     .cornerRadius(10)
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppColors.primary, lineWidth: 2)
+                    )
                     
                     // Error message
                     if !viewModel.errorMessage.isEmpty {
                         Text(viewModel.errorMessage)
                             .foregroundColor(.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    
+                    if !viewModel.message.isEmpty {
+                        Text(viewModel.message)
+                            .foregroundColor(.green)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     
@@ -94,16 +98,6 @@ struct LoginScreen: View {
                     }
                     .disabled(viewModel.isLoading)
                     
-                    // Forgot password link
-                    Button(action: {
-                        // Action for forgot password
-                    }) {
-                        Text("Forgot Password?")
-                            .foregroundColor(AppColors.accent3)
-                            .underline()
-                    }
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    
                     Divider()
                         .background(Color.white.opacity(0.3))
                         .padding(.vertical)
@@ -121,7 +115,7 @@ struct LoginScreen: View {
                 }
                 .padding(.horizontal, 25)
                 .padding(.vertical, 35)
-                .background(Color.white.opacity(0.1))
+                .background(AppColors.accent2)
                 .cornerRadius(20)
             }
             .padding(.horizontal)
@@ -131,7 +125,7 @@ struct LoginScreen: View {
             presentationMode.wrappedValue.dismiss()
         }) {
             Image(systemName: "chevron.left")
-                .foregroundColor(AppColors.accent3)
+                .foregroundColor(AppColors.accent2)
                 .imageScale(.large)
         })
         .navigationViewStyle(StackNavigationViewStyle())
@@ -142,29 +136,71 @@ struct LoginScreen: View {
 
 // LoginViewModel to handle login logic
 class LoginViewModel: ObservableObject {
-    @Published var email = ""
+    @Published var emailOrUsername = ""
     @Published var password = ""
     @Published var isLoading = false
     @Published var errorMessage = ""
     @Published var isLoggedIn = false
+    @Published var message = ""
+    
+    private let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
+    private let tokenKey = "authToken"
+    
+    init(){
+        checkForExistingToken()
+    }
+    
+    func checkForExistingToken() {
+        do {
+            if let token = try keychain.get(tokenKey) {
+                isLoggedIn = true
+            } else {
+                isLoggedIn = false
+            }
+        } catch {
+            isLoggedIn = false
+        }
+    }
     
     func login() {
         isLoading = true
         errorMessage = ""
-        Server.shared.login(email: email, password: password) { [weak self] result in
+        
+        NetworkService.shared.login(emailOrUsername: emailOrUsername, password: password) { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 
                 switch result {
-                case .success(let user):
-                    print("Login successful for user: \(user.accessToken)")
-                    self?.isLoggedIn = true
-                    // You might want to store the user data or token here
+                case .success(let data):
+                    do {
+                        try self?.keychain.set(data.accessToken, key: self?.tokenKey ?? "")
+                        self?.message = "Logged in successfully!"
+                        self?.isLoggedIn = true
+                    } catch{
+                        self?.errorMessage = "Failed to save token: \(error.localizedDescription)"
+                    }
                 case .failure(let error):
-                    self?.errorMessage = error.localizedDescription
+                    if let networkError = error as? NetworkError {
+                        self?.errorMessage = networkError.localizedDescription.description
+                    } else {
+                        self?.errorMessage = error.localizedDescription
+                    }
                 }
             }
         }
+    }
+    
+    func logout() {
+        do {
+            try keychain.remove(tokenKey)
+            isLoggedIn = false
+        } catch {
+            errorMessage = "Failed to logout: \(error.localizedDescription)"
+        }
+    }
+        
+    func getToken() -> String? {
+        try? keychain.get(tokenKey)
     }
 }
 

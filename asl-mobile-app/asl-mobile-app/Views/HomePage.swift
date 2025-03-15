@@ -27,7 +27,7 @@ struct HomePage: View {
                         .foregroundColor(.white.opacity(0.1))
                     Circle()
                         .scale(0.65)
-                        .foregroundColor(AppColors.primary.opacity(0.3))
+                        .foregroundColor(AppColors.accent3.opacity(0.3))
                     VStack{
                         
                         Spacer()
@@ -62,14 +62,16 @@ struct HomePage: View {
                             }
                             NavigationLink(destination: LoginScreen()) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
+                                    .fontWeight(.bold)
+                                    .foregroundColor(AppColors.accent3)
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .bold(true)
+                                    .background(AppColors.accent2)
                                     .cornerRadius(10)
-                                    .underline(true)
-                                    .foregroundColor(AppColors.accent3)
-                                    .background(AppColors.selectedBackground)
+                                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppColors.primary, lineWidth: 2)
+                                    )
                             }
+                            
                         }
                         .padding(.horizontal, 20)
                         Spacer()

@@ -20,11 +20,14 @@ class RegistrationData: ObservableObject {
     var progressPercentage: Double {
         return Double(currentStep) / Double(maxSteps)
     }
+    
+   
 }
 
 struct RegistrationFlow: View {
     @StateObject private var registrationData = RegistrationData()
     @State private var navigateToHome = false
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
@@ -102,9 +105,17 @@ struct RegistrationFlow: View {
                     )
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .background(AppColors.accent2.opacity(0.9))
+            .navigationBarItems(leading: Button(action: {
+                presentationMode.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "chevron.left")
+                    .foregroundColor(AppColors.accent2)
+                    .imageScale(.large)
+            })
+            .navigationViewStyle(StackNavigationViewStyle())
+            .navigationBarTitleDisplayMode(.inline)
+            .background(AppColors.accent2)
         }
     }
 }
