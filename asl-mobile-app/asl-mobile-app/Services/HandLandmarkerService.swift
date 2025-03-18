@@ -161,7 +161,6 @@ delegate: HandLandmarkerDelegate) -> HandLandmarkerService? {
     guard let mpImage = try? MPImage(uiImage: image) else {
       return nil
     }
-    print(image.imageOrientation.rawValue)
     do {
       let startDate = Date()
       let result = try handLandmarker?.detect(image: mpImage)

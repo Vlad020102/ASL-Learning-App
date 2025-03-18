@@ -19,7 +19,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
-    var isFrontCamera: Bool = false
     var screenRect: CGRect! = nil // For view dimensions
     
     // Detector
@@ -86,7 +85,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             captureSession.removeInput(currentInput)
         }
         // Camera input
-        guard let videoDevice = AVCaptureDevice.default(isFrontCamera ? .builtInWideAngleCamera : .builtInDualWideCamera, for: .video, position: isFrontCamera ? .front : .back) else { return }
+        guard let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else { return }
 
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
         
@@ -126,10 +125,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             
             // Get the appropriate camera device
-            let position: AVCaptureDevice.Position = isFrontCamera ? .front : .back
-            let deviceType: AVCaptureDevice.DeviceType = position == .back ? .builtInDualWideCamera : .builtInWideAngleCamera
+        let deviceType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera
             
-            guard let videoDevice = AVCaptureDevice.default(deviceType, for: .video, position: position) else {
+        guard let videoDevice = AVCaptureDevice.default(deviceType, for: .video, position: .front) else {
                 return
             }
             do {
@@ -191,19 +189,39 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     func handLandmarkerService(_ handLandmarkerService: HandLandmarkerService, didFinishDetection result: ResultBundle?, error: Error?) {
         guard let result = result, let handLandmarkerResult = result.handLandmarkerResults.first as? HandLandmarkerResult else {
+            DispatchQueue.main.async {
+                        PredictionViewModel.shared.prediction = "No hand detected"
+            }
+            self.clearHandLandmarks()
             return
         }
-        processHandLandmarks(handLandmarkerResult, in: self, isFrontCamera: isFrontCamera)
+        
+        if handLandmarkerResult.landmarks.isEmpty {
+            DispatchQueue.main.async {
+                PredictionViewModel.shared.prediction = "No hand detected"
+            }
+            self.clearHandLandmarks()
+            return
+        }
+        
+        processHandLandmarks(handLandmarkerResult, in: self)
         do{
             let config = MLModelConfiguration()
             let model = try ASLClassifier(configuration: config)
             
             let input: ASLClassifierInput = try ASLClassifierInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
             let prediction: ASLClassifierOutput = try model.prediction(input: input)
-            print(prediction.classLabel)
+            
+            
+            DispatchQueue.main.async {
+                        PredictionViewModel.shared.prediction = prediction.classLabel
+            }
         }
         catch(let error){
             print("Error: \(error)")
+            DispatchQueue.main.async {
+                       PredictionViewModel.shared.prediction = "Error: Unable to classify"
+           }
         }
     }
     
@@ -258,47 +276,47 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
         return multiArray
     }
-    func processHandLandmarks(_ result: HandLandmarkerResult?, in viewController: UIViewController, isFrontCamera: Bool = false) {
+    func processHandLandmarks(_ result: HandLandmarkerResult?, in viewController: UIViewController) {
         // Get the result and pass it to main thread for UI updates
         if let handLandmarks = result?.landmarks {
             DispatchQueue.main.async {
                 // Get the view from the view controller on the main thread
-                let view = viewController.view!
+                if let vc = viewController as? ViewController {
+                                vc.clearHandLandmarks()
+                            }
                 
-                // Clear previous drawings
-                view.layer.sublayers?.removeAll(where: { $0.name == "handLandmarksLayer" })
                 
                 if !handLandmarks.isEmpty {
                     for (index, landmarks) in handLandmarks.enumerated() {
                         // Draw the landmarks
-                        drawHandLandmarks(landmarks, in: view, handIndex: index, isFrontCamera: isFrontCamera)
+                        drawHandLandmarks(landmarks, in: viewController.view, handIndex: index)
                     }
                 }
             }
         }
     }
+    
+    func clearHandLandmarks() {
+            // Remove all layers with the name "handLandmarksLayer"
+            if let sublayers = view.layer.sublayers {
+                for layer in sublayers {
+                    if layer.name == "handLandmarksLayer" {
+                        layer.removeFromSuperlayer()
+                    }
+                }
+            }
+        }
 }
     
     struct HostedViewController: UIViewControllerRepresentable {
-        var isFrontCamera: Bool
-        
         func makeUIViewController(context: Context) -> UIViewController {
             let viewController = ViewController()
             // Pass the camera selection to your ViewController
             if let cameraVC = viewController as? ViewController {
-                cameraVC.isFrontCamera = isFrontCamera
             }
             return viewController
         }
-        
         func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-            // Update camera when the isFrontCamera property changes
-            if let cameraVC = uiViewController as? ViewController {
-                if cameraVC.isFrontCamera != isFrontCamera {
-                    cameraVC.isFrontCamera = isFrontCamera
-                    cameraVC.switchCamera()  // Assuming you'll add this method to ViewController
-                }
-            }
         }
     }
 
@@ -307,6 +325,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         @State private var animationAmount: CGFloat = 1
         var body: some View {
             Image(systemName: "video").font(.largeTitle)
+                .padding(20)
                 .background(Color.red)
                 .foregroundColor(.white)
                 .clipShape(Circle())
@@ -324,25 +343,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
         }
     }
-    struct CameraFlipButton: View {
-        @Binding var isFrontCamera: Bool
-        
-        var body: some View {
-            Button(action: {
-                // Toggle camera
-//                isFrontCamera.toggle()
-                print("Not implemented yet!")
-            }) {
-                Image(systemName: "camera.rotate.fill")
-                    .font(.system(size: 24))
-                    .padding(12)
-                    .background(Color.black.opacity(0.6))
-                    .foregroundColor(.white)
-                    .clipShape(Circle())
-            }
-            .padding([.top, .trailing], 20)
-        }
-    }
     
     struct CameraView: View {
         @State var didTapCapture: Bool = false
@@ -350,15 +350,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         var body: some View {
             ZStack {
                 // Camera view controller
-                HostedViewController(isFrontCamera: isFrontCamera)
+                HostedViewController()
                     .ignoresSafeArea()
                 
                 // UI Overlay
                 VStack {
-                    HStack {
-                        Spacer()
-                        CameraFlipButton(isFrontCamera: $isFrontCamera)
-                    }
+                    PredictionLabelView().padding(.horizontal)
                     
                     Spacer()
                     
@@ -367,13 +364,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                         .onTapGesture {
                             self.didTapCapture = true
                         }
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 10)
                 }
             }
         }
     }
     
-    func drawHandLandmarks(_ landmarks: [NormalizedLandmark], in view: UIView, handIndex: Int, isFrontCamera: Bool = false) {
+    func drawHandLandmarks(_ landmarks: [NormalizedLandmark], in view: UIView, handIndex: Int) {
         // Create a shape layer for drawing
         let shapeLayer = CAShapeLayer()
         shapeLayer.name = "handLandmarksLayer"
@@ -387,7 +384,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         // Convert normalized coordinates to view coordinates
         let points = landmarks.map { landmark -> CGPoint in
             // For front camera, flip the x coordinate horizontally
-            print(isFrontCamera)
             let xCoordinate = 1.0 - CGFloat(landmark.x)
             let yCoordinate = CGFloat(landmark.y)
             
@@ -452,5 +448,27 @@ func drawHandConnections(points: [CGPoint], in view: UIView, handIndex: Int) {
         lineLayer.fillColor = UIColor.clear.cgColor
         
         view.layer.addSublayer(lineLayer)
+    }
+}
+
+
+
+class PredictionViewModel: ObservableObject {
+    @Published var prediction: String = "Waiting for hand..."
+    
+    static let shared = PredictionViewModel()
+}
+
+struct PredictionLabelView: View {
+    @ObservedObject var viewModel = PredictionViewModel.shared
+    
+    var body: some View {
+        Text(viewModel.prediction)
+            .font(.system(size: 24, weight: .bold))
+            .padding()
+            .background(Color.black.opacity(0.7))
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .padding(.top, 50)
     }
 }
