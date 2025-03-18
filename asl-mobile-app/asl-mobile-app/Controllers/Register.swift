@@ -5,13 +5,12 @@
 //  Created by "Vlad Achim, Vodafone" on 15.03.2025.
 //
 extension NetworkService {
-    func register(data: RegisterData, completion: @escaping (Result<RegisterResponse, Error>) -> Void) {
+    func register(data: RegisterData, completion: @escaping (Result<AuthResponse, Error>) -> Void) {
         self.request(
             endpoint: "auth/register",
             method: .post,
             body: data
-        ) { (result: Result<RegisterResponse, NetworkError>) in
-            print(result)
+        ) { (result: Result<AuthResponse, NetworkError>) in
             switch result {
             case .success(let response):
                 completion(.success(response))
@@ -32,12 +31,4 @@ struct RegisterData: Codable {
     let dailyGoal: Int?
     let learningReason: String?
     let experience: String?
-}
-
-struct RegisterResponse: Codable {
-    let id: Int
-    let username: String
-    let email: String
-    let createdAt: String
-    let updatedAt: String
 }

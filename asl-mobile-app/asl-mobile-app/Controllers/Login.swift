@@ -5,14 +5,14 @@
 //  Created by "Vlad Achim, Vodafone" on 15.03.2025.
 //
 extension NetworkService {
-    func login(emailOrUsername: String, password: String, completion: @escaping (Result<LoginResponse, Error>) -> Void)  {
+    func login(emailOrUsername: String, password: String, completion: @escaping (Result<AuthResponse, Error>) -> Void)  {
         let loginData = LoginData(emailOrUsername: emailOrUsername, password: password)
         
         self.request(
             endpoint: "auth/login",
             method: .post,
             body: loginData
-        ) { (result: Result<LoginResponse, NetworkError>) in
+        ) { (result: Result<AuthResponse, NetworkError>) in
             print(result)
             switch result {
             case .success(let response):
@@ -24,7 +24,7 @@ extension NetworkService {
     }
 }
 
-struct LoginResponse: Codable {
+struct AuthResponse: Codable {
     let accessToken: String
     let user: User
     

@@ -7,6 +7,7 @@
 import SwiftUI
 
 struct HomePage: View {
+    @EnvironmentObject var authManager: AuthManager
     var body: some View {
             NavigationView {
                 ZStack (alignment: .top){
@@ -51,7 +52,7 @@ struct HomePage: View {
                             .padding()
                         
                         VStack {
-                            NavigationLink(destination: RegistrationFlow()) {
+                            NavigationLink(destination: RegistrationScreen().environmentObject(authManager)) {
                                 Text("GET STARTED")
                                     .frame(maxWidth: .infinity)
                                     .padding()
@@ -60,7 +61,7 @@ struct HomePage: View {
                                     .cornerRadius(10)
                                     .bold(true)
                             }
-                            NavigationLink(destination: LoginScreen()) {
+                            NavigationLink(destination: LoginScreen().environmentObject(authManager)) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .fontWeight(.bold)
                                     .foregroundColor(AppColors.accent3)

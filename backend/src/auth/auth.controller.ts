@@ -10,6 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { LoginUserDto } from './dto/login.dto';
+import { RegisterUserDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -32,7 +33,7 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Body() registerDto: { username: string; password: string; email: string },
+    @Body() registerDto: RegisterUserDto,
   ) {
     return this.authService.register(registerDto);
   }

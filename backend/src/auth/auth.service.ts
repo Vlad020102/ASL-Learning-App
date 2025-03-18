@@ -41,10 +41,17 @@ export class AuthService {
     username: string;
     password: string;
     email: string;
+    source?: string;
+    dailyGoal?: number;
+    learningReason?: string;
   }) {
     const newUser = await this.usersService.create(userData);
     const { password: _, ...result } = newUser;
-    return result;
+    const payload = { username: newUser.username, sub: newUser.id };
+    return {
+      accessToken: this.jwtService.sign(payload),
+      user: result,
+    };
   }
 
   async getProfile(user: any) {

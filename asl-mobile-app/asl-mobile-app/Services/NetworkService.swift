@@ -14,7 +14,7 @@ class NetworkService {
     static let shared = NetworkService()
     private let baseURL: String
     
-    init(baseURL: String = "http://127.0.0.1:3001") {
+    init(baseURL: String = "http://192.168.0.122:3001") {
         self.baseURL = baseURL
     }
     

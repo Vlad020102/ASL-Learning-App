@@ -15,6 +15,13 @@
       "when": 1742054801442,
       "tag": "0001_dashing_the_fallen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1742318068621,
+      "tag": "0002_blue_marvel_boy",
+      "breakpoints": true
     }
   ]
 }

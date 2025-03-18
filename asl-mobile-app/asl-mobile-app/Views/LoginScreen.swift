@@ -11,6 +11,7 @@ struct LoginScreen: View {
     @StateObject private var viewModel = LoginViewModel()
     @State private var isSecured: Bool = true
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var authManager: AuthManager
     
     var body: some View {
         ZStack {
@@ -79,7 +80,7 @@ struct LoginScreen: View {
                     
                     // Login button
                     Button(action: {
-                        viewModel.login()
+                        viewModel.login(authManager: authManager)
                     }) {
                         ZStack {
                             Text("LOGIN")
@@ -103,7 +104,7 @@ struct LoginScreen: View {
                         .padding(.vertical)
                     
                 
-                    NavigationLink(destination: RegistrationFlow()) {
+                    NavigationLink(destination: RegistrationScreen()) {
                         Text("CREATE NEW ACCOUNT")
                             .fontWeight(.bold)
                             .foregroundColor(AppColors.accent3)
@@ -136,33 +137,19 @@ struct LoginScreen: View {
 
 // LoginViewModel to handle login logic
 class LoginViewModel: ObservableObject {
+    @EnvironmentObject var authManager: AuthManager
     @Published var emailOrUsername = ""
     @Published var password = ""
     @Published var isLoading = false
     @Published var errorMessage = ""
-    @Published var isLoggedIn = false
     @Published var message = ""
     
     private let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
     private let tokenKey = "authToken"
     
-    init(){
-        checkForExistingToken()
-    }
+
     
-    func checkForExistingToken() {
-        do {
-            if let token = try keychain.get(tokenKey) {
-                isLoggedIn = true
-            } else {
-                isLoggedIn = false
-            }
-        } catch {
-            isLoggedIn = false
-        }
-    }
-    
-    func login() {
+    func login(authManager: AuthManager) {
         isLoading = true
         errorMessage = ""
         
@@ -171,14 +158,8 @@ class LoginViewModel: ObservableObject {
                 self?.isLoading = false
                 
                 switch result {
-                case .success(let data):
-                    do {
-                        try self?.keychain.set(data.accessToken, key: self?.tokenKey ?? "")
-                        self?.message = "Logged in successfully!"
-                        self?.isLoggedIn = true
-                    } catch{
-                        self?.errorMessage = "Failed to save token: \(error.localizedDescription)"
-                    }
+                case .success(let response):
+                    authManager.setToken(with: response.accessToken)
                 case .failure(let error):
                     if let networkError = error as? NetworkError {
                         self?.errorMessage = networkError.localizedDescription.description
@@ -188,19 +169,6 @@ class LoginViewModel: ObservableObject {
                 }
             }
         }
-    }
-    
-    func logout() {
-        do {
-            try keychain.remove(tokenKey)
-            isLoggedIn = false
-        } catch {
-            errorMessage = "Failed to logout: \(error.localizedDescription)"
-        }
-    }
-        
-    func getToken() -> String? {
-        try? keychain.get(tokenKey)
     }
 }
 

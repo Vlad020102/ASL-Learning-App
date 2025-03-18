@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import KeychainAccess
 
 // Model to store user registration information
 class RegistrationViewModel: ObservableObject {
@@ -21,13 +22,18 @@ class RegistrationViewModel: ObservableObject {
     @Published var currentStep: Int = 1
     @Published var maxSteps: Int = 4
     @Published var showPassword: Bool = false
-  @Published var showConfirmPassword: Bool = false
+    @Published var showConfirmPassword: Bool = false
+    @Published var errorMessage = ""
+    
+    private let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
+    private let tokenKey = "authToken"
+    
     
     var progressPercentage: Double {
         return Double(currentStep) / Double(maxSteps)
     }
     
-    func register() {
+    func register(authManager: AuthManager) {
         print("registering")
         let data: RegisterData = .init(
             email: self.email,
@@ -40,9 +46,12 @@ class RegistrationViewModel: ObservableObject {
             experience: self.experience
         )
         
+        print(data)
+        
         NetworkService.shared.register(data:data){[weak self] result in DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
+                    authManager.setToken(with: response.accessToken)
                     print("Success: \(response)")
                 case .failure(let error):
                     print("Error: \(error)")
@@ -73,7 +82,8 @@ class RegistrationViewModel: ObservableObject {
     }
 }
 
-struct RegistrationFlow: View {
+struct RegistrationScreen: View {
+    @EnvironmentObject var authManager: AuthManager
     @StateObject private var registrationViewModel = RegistrationViewModel()
     @State private var navigateToHome = false
     @Environment(\.presentationMode) var presentationMode
@@ -126,7 +136,7 @@ struct RegistrationFlow: View {
                                     registrationViewModel.currentStep += 1
                                 }
                             } else {
-                                registrationViewModel.register()
+                                registrationViewModel.register(authManager: authManager)
                             }
                         }) {
                             Text("CONTINUE")
@@ -580,6 +590,6 @@ struct HomeView: View {
 
 struct RegistrationFlow_Previews: PreviewProvider {
     static var previews: some View {
-        RegistrationFlow()
+        RegistrationScreen()
     }
 }
