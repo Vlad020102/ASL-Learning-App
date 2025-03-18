@@ -6,89 +6,85 @@
 //
 import SwiftUI
 
-struct LoginPage: View {
+struct HomePage: View {
+    @EnvironmentObject var authManager: AuthManager
     var body: some View {
             NavigationView {
                 ZStack (alignment: .top){
-                    Color(fromInt: 0x11384a)
+                    AppColors.accent2
                         .ignoresSafeArea ()
+            
+                    Circle()
+                        .scale(2)
+                        .foregroundColor (.white.opacity (0.1))
                     Circle()
                         .scale(1.7)
                         .foregroundColor (.white.opacity (0.1))
                     Circle()
                         .scale (1.35)
                         .foregroundColor(.white.opacity(0.1))
+                    Circle()
+                        .scale(1)
+                        .foregroundColor(.white.opacity(0.1))
+                    Circle()
+                        .scale(0.65)
+                        .foregroundColor(AppColors.accent3.opacity(0.3))
                     VStack{
-                        Spacer()
                         
+                        Spacer()
+                    
                         VStack(){
-                            Image(systemName: "hand.raised.app")
+                            Image(systemName: "hand.raised.fill")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 100, height: 100)
-                                .foregroundColor(Color(fromInt: 0x2f9ccf))
+                                .foregroundColor(AppColors.accent2)
                             
                             Text("ASLearning")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundColor(Color(fromInt: 0x2f9ccf))
-                                .monospaced(true)
-                        }
-                        .offset(y: 100)
-                
-                        
+                                .foregroundColor(AppColors.accent2)
+                        }.offset(y: 80)
                         Image("illustration")
                             .resizable()
                             .scaledToFit()
                             .frame(height: 200)
                             .padding()
                         
-                        Text("The free, fun, and effective way to learn \nAmerican Sign Language!")
-                            .font(Font.system(size: 18, weight: .light))
-                            .multilineTextAlignment(.center)
-                            .padding()
-                            .foregroundColor(.white)
-                            .monospaced(true)
-                        
-                        Spacer()
-                        
                         VStack {
-                            Button(action: {
-                                print("Get Started tapped")
-                            }) {
+                            NavigationLink(destination: RegistrationScreen().environmentObject(authManager)) {
                                 Text("GET STARTED")
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(Color(fromInt: 0x2f9ccf))
-                                    .foregroundColor(.white)
+                                    .background(AppColors.primary)
+                                    .foregroundColor(AppColors.textSecondary)
                                     .cornerRadius(10)
-                                    .monospaced(true)
+                                    .bold(true)
                             }
-                            
-                            Button(action: {
-                                //load another view
-                            }) {
+                            NavigationLink(destination: LoginScreen().environmentObject(authManager)) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
+                                    .fontWeight(.bold)
+                                    .foregroundColor(AppColors.accent3)
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .monospaced(true)
-                                    .foregroundColor(.white)
-                                    .underline(true)
+                                    .background(AppColors.accent2)
+                                    .cornerRadius(10)
+                                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppColors.primary, lineWidth: 2)
+                                    )
                             }
+                            
                         }
                         .padding(.horizontal, 20)
-                        
                         Spacer()
                     }
-
+                    .offset(y: 100)
                 }}
                 .navigationBarHidden (true)
-            // Logo
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginPage()
+        HomePage()
     }
 }
