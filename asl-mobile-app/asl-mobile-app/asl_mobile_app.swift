@@ -23,8 +23,7 @@ struct RootView: View {
     var body: some View {
         Group {
             if authManager.isAuthenticated {
-                CameraView().environmentObject(authManager)
-                    .transition(.opacity)
+                ContentView().transition(.opacity)
             } else {
                 HomePage()
                     .transition(.opacity)

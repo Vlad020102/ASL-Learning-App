@@ -342,31 +342,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
         }
     }
-
-    struct LogoutButton: View {
-        @EnvironmentObject var authManager: AuthManager
-        var body: some View {
-            Button(action: {
-                authManager.removeToken()
-            }) {
-                HStack {
-                    Image(systemName: "arrow.left")
-                        .font(.headline)
-                    Text("Logout")
-                        .fontWeight(.medium)
-                }
-                .padding()
-                .foregroundColor(.white)
-                .background(Color.black)
-                .cornerRadius(10)
-            }
-        }
-    }
     
     struct CameraView: View {
         @State var didTapCapture: Bool = false
         @State var isFrontCamera: Bool = true
-        @EnvironmentObject var authManager: AuthManager
         var body: some View {
             ZStack {
                 // Camera view controller
@@ -375,8 +354,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 
                 // UI Overlay
                 VStack {
-                    
-                    LogoutButton().padding(.top, 10).environmentObject(authManager)
                     PredictionLabelView().padding(.horizontal)
                     
                     Spacer()
