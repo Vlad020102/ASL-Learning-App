@@ -5,22 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741448250319,
-      "tag": "0000_premium_red_ghost",
+      "when": 1742502703707,
+      "tag": "0000_lucky_thing",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1742054801442,
-      "tag": "0001_dashing_the_fallen",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1742318068621,
-      "tag": "0002_blue_marvel_boy",
+      "when": 1742503392461,
+      "tag": "0001_closed_the_captain",
       "breakpoints": true
     }
   ]
