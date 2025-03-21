@@ -15,7 +15,7 @@ struct LoginScreen: View {
     
     var body: some View {
         ZStack {
-            AppColors.accent2.opacity(0.9).ignoresSafeArea()
+            AppColors.background.opacity(0.9).ignoresSafeArea()
             
             VStack(spacing: 20) {
                 VStack {
@@ -55,7 +55,7 @@ struct LoginScreen: View {
                             isSecured.toggle()
                         }) {
                             Image(systemName: isSecured ? "eye.slash" : "eye")
-                                .foregroundColor(AppColors.accent2)
+                                .foregroundColor(AppColors.background)
                         }
                     }
                     
@@ -116,7 +116,7 @@ struct LoginScreen: View {
                 }
                 .padding(.horizontal, 25)
                 .padding(.vertical, 35)
-                .background(AppColors.accent2)
+                .background(AppColors.background)
                 .cornerRadius(20)
             }
             .padding(.horizontal)
@@ -126,7 +126,7 @@ struct LoginScreen: View {
             presentationMode.wrappedValue.dismiss()
         }) {
             Image(systemName: "chevron.left")
-                .foregroundColor(AppColors.accent2)
+                .foregroundColor(AppColors.background)
                 .imageScale(.large)
         })
         .navigationViewStyle(StackNavigationViewStyle())

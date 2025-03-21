@@ -7,11 +7,11 @@ struct AppColors {
     
     // Accent colors
     static let accent1 = Color(hex: "f23c4c")
-    static let accent2 = Color(hex: "2c2c44")
+    static let accent2 = Color(hex: "bfbbd9")
     static let accent3 = Color(hex: "bfbbd9")
     
-    // Base colors
-    static let background = Color(hex: "bfbbd9")
+    // Base colors2c2c44
+    static let background = Color(hex: "2c2c44")
     static let card = Color.white
     static let text = Color(hex: "333333")
     static let textSecondary = Color(hex: "2c2c44")
