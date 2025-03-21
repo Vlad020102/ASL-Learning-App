@@ -46,8 +46,6 @@ class RegistrationViewModel: ObservableObject {
             experience: self.experience
         )
         
-        print(data)
-        
         NetworkService.shared.register(data:data){[weak self] result in DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
@@ -176,7 +174,7 @@ struct RegistrationScreen: View {
             })
             .navigationViewStyle(StackNavigationViewStyle())
             .navigationBarTitleDisplayMode(.inline)
-            .background(AppColors.accent2)
+            .background(AppColors.background)
         }
     }
 }
@@ -193,11 +191,7 @@ struct CredentialsView: View {
                 .padding(.top, 30)
                 .padding(.horizontal)
                 .foregroundColor(AppColors.primary)
-            
-            Text("Enter your details to get started")
-                .font(.subheadline)
-                .foregroundColor(AppColors.accent3)
-                .padding(.bottom, 20)
+            Spacer()
             
             ScrollView {
                 VStack(spacing: 16) {
@@ -379,7 +373,7 @@ struct SourceView: View {
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                     .background(
                                         registrationViewModel.source == source ?
-                                        AppColors.secondary : AppColors.accent2
+                                        AppColors.secondary : AppColors.background
                                     )
                             )
                             .cornerRadius(10)
