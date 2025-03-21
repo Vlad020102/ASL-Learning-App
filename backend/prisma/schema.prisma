@@ -1,0 +1,121 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BadgeRarity {
+  Bronze
+  Silver
+  Gold
+}
+
+enum BadgeType {
+  Level
+  Question
+}
+
+enum QuizType {
+  Bubbles
+  Matching
+  VideoText
+  VideoAudio
+  AlphabetStreak
+}
+
+enum Difficulty {
+  Hard
+  Easy
+  Moderate
+}
+
+model User {
+  id                 Int         @id @default(autoincrement())
+  username           String      @unique
+  password           String
+  email              String      @unique
+  source             String      @default("Google Search")
+  dailyGoal          String      @default("5") @map("daily_goal")
+  learningReason     String      @default("For work or school") @map("learning_reason")
+  level              Int         @default(1)
+  questions_answered Int         @default(0)
+  createdAt          DateTime    @default(now()) @map("created_at")
+  updatedAt          DateTime    @default(now()) @map("updated_at")
+  badges             UserBadge[]
+
+  @@map("users")
+}
+
+model Badge {
+  id          Int         @id @default(autoincrement())
+  name        String
+  rarity      BadgeRarity
+  type        BadgeType
+  icon        String
+  description String
+  users       UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id        Int     @id @default(autoincrement())
+  user      User    @relation(fields: [user_id], references: [id])
+  user_id   Int
+  badge     Badge   @relation(fields: [badge_id], references: [id])
+  badge_id  Int
+  progress  Int
+  completed Boolean
+
+  @@map("user_badges")
+}
+
+model Lesson {
+  id Int @id @default(autoincrement())
+  
+  @@map("lessons")
+}
+
+model Sign {
+  id         Int          @id @default(autoincrement())
+  difficulty Difficulty
+  sign_url   String
+  text       String
+  quizzes    Quiz[]
+  phrases    PhraseSign[]
+
+  @@map("signs")
+}
+
+model Quiz {
+  id      Int      @id @default(autoincrement())
+  type    QuizType
+  sign    Sign     @relation(fields: [sign_id], references: [id])
+  sign_id Int
+
+  @@map("quizzes")
+}
+
+model Phrase {
+  id         Int          @id @default(autoincrement())
+  difficulty Difficulty
+  signs      PhraseSign[]
+
+  @@map("phrases")
+}
+
+model PhraseSign {
+  id        Int     @id @default(autoincrement())
+  sign      Sign?   @relation(fields: [sign_id], references: [id])
+  sign_id   Int?
+  phrase    Phrase? @relation(fields: [phrase_id], references: [id])
+  phrase_id Int?
+  order     Int?
+
+  @@map("phrases_sign")
+}
