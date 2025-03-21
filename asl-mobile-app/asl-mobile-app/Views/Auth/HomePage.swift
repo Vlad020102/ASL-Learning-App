@@ -6,7 +6,8 @@
 //
 import SwiftUI
 
-struct HomeView: View {
+struct HomePage: View {
+    @EnvironmentObject var authManager: AuthManager
     var body: some View {
             NavigationStack {
                 ZStack (alignment: .top){
@@ -51,7 +52,7 @@ struct HomeView: View {
                             .padding()
                         
                         VStack {
-                            NavigationLink(destination: RegistrationView()) {
+                            NavigationLink(destination: RegistrationScreen().environmentObject(authManager)) {
                                 Text("GET STARTED")
                                     .frame(maxWidth: .infinity)
                                     .padding()
@@ -60,7 +61,7 @@ struct HomeView: View {
                                     .cornerRadius(10)
                                     .bold(true)
                             }
-                            NavigationLink(destination: LoginView()) {
+                            NavigationLink(destination: LoginScreen().environmentObject(authManager)) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .fontWeight(.bold)
                                     .foregroundColor(AppColors.accent3)
@@ -84,6 +85,6 @@ struct HomeView: View {
 
 struct Home_Preview: PreviewProvider {
     static var previews: some View {
-        HomeView().environmentObject(AuthManager())
+        HomePage().environmentObject(AuthManager())
     }
 }
