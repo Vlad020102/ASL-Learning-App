@@ -10,7 +10,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
@@ -53,37 +53,12 @@ export class UsersService {
   }
 
 async findProfile(user: User) {
-    const userWithBadges = await this.prisma.user.findUnique({
+    const userProfile = await this.prisma.user.findUnique({
       where: { username: user.username },
       include: {
-      badges: {
-        select: {
-        id: true,
-        progress: true,
-        status: true,
-        badge: {
-          select: {
-          name: true,
-          description: true,
-          icon: true,
-          type: true,
-          rarity: true,
-          },
-        },
-        }
-      },
+      badges: true,
       },
     });
-
-    const userProfile = userWithBadges ? {
-      ...userWithBadges,
-      badges: userWithBadges.badges.map(badge => ({
-        id: badge.id,
-        progress: badge.progress,
-        status: badge.status,
-        ...badge.badge,
-      })),
-    } : null;
     if (!userProfile) {
       throw new NotFoundException('User not found');
     }
@@ -91,36 +66,4 @@ async findProfile(user: User) {
     const { id, password, ...profileWithoutId } = userProfile;
     return profileWithoutId;
   }
-
-  async getUserBadges(user: any) {
-    const userBadges = await this.prisma.userBadge.findMany({
-      where: {
-        user:{
-          username: user.username,
-        }
-      },
-    });
-    const badges = await this.prisma.badge.findMany({})
-    if (userBadges.length == badges.length) 
-      return userBadges;
-    else {
-      for (const badge of badges) {
-        await this.prisma.userBadge.create({
-          data: {
-            user: {
-              connect: {
-                username: user.username,
-              },
-            },
-            badge:{
-              connect: {
-                id: badge.id,
-              },
-            }
-          },
-        });
-      }
-      }
-    }
 }
-
