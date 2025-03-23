@@ -25,7 +25,7 @@ struct RootView: View {
             if authManager.isAuthenticated {
                 ContentView().transition(.opacity)
             } else {
-                HomePage()
+                HomeView()
                     .transition(.opacity)
             }
         }

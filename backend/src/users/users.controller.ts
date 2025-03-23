@@ -31,6 +31,6 @@ export class UsersController {
   findProfile(
     @ReqUser() user: User
   ) {
-    return this.usersService.findProfile();
+    return this.usersService.findProfile(user);
   }
 }

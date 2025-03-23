@@ -80,7 +80,7 @@ class RegistrationViewModel: ObservableObject {
     }
 }
 
-struct RegistrationScreen: View {
+struct RegistrationView: View {
     @EnvironmentObject var authManager: AuthManager
     @StateObject private var registrationViewModel = RegistrationViewModel()
     @State private var navigateToHome = false
@@ -559,31 +559,8 @@ struct ExperienceView: View {
     }
 }
 
-// Placeholder for the Home view after registration
-struct HomeView: View {
-    var body: some View {
-        VStack {
-            Text("Welcome to ASLearning!")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding()
-            
-            Text("Registration complete. Your learning journey begins now!")
-                .multilineTextAlignment(.center)
-                .padding()
-            
-            Image(systemName: "hand.wave.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .foregroundColor(.green)
-                .padding()
-        }
-    }
-}
-
 struct RegistrationFlow_Previews: PreviewProvider {
     static var previews: some View {
-        RegistrationScreen()
+        RegistrationView()
     }
 }

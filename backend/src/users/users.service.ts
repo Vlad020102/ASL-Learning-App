@@ -6,6 +6,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -51,12 +52,18 @@ export class UsersService {
     });
   }
 
-async findProfile() {
-    return await this.prisma.user.findUnique({
-      where: { id: 1 },
+async findProfile(user: User) {
+    const userProfile = await this.prisma.user.findUnique({
+      where: { username: user.username },
       include: {
-        badges: true,
+      badges: true,
       },
     });
+    if (!userProfile) {
+      throw new NotFoundException('User not found');
+    }
+
+    const { id, password, ...profileWithoutId } = userProfile;
+    return profileWithoutId;
   }
 }

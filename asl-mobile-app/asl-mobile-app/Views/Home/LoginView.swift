@@ -7,7 +7,7 @@
 import SwiftUI
 import KeychainAccess
 
-struct LoginScreen: View {
+struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     @State private var isSecured: Bool = true
     @Environment(\.presentationMode) var presentationMode
@@ -104,7 +104,7 @@ struct LoginScreen: View {
                         .padding(.vertical)
                     
                 
-                    NavigationLink(destination: RegistrationScreen()) {
+                    NavigationLink(destination: RegistrationView()) {
                         Text("CREATE NEW ACCOUNT")
                             .fontWeight(.bold)
                             .foregroundColor(AppColors.accent3)
@@ -175,6 +175,6 @@ class LoginViewModel: ObservableObject {
 
 struct LoginScreen_Preview: PreviewProvider {
     static var previews: some View {
-        LoginScreen()
+        LoginView()
     }
 }

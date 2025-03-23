@@ -6,30 +6,138 @@
 //
 import SwiftUI
 
+class ProfileViewModel: ObservableObject {
+    @Published var profile: ProfileResponse?
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    
+    @Published var createdAt: Date = Date()
+    @Published var username: String = ""
+    @Published var email: String = ""
+    @Published var level: Int = 0
+    @Published var dailyGoal: Int = 5
+    @Published var streak: Int = 0
+    @Published var questionsAnsweredTotal: Int = 0
+    @Published var questionsAnsweredToday: Int = 0
+    
+    func loadProfile() {
+        AuthManager.init().setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsImlhdCI6MTc0Mjc0Mzc3MSwiZXhwIjoxNzQyNzQ3MzcxfQ.JDxEUKanhosBzpn0eT425JTIxC2gOplyzz-yKrlqN2o")
+        isLoading = true
+        errorMessage = nil
+        
+        NetworkService.shared.fetchProfile { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                
+                switch result {
+                case .success(let profileData):
+                    self?.profile = profileData
+                    self?.username = profileData.username
+                    self?.email = profileData.email
+                    self?.level = profileData.level
+                    self?.questionsAnsweredTotal = profileData.questionsAnsweredTotal
+                    self?.questionsAnsweredToday = profileData.questionsAnsweredToday
+                    self?.streak = profileData.streak
+                    self?.dailyGoal = profileData.dailyGoal
+                    self?.createdAt = DateUtils.shared.convertISOStringToDate(isoDateString: profileData.createdAt) ?? Date()
+                case .failure(let error):
+                    self?.errorMessage = "Failed to load profile: \(error.localizedDescription)"
+                }
+            }
+        }
+    }
+    
+    func saveProfile(completion: @escaping (Bool) -> Void) {
+        guard let _ = profile else {
+            errorMessage = "No profile data available"
+            completion(false)
+            return
+        }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        let updateRequest = ProfileUpdateRequest(
+            username: username,
+            email: email
+        )
+        
+        NetworkService.shared.updateProfile(with: updateRequest) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                
+                switch result {
+                case .success(let updatedProfile):
+                    self?.profile = updatedProfile
+                    completion(true)
+                case .failure(let error):
+                    self?.errorMessage = "Failed to update profile: \(error.localizedDescription)"
+                    completion(false)
+                }
+            }
+        }
+    }
+    
+    private func formatDate(_ dateString: String) -> String {
+            let inputFormatter = ISO8601DateFormatter()
+            if let date = inputFormatter.date(from: dateString) {
+                let outputFormatter = DateFormatter()
+                outputFormatter.dateStyle = .medium
+                return outputFormatter.string(from: date)
+            }
+            return dateString
+        }
+}
+
+
 struct ProfileView: View {
+    @StateObject private var viewModel: ProfileViewModel = ProfileViewModel()
+    @State private var showEditProfileView: Bool = false
+    
     var body: some View {
         NavigationStack{
             ScrollView {
                 VStack(spacing: 0) {
-                    // Header
-                    ProfileHeaderView()
-                    
-                    // Statistics
-                    StatisticsView()
-                    
-                    // Achievements
-                    AchievementsView()
-                    
-                    Spacer(minLength: 20)
+                    if viewModel.isLoading{
+                        ProgressView()
+                    } else if let errorMessage = viewModel.errorMessage{
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .padding()
+                    } else {
+                        ProfileHeaderView(username: viewModel.username, email: viewModel.email, createdAt: viewModel.createdAt)
+                        StatisticsView(level: viewModel.level, questionsAnsweredTotal: viewModel.questionsAnsweredTotal, questionsAnsweredToday: viewModel.questionsAnsweredToday, streak: viewModel.streak, dailyGoal: viewModel.dailyGoal)
+                        AchievementsView()
+                        Spacer(minLength: 20)
+                    }
                 }
                 .padding(.horizontal)
             }
             .background(AppColors.background)
+            .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            showEditProfileView = true
+                        }) {
+                            Text("Edit")
+                        }
+                    }
+                }
+            .sheet(isPresented: $showEditProfileView) {
+                    AccountSettingsView()
+                }
+                .onAppear {
+                    viewModel.loadProfile()
+                }
         }
     }
 }
 
 struct ProfileHeaderView: View {
+    var username: String
+    var email: String
+    var createdAt: Date
     var body: some View {
         VStack {
             HStack {
@@ -54,8 +162,7 @@ struct ProfileHeaderView: View {
                         .fill(Color.purple)
                         .frame(width: 70, height: 70)
                     
-                    Text("R")
-                        .font(.system(size: 28, weight: .bold))
+                    Image(systemName: "person.circle")
                         .foregroundColor(.white)
                     
                     Circle()
@@ -69,24 +176,25 @@ struct ProfileHeaderView: View {
                         .offset(x: 25, y: 25)
                 }
                 
-                Text("Kakashi Hatake")
+                Text(username)
                     .font(.title3)
                     .fontWeight(.bold)
                 
-                Text("kakashi.hatake@example.com")
+                Text(email)
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 
                 HStack(spacing: 16) {
-                    Label("Joined March 2021", systemImage: "calendar")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    
-                    Label("0 Friends", systemImage: "person.2")
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                    Label {
+                        Text(createdAt, style: .date)
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    } icon: {
+                        Image(systemName: "calendar")
+                            .foregroundColor(.gray)
+                    }
                 }
-                
+
             }
             .padding(.bottom, 16)
         }
@@ -98,20 +206,25 @@ struct ProfileHeaderView: View {
 }
 
 struct StatisticsView: View {
+    var level: Int
+    var questionsAnsweredTotal: Int
+    var questionsAnsweredToday: Int
+    var streak: Int
+    var dailyGoal: Int
     var body: some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
                 // Day streak stat
-                StatCard(icon: "flame.fill", iconColor: .orange, value: "1", label: "Day streak")
+                StatCard(icon: "flame.fill", iconColor: .orange, value: String(questionsAnsweredTotal), label: "Total Questions Answered")
                 
                 // Total XP stat
-                StatCard(icon: "bolt.fill", iconColor: .yellow, value: "531", label: "Total XP")
+                StatCard(icon: "bolt.fill", iconColor: .yellow, value: String(level), label: "Current Level")
             }
             
             HStack(spacing: 10) {
                 // League stat
                 ZStack(alignment: .topTrailing) {
-                    StatCard(icon: "trophy.fill", iconColor: .yellow, value: "Gold", label: "League")
+                    StatCard(icon: "trophy.fill", iconColor: .yellow, value: "\(questionsAnsweredToday)/\(dailyGoal)", label: "Daily Goal")
                         .overlay(
                             Text("WEEK 1")
                                 .font(.system(size: 10, weight: .bold))
@@ -126,7 +239,7 @@ struct StatisticsView: View {
                 }
                 
                 // Top 3 finishes stat
-                StatCard(icon: "rosette", iconColor: .gray, value: "0", label: "Top 3 finishes")
+                StatCard(icon: "rosette", iconColor: .gray, value: String(streak), label: "Streak")
             }
         }
         .padding(.bottom, 16)

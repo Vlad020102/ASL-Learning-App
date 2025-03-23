@@ -14,7 +14,7 @@ class NetworkService {
     static let shared = NetworkService()
     private let baseURL: String
     
-    init(baseURL: String = "http://10.140.167.193:3001") {
+    init(baseURL: String = "http://192.168.0.122:3001") {
         self.baseURL = baseURL
     }
     
@@ -132,29 +132,31 @@ class NetworkService {
         completion: @escaping (Result<U, NetworkError>) -> Void
     ) {
   
-        let keychain = Keychain(service: "com.yourapp.authentication")
-        
-        do {
-            guard let token = try keychain.get("authToken") else {
-                completion(.failure(.serverError(statusCode: 401, message: "Authentication token not found")))
-                return
-            }
-            
-            let headers = [
-                "Content-Type": "application/json",
-                "Authorization": "Bearer \(token)"
-            ]
-            
-            request(
-                endpoint: endpoint,
-                method: method,
-                body: body,
-                headers: headers,
-                completion: completion
-            )
-        } catch {
-            completion(.failure(.serverError(statusCode: 401, message: "Error retrieving authentication token")))
+        let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
+        guard let token = AuthManager.init().getToken() else {
+            completion(.failure(.serverError(statusCode: 401, message: "Authentication token not found")))
+            return
         }
+        print(token)
+        let headers = [
+            "Content-Type": "application/json",
+            "Authorization": "Bearer \(token)"
+        ]
+        request(
+            endpoint: endpoint,
+            method: method,
+            body: body,
+            headers: headers,
+            completion: completion
+        )
+    }
+    
+    func authenticatedRequest<U: Decodable>(
+        endpoint: String,
+        method: HTTPMethod,
+        completion: @escaping (Result<U, NetworkError>) -> Void
+    ) {
+        authenticatedRequest(endpoint: endpoint, method: method, body: nil as EmptyBody?, completion: completion)
     }
 }
 
