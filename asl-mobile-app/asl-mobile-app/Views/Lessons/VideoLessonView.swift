@@ -26,6 +26,16 @@ struct Lesson: Identifiable, Codable {
 struct LessonCollection: Codable {
     var numberOfLessons: Int
     var lessons: [Lesson]
+    
+    static func loadFrom(jsonFileName: String) -> LessonCollection? {
+        guard let url = Bundle.main.url(forResource: jsonFileName, withExtension: "json"),
+              let data = try? Data(contentsOf: url) else {
+            return nil
+        }
+        
+        let decoder = JSONDecoder()
+        return try? decoder.decode(LessonCollection.self, from: data)
+    }
 }
 
 // Main lesson container view
@@ -401,18 +411,5 @@ struct LessonPreviewData {
 struct LessonContainerView_Previews: PreviewProvider {
     static var previews: some View {
         LessonContainerView(lessonCollection: LessonPreviewData.sampleLessonCollection)
-    }
-}
-
-// Helper method to load lessons from a JSON file
-extension LessonCollection {
-    static func loadFrom(jsonFileName: String) -> LessonCollection? {
-        guard let url = Bundle.main.url(forResource: jsonFileName, withExtension: "json"),
-              let data = try? Data(contentsOf: url) else {
-            return nil
-        }
-        
-        let decoder = JSONDecoder()
-        return try? decoder.decode(LessonCollection.self, from: data)
     }
 }

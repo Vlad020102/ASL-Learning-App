@@ -13,17 +13,20 @@ struct asl_mobile_app: App {
         WindowGroup {
             RootView()
                 .environmentObject(authManager)
+                
         }
     }
 }
 
 struct RootView: View {
+    @State private var targetSign: String = "Hello"
+    @State private var isCorrectSign: Bool = false
     @EnvironmentObject var authManager: AuthManager
     
     var body: some View {
         Group {
             if authManager.isAuthenticated {
-                CameraView().environmentObject(authManager)
+                CameraView(targetSign: $targetSign, isCorrectSign: $isCorrectSign).environmentObject(authManager)
                     .transition(.opacity)
             } else {
                 HomePage()
