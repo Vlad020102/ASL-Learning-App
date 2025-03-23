@@ -12,9 +12,12 @@ import AVFoundation
 import Vision
 import MediaPipeTasksVision
 
+protocol SignTargetDelegate {
+    func setTargetSign(_ sign: String)
+}
 
 
-class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate, HandLandmarkerServiceLiveStreamDelegate {
+class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate, HandLandmarkerServiceLiveStreamDelegate, SignTargetDelegate {
     private var permissionGranted = false // Flag for permission
     private let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
@@ -29,6 +32,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var handLandmarkerService: HandLandmarkerService?
     private var currentTimeStamp: Int = 0
     
+
+    func setTargetSign(_ sign: String) {
+            // Pass the target sign to the prediction viewModel
+            PredictionViewModel.shared.targetSign = sign
+        }
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
         checkPermission()
@@ -189,7 +199,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     func handLandmarkerService(_ handLandmarkerService: HandLandmarkerService, didFinishDetection result: ResultBundle?, error: Error?) {
         guard let result = result, let handLandmarkerResult = result.handLandmarkerResults.first as? HandLandmarkerResult else {
             DispatchQueue.main.async {
-                        PredictionViewModel.shared.prediction = "No hand detected"
+                        PredictionViewModel.shared.setPrediction("No hand detected")
             }
             self.clearHandLandmarks()
             return
@@ -197,7 +207,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         if handLandmarkerResult.landmarks.isEmpty {
             DispatchQueue.main.async {
-                PredictionViewModel.shared.prediction = "No hand detected"
+                PredictionViewModel.shared.setPrediction("No hand detected")
             }
             self.clearHandLandmarks()
             return
@@ -213,13 +223,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             
             DispatchQueue.main.async {
-                        PredictionViewModel.shared.prediction = prediction.classLabel
+                PredictionViewModel.shared.setPrediction(prediction.classLabel)
             }
         }
         catch(let error){
             print("Error: \(error)")
             DispatchQueue.main.async {
-                       PredictionViewModel.shared.prediction = "Error: Unable to classify"
+                PredictionViewModel.shared.setPrediction("Error: Unable to classify")
            }
         }
     }
@@ -280,15 +290,15 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         if let handLandmarks = result?.landmarks {
             DispatchQueue.main.async {
                 // Get the view from the view controller on the main thread
-                if let vc = viewController as? ViewController {
-                                vc.clearHandLandmarks()
+                if let vc = viewController as? CameraViewController {
+                                self.clearHandLandmarks()
                             }
                 
                 
                 if !handLandmarks.isEmpty {
                     for (index, landmarks) in handLandmarks.enumerated() {
                         // Draw the landmarks
-                        drawHandLandmarks(landmarks, in: viewController.view, handIndex: index)
+                        self.drawHandLandmarks(landmarks, in: viewController.view, handIndex: index)
                     }
                 }
             }
@@ -342,7 +352,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
         }
     }
-    
+
     struct CameraView: View {
         @State var didTapCapture: Bool = false
         @State var isFrontCamera: Bool = true
@@ -351,7 +361,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 // Camera view controller
                 HostedViewController()
                     .ignoresSafeArea()
-                
+
                 // UI Overlay
                 VStack {
                     PredictionLabelView().padding(.horizontal)
@@ -409,65 +419,44 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
 
 
-func drawHandConnections(points: [CGPoint], in view: UIView, handIndex: Int) {
-    // Define the connections for a hand
-    // These index pairs represent which landmarks should be connected with lines
-    // Based on MediaPipe hand landmark model (21 landmarks)
-    let connections = [
-        // Thumb
-        [0, 1], [1, 2], [2, 3], [3, 4],
-        // Index finger
-        [0, 5], [5, 6], [6, 7], [7, 8],
-        // Middle finger
-        [0, 9], [9, 10], [10, 11], [11, 12],
-        // Ring finger
-        [0, 13], [13, 14], [14, 15], [15, 16],
-        // Pinky
-        [0, 17], [17, 18], [18, 19], [19, 20],
-        // Palm connections
-        [5, 9], [9, 13], [13, 17]
-    ]
-    
-    for connection in connections {
-        // Ensure indices are valid
-        guard connection[0] < points.count, connection[1] < points.count else { continue }
-        
-        let startPoint = points[connection[0]]
-        let endPoint = points[connection[1]]
-        
-        let path = UIBezierPath()
-        path.move(to: startPoint)
-        path.addLine(to: endPoint)
-        
-        let lineLayer = CAShapeLayer()
-        lineLayer.name = "handLandmarksLayer"
-        lineLayer.path = path.cgPath
-        lineLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
-        lineLayer.lineWidth = 2.0
-        lineLayer.fillColor = UIColor.clear.cgColor
-        
-        view.layer.addSublayer(lineLayer)
-    }
-}
+    func drawHandConnections(points: [CGPoint], in view: UIView, handIndex: Int) {
+        // Define the connections for a hand
+        // These index pairs represent which landmarks should be connected with lines
+        // Based on MediaPipe hand landmark model (21 landmarks)
+        let connections = [
+            // Thumb
+            [0, 1], [1, 2], [2, 3], [3, 4],
+            // Index finger
+            [0, 5], [5, 6], [6, 7], [7, 8],
+            // Middle finger
+            [0, 9], [9, 10], [10, 11], [11, 12],
+            // Ring finger
+            [0, 13], [13, 14], [14, 15], [15, 16],
+            // Pinky
+            [0, 17], [17, 18], [18, 19], [19, 20],
+            // Palm connections
+            [5, 9], [9, 13], [13, 17]
+        ]
 
+        for connection in connections {
+            // Ensure indices are valid
+            guard connection[0] < points.count, connection[1] < points.count else { continue }
 
+            let startPoint = points[connection[0]]
+            let endPoint = points[connection[1]]
 
-class PredictionViewModel: ObservableObject {
-    @Published var prediction: String = "Waiting for hand..."
-    
-    static let shared = PredictionViewModel()
-}
+            let path = UIBezierPath()
+            path.move(to: startPoint)
+            path.addLine(to: endPoint)
 
-struct PredictionLabelView: View {
-    @ObservedObject var viewModel = PredictionViewModel.shared
-    
-    var body: some View {
-        Text(viewModel.prediction)
-            .font(.system(size: 24, weight: .bold))
-            .padding()
-            .background(Color.black.opacity(0.7))
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding(.top, 50)
+            let lineLayer = CAShapeLayer()
+            lineLayer.name = "handLandmarksLayer"
+            lineLayer.path = path.cgPath
+            lineLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
+            lineLayer.lineWidth = 2.0
+            lineLayer.fillColor = UIColor.clear.cgColor
+
+            view.layer.addSublayer(lineLayer)
+        }
     }
 }
