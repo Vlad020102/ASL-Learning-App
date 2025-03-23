@@ -1,24 +1,20 @@
-// 2. Create users.service.ts
 import {
   Injectable,
   ConflictException,
   NotFoundException,
-  Inject,
 } from '@nestjs/common';
-import { users } from '../db/schema/schema';
-import { eq } from 'drizzle-orm';
 import * as bcrypt from 'bcrypt';
-import { DRIZZLE } from 'src/db/drizzle.module';
-import { DrizzleDB } from 'src/db/types/drizzle';
 import { CreateUserDto } from './dto/create-user.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+  constructor(private prisma: PrismaService) {}
 
   async findOne(id: number) {
-    const result = await this.db.select().from(users).where(eq(users.id, id));
-    return result[0] || null;
+    return await this.prisma.user.findUnique({
+      where: { id },
+    });
   }
 
   async create(userData: CreateUserDto) {
@@ -29,35 +25,38 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-    const result = await this.db
-      .insert(users)
-      .values({
+    return await this.prisma.user.create({
+      data: {
         ...userData,
         password: hashedPassword,
-      })
-      .returning();
-
-    return result[0];
+      },
+    });
   }
+
   async findAll() {
-    return await this.db.query.users.findMany();
+    return await this.prisma.user.findMany();
   }
 
   async findByUsername(username: string) {
     if (username === '') return null;
-    const result = await this.db
-      .select()
-      .from(users)
-      .where(eq(users.username, username));
-    return result[0] || null;
+    return await this.prisma.user.findUnique({
+      where: { username },
+    });
   }
 
   async findByEmail(email: string) {
     if (email === '') return null;
-    const result = await this.db
-      .select()
-      .from(users)
-      .where(eq(users.email, email));
-    return result[0] || null;
+    return await this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
+async findProfile() {
+    return await this.prisma.user.findUnique({
+      where: { id: 1 },
+      include: {
+        badges: true,
+      },
+    });
   }
 }

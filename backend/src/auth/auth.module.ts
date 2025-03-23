@@ -6,11 +6,10 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
-import { DrizzleModule } from 'src/db/drizzle.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports: [
-    DrizzleModule,
     PassportModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
@@ -20,6 +19,7 @@ import { DrizzleModule } from 'src/db/drizzle.module';
       inject: [ConfigService],
     }),
     ConfigModule,
+    PrismaModule
   ],
   providers: [AuthService, UsersService, JwtStrategy],
   controllers: [AuthController],
