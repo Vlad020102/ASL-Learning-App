@@ -11,7 +11,6 @@ struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     @State private var isSecured: Bool = true
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var authManager: AuthManager
     
     var body: some View {
         ZStack {
@@ -80,7 +79,7 @@ struct LoginView: View {
                     
                     // Login button
                     Button(action: {
-                        viewModel.login(authManager: authManager)
+                        viewModel.login()
                     }) {
                         ZStack {
                             Text("LOGIN")
@@ -137,7 +136,6 @@ struct LoginView: View {
 
 // LoginViewModel to handle login logic
 class LoginViewModel: ObservableObject {
-    @EnvironmentObject var authManager: AuthManager
     @Published var emailOrUsername = ""
     @Published var password = ""
     @Published var isLoading = false
@@ -149,7 +147,7 @@ class LoginViewModel: ObservableObject {
     
 
     
-    func login(authManager: AuthManager) {
+    func login() {
         isLoading = true
         errorMessage = ""
         
@@ -159,7 +157,7 @@ class LoginViewModel: ObservableObject {
                 
                 switch result {
                 case .success(let response):
-                    authManager.setToken(with: response.accessToken)
+                    AuthManager.shared.setToken(with: response.accessToken)
                 case .failure(let error):
                     if let networkError = error as? NetworkError {
                         self?.errorMessage = networkError.localizedDescription.description

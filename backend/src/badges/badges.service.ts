@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBadgeDto } from './dto/create-badge.dto';
 import { UpdateBadgeDto } from './dto/update-badge.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class BadgesService {
+  constructor(private readonly  prisma: PrismaService) {}
+
   create(createBadgeDto: CreateBadgeDto) {
     return 'This action adds a new badge';
   }
@@ -23,4 +26,5 @@ export class BadgesService {
   remove(id: number) {
     return `This action removes a #${id} badge`;
   }
+
 }

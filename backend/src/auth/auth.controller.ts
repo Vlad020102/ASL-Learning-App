@@ -37,10 +37,4 @@ export class AuthController {
   ) {
     return this.authService.register(registerDto);
   }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return this.authService.getProfile(req.user);
-  }
 }

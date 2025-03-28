@@ -8,6 +8,8 @@ import SwiftUI
 import KeychainAccess
 
 class AuthManager: ObservableObject {
+    static let shared = AuthManager()
+    
     private let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
     private let tokenKey = "authToken"
     @Published var isAuthenticated = false

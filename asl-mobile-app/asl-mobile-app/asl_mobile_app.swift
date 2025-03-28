@@ -7,19 +7,15 @@ import SwiftUI
 import KeychainAccess
 @main
 struct asl_mobile_app: App {
-    @StateObject private var authManager = AuthManager()
-    
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environmentObject(authManager)
         }
     }
 }
 
 struct RootView: View {
-    @EnvironmentObject var authManager: AuthManager
-    
+    @StateObject private var authManager = AuthManager.shared
     var body: some View {
         Group {
             if authManager.isAuthenticated {
@@ -29,13 +25,7 @@ struct RootView: View {
                     .transition(.opacity)
             }
         }
-        .animation(.easeInOut, value: authManager.isAuthenticated)
-    }
-}
-
-struct Main_preview: PreviewProvider {
-    static var previews: some View {
-        RootView().environmentObject(AuthManager())
+        .animation(.easeInOut, value:  authManager.isAuthenticated)
     }
 }
 
