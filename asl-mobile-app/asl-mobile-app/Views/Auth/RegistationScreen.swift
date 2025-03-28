@@ -25,15 +25,12 @@ class RegistrationViewModel: ObservableObject {
     @Published var showConfirmPassword: Bool = false
     @Published var errorMessage = ""
     
-    private let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
-    private let tokenKey = "authToken"
-    
     
     var progressPercentage: Double {
         return Double(currentStep) / Double(maxSteps)
     }
     
-    func register(authManager: AuthManager) {
+    func register() {
         print("registering")
         let data: RegisterData = .init(
             email: self.email,
@@ -49,7 +46,7 @@ class RegistrationViewModel: ObservableObject {
         NetworkService.shared.register(data:data){[weak self] result in DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
-                    authManager.setToken(with: response.accessToken)
+                    AuthManager.shared.setToken(with: response.accessToken)
                     print("Success: \(response)")
                 case .failure(let error):
                     print("Error: \(error)")
@@ -81,7 +78,6 @@ class RegistrationViewModel: ObservableObject {
 }
 
 struct RegistrationView: View {
-    @EnvironmentObject var authManager: AuthManager
     @StateObject private var registrationViewModel = RegistrationViewModel()
     @State private var navigateToHome = false
     @Environment(\.presentationMode) var presentationMode
@@ -134,7 +130,7 @@ struct RegistrationView: View {
                                     registrationViewModel.currentStep += 1
                                 }
                             } else {
-                                registrationViewModel.register(authManager: authManager)
+                                registrationViewModel.register()
                             }
                         }) {
                             Text("CONTINUE")

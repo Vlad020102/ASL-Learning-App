@@ -41,6 +41,12 @@ enum Difficulty {
   Moderate
 }
 
+enum BadgeStatus {
+  Locked
+  InProgress
+  Completed
+}
+
 model User {
   id                     Int         @id @default(autoincrement())
   username               String      @unique
