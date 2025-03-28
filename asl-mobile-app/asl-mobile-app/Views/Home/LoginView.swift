@@ -7,15 +7,14 @@
 import SwiftUI
 import KeychainAccess
 
-struct LoginScreen: View {
+struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     @State private var isSecured: Bool = true
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var authManager: AuthManager
     
     var body: some View {
         ZStack {
-            AppColors.accent2.opacity(0.9).ignoresSafeArea()
+            AppColors.background.opacity(0.9).ignoresSafeArea()
             
             VStack(spacing: 20) {
                 VStack {
@@ -55,7 +54,7 @@ struct LoginScreen: View {
                             isSecured.toggle()
                         }) {
                             Image(systemName: isSecured ? "eye.slash" : "eye")
-                                .foregroundColor(AppColors.accent2)
+                                .foregroundColor(AppColors.background)
                         }
                     }
                     
@@ -80,7 +79,7 @@ struct LoginScreen: View {
                     
                     // Login button
                     Button(action: {
-                        viewModel.login(authManager: authManager)
+                        viewModel.login()
                     }) {
                         ZStack {
                             Text("LOGIN")
@@ -104,7 +103,7 @@ struct LoginScreen: View {
                         .padding(.vertical)
                     
                 
-                    NavigationLink(destination: RegistrationScreen()) {
+                    NavigationLink(destination: RegistrationView()) {
                         Text("CREATE NEW ACCOUNT")
                             .fontWeight(.bold)
                             .foregroundColor(AppColors.accent3)
@@ -116,7 +115,7 @@ struct LoginScreen: View {
                 }
                 .padding(.horizontal, 25)
                 .padding(.vertical, 35)
-                .background(AppColors.accent2)
+                .background(AppColors.background)
                 .cornerRadius(20)
             }
             .padding(.horizontal)
@@ -126,7 +125,7 @@ struct LoginScreen: View {
             presentationMode.wrappedValue.dismiss()
         }) {
             Image(systemName: "chevron.left")
-                .foregroundColor(AppColors.accent2)
+                .foregroundColor(AppColors.background)
                 .imageScale(.large)
         })
         .navigationViewStyle(StackNavigationViewStyle())
@@ -137,7 +136,6 @@ struct LoginScreen: View {
 
 // LoginViewModel to handle login logic
 class LoginViewModel: ObservableObject {
-    @EnvironmentObject var authManager: AuthManager
     @Published var emailOrUsername = ""
     @Published var password = ""
     @Published var isLoading = false
@@ -149,7 +147,7 @@ class LoginViewModel: ObservableObject {
     
 
     
-    func login(authManager: AuthManager) {
+    func login() {
         isLoading = true
         errorMessage = ""
         
@@ -159,7 +157,7 @@ class LoginViewModel: ObservableObject {
                 
                 switch result {
                 case .success(let response):
-                    authManager.setToken(with: response.accessToken)
+                    AuthManager.shared.setToken(with: response.accessToken)
                 case .failure(let error):
                     if let networkError = error as? NetworkError {
                         self?.errorMessage = networkError.localizedDescription.description
@@ -175,6 +173,6 @@ class LoginViewModel: ObservableObject {
 
 struct LoginScreen_Preview: PreviewProvider {
     static var previews: some View {
-        LoginScreen()
+        LoginView()
     }
 }

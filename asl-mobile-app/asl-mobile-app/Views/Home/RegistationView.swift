@@ -25,15 +25,12 @@ class RegistrationViewModel: ObservableObject {
     @Published var showConfirmPassword: Bool = false
     @Published var errorMessage = ""
     
-    private let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
-    private let tokenKey = "authToken"
-    
     
     var progressPercentage: Double {
         return Double(currentStep) / Double(maxSteps)
     }
     
-    func register(authManager: AuthManager) {
+    func register() {
         print("registering")
         let data: RegisterData = .init(
             email: self.email,
@@ -46,12 +43,10 @@ class RegistrationViewModel: ObservableObject {
             experience: self.experience
         )
         
-        print(data)
-        
         NetworkService.shared.register(data:data){[weak self] result in DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
-                    authManager.setToken(with: response.accessToken)
+                    AuthManager.shared.setToken(with: response.accessToken)
                     print("Success: \(response)")
                 case .failure(let error):
                     print("Error: \(error)")
@@ -82,8 +77,7 @@ class RegistrationViewModel: ObservableObject {
     }
 }
 
-struct RegistrationScreen: View {
-    @EnvironmentObject var authManager: AuthManager
+struct RegistrationView: View {
     @StateObject private var registrationViewModel = RegistrationViewModel()
     @State private var navigateToHome = false
     @Environment(\.presentationMode) var presentationMode
@@ -136,7 +130,7 @@ struct RegistrationScreen: View {
                                     registrationViewModel.currentStep += 1
                                 }
                             } else {
-                                registrationViewModel.register(authManager: authManager)
+                                registrationViewModel.register()
                             }
                         }) {
                             Text("CONTINUE")
@@ -176,7 +170,7 @@ struct RegistrationScreen: View {
             })
             .navigationViewStyle(StackNavigationViewStyle())
             .navigationBarTitleDisplayMode(.inline)
-            .background(AppColors.accent2)
+            .background(AppColors.background)
         }
     }
 }
@@ -193,11 +187,7 @@ struct CredentialsView: View {
                 .padding(.top, 30)
                 .padding(.horizontal)
                 .foregroundColor(AppColors.primary)
-            
-            Text("Enter your details to get started")
-                .font(.subheadline)
-                .foregroundColor(AppColors.accent3)
-                .padding(.bottom, 20)
+            Spacer()
             
             ScrollView {
                 VStack(spacing: 16) {
@@ -379,7 +369,7 @@ struct SourceView: View {
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                     .background(
                                         registrationViewModel.source == source ?
-                                        AppColors.secondary : AppColors.accent2
+                                        AppColors.secondary : AppColors.background
                                     )
                             )
                             .cornerRadius(10)
@@ -565,31 +555,8 @@ struct ExperienceView: View {
     }
 }
 
-// Placeholder for the Home view after registration
-struct HomeView: View {
-    var body: some View {
-        VStack {
-            Text("Welcome to ASLearning!")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding()
-            
-            Text("Registration complete. Your learning journey begins now!")
-                .multilineTextAlignment(.center)
-                .padding()
-            
-            Image(systemName: "hand.wave.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .foregroundColor(.green)
-                .padding()
-        }
-    }
-}
-
 struct RegistrationFlow_Previews: PreviewProvider {
     static var previews: some View {
-        RegistrationScreen()
+        RegistrationView()
     }
 }

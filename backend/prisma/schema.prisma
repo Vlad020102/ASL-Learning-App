@@ -1,5 +1,3 @@
-// This is your Prisma schema file
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -34,19 +32,27 @@ enum Difficulty {
   Moderate
 }
 
+enum BadgeStatus {
+  Locked
+  InProgress
+  Completed
+}
+
 model User {
-  id                 Int         @id @default(autoincrement())
-  username           String      @unique
-  password           String
-  email              String      @unique
-  source             String      @default("Google Search")
-  dailyGoal          String      @default("5") @map("daily_goal")
-  learningReason     String      @default("For work or school") @map("learning_reason")
-  level              Int         @default(1)
-  questions_answered Int         @default(0)
-  createdAt          DateTime    @default(now()) @map("created_at")
-  updatedAt          DateTime    @default(now()) @map("updated_at")
-  badges             UserBadge[]
+  id                     Int         @id @default(autoincrement())
+  username               String      @unique
+  password               String
+  email                  String      @unique
+  source                 String      @default("Google Search")
+  dailyGoal              Int         @default(5) @map("daily_goal")
+  learningReason         String      @default("For work or school") @map("learning_reason")
+  level                  Int         @default(1)
+  questionsAnsweredTotal Int         @default(0) @map("questions_answered_total")
+  questionsAnsweredToday Int         @default(0) @map("questions_correct_today")
+  streak                 Int         @default(0)
+  createdAt              DateTime    @default(now()) @map("created_at")
+  updatedAt              DateTime    @default(now()) @map("updated_at")
+  badges                 UserBadge[]
 
   @@map("users")
 }
@@ -64,27 +70,27 @@ model Badge {
 }
 
 model UserBadge {
-  id        Int     @id @default(autoincrement())
-  user      User    @relation(fields: [user_id], references: [id])
-  user_id   Int
-  badge     Badge   @relation(fields: [badge_id], references: [id])
-  badge_id  Int
-  progress  Int
-  completed Boolean
+  id       Int         @id @default(autoincrement())
+  user     User        @relation(fields: [userId], references: [id])
+  userId   Int         @map("user_id")
+  badge    Badge       @relation(fields: [badgeId], references: [id])
+  badgeId  Int         @map("badge_id")
+  progress Int         @default(0)
+  status   BadgeStatus @default(Locked)
 
   @@map("user_badges")
 }
 
 model Lesson {
   id Int @id @default(autoincrement())
-  
+
   @@map("lessons")
 }
 
 model Sign {
   id         Int          @id @default(autoincrement())
   difficulty Difficulty
-  sign_url   String
+  signUrl    String       @map("sign_url")
   text       String
   quizzes    Quiz[]
   phrases    PhraseSign[]
@@ -93,10 +99,10 @@ model Sign {
 }
 
 model Quiz {
-  id      Int      @id @default(autoincrement())
-  type    QuizType
-  sign    Sign     @relation(fields: [sign_id], references: [id])
-  sign_id Int
+  id     Int      @id @default(autoincrement())
+  type   QuizType
+  sign   Sign     @relation(fields: [signID], references: [id])
+  signID Int      @map("sign_id")
 
   @@map("quizzes")
 }
@@ -110,12 +116,12 @@ model Phrase {
 }
 
 model PhraseSign {
-  id        Int     @id @default(autoincrement())
-  sign      Sign?   @relation(fields: [sign_id], references: [id])
-  sign_id   Int?
-  phrase    Phrase? @relation(fields: [phrase_id], references: [id])
-  phrase_id Int?
-  order     Int?
+  id       Int     @id @default(autoincrement())
+  sign     Sign?   @relation(fields: [signID], references: [id])
+  signID   Int?    @map("sign_id")
+  phrase   Phrase? @relation(fields: [phraseId], references: [id])
+  phraseId Int?    @map("phrase_id")
+  order    Int?
 
   @@map("phrases_sign")
 }

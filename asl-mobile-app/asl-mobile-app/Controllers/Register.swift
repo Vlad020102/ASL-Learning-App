@@ -4,6 +4,17 @@
 //
 //  Created by "Vlad Achim, Vodafone" on 15.03.2025.
 //
+struct RegisterData: Codable {
+    let email: String
+    let username: String
+    let password: String
+    let confirmPassword: String
+    let source: String?
+    let dailyGoal: Int?
+    let learningReason: String?
+    let experience: String?
+}
+
 extension NetworkService {
     func register(data: RegisterData, completion: @escaping (Result<AuthResponse, Error>) -> Void) {
         self.request(
@@ -20,15 +31,4 @@ extension NetworkService {
         }
         
     }
-}
-
-struct RegisterData: Codable {
-    let email: String
-    let username: String
-    let password: String
-    let confirmPassword: String
-    let source: String?
-    let dailyGoal: Int?
-    let learningReason: String?
-    let experience: String?
 }

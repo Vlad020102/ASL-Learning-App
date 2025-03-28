@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Param,
   UseGuards
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -31,6 +30,7 @@ export class UsersController {
   findProfile(
     @ReqUser() user: User
   ) {
-    return this.usersService.findProfile();
+    this.usersService.getUserBadges(user);
+    return this.usersService.findProfile(user);
   }
 }

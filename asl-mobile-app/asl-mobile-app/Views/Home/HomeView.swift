@@ -6,12 +6,11 @@
 //
 import SwiftUI
 
-struct HomePage: View {
-    @EnvironmentObject var authManager: AuthManager
+struct HomeView: View {
     var body: some View {
-            NavigationView {
+            NavigationStack {
                 ZStack (alignment: .top){
-                    AppColors.accent2
+                    AppColors.background
                         .ignoresSafeArea ()
             
                     Circle()
@@ -38,12 +37,12 @@ struct HomePage: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 100, height: 100)
-                                .foregroundColor(AppColors.accent2)
+                                .foregroundColor(AppColors.background)
                             
                             Text("ASLearning")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundColor(AppColors.accent2)
+                                .foregroundColor(AppColors.background)
                         }.offset(y: 80)
                         Image("illustration")
                             .resizable()
@@ -52,7 +51,7 @@ struct HomePage: View {
                             .padding()
                         
                         VStack {
-                            NavigationLink(destination: RegistrationScreen().environmentObject(authManager)) {
+                            NavigationLink(destination: RegistrationView()) {
                                 Text("GET STARTED")
                                     .frame(maxWidth: .infinity)
                                     .padding()
@@ -61,13 +60,13 @@ struct HomePage: View {
                                     .cornerRadius(10)
                                     .bold(true)
                             }
-                            NavigationLink(destination: LoginScreen().environmentObject(authManager)) {
+                            NavigationLink(destination: LoginView()) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .fontWeight(.bold)
                                     .foregroundColor(AppColors.accent3)
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(AppColors.accent2)
+                                    .background(AppColors.background)
                                     .cornerRadius(10)
                                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppColors.primary, lineWidth: 2)
                                     )
@@ -83,8 +82,8 @@ struct HomePage: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct Home_Preview: PreviewProvider {
     static var previews: some View {
-        HomePage()
+        HomeView().environmentObject(AuthManager())
     }
 }

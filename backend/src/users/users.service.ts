@@ -6,10 +6,11 @@ import {
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
@@ -51,12 +52,75 @@ export class UsersService {
     });
   }
 
-async findProfile() {
-    return await this.prisma.user.findUnique({
-      where: { id: 1 },
+async findProfile(user: User) {
+    const userWithBadges = await this.prisma.user.findUnique({
+      where: { username: user.username },
       include: {
-        badges: true,
+      badges: {
+        select: {
+        id: true,
+        progress: true,
+        status: true,
+        badge: {
+          select: {
+          name: true,
+          description: true,
+          icon: true,
+          type: true,
+          rarity: true,
+          },
+        },
+        }
+      },
       },
     });
+
+    const userProfile = userWithBadges ? {
+      ...userWithBadges,
+      badges: userWithBadges.badges.map(badge => ({
+        id: badge.id,
+        progress: badge.progress,
+        status: badge.status,
+        ...badge.badge,
+      })),
+    } : null;
+    if (!userProfile) {
+      throw new NotFoundException('User not found');
+    }
+
+    const { id, password, ...profileWithoutId } = userProfile;
+    return profileWithoutId;
   }
+
+  async getUserBadges(user: any) {
+    const userBadges = await this.prisma.userBadge.findMany({
+      where: {
+        user:{
+          username: user.username,
+        }
+      },
+    });
+    const badges = await this.prisma.badge.findMany({})
+    if (userBadges.length == badges.length) 
+      return userBadges;
+    else {
+      for (const badge of badges) {
+        await this.prisma.userBadge.create({
+          data: {
+            user: {
+              connect: {
+                username: user.username,
+              },
+            },
+            badge:{
+              connect: {
+                id: badge.id,
+              },
+            }
+          },
+        });
+      }
+      }
+    }
 }
+

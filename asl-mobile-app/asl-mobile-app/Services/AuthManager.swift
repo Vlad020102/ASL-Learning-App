@@ -8,6 +8,8 @@ import SwiftUI
 import KeychainAccess
 
 class AuthManager: ObservableObject {
+    static let shared = AuthManager()
+    
     private let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
     private let tokenKey = "authToken"
     @Published var isAuthenticated = false
@@ -37,7 +39,18 @@ class AuthManager: ObservableObject {
             print("Error saving token: \(error)")
         }
     }
-    
+    func getToken() -> String? {
+        do {
+            if let token = try keychain.get(tokenKey), !token.isEmpty {
+                return token
+            } else {
+                return nil
+            }
+        } catch {
+            print("Error retrieving token: \(error.localizedDescription)")
+            return nil
+        }
+    }
     func removeToken() {
         do {
             try keychain.remove(tokenKey)
