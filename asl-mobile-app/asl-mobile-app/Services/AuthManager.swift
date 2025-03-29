@@ -37,7 +37,18 @@ class AuthManager: ObservableObject {
             print("Error saving token: \(error)")
         }
     }
-    
+    func getToken() -> String? {
+        do {
+            if let token = try keychain.get(tokenKey), !token.isEmpty {
+                return token
+            } else {
+                return nil
+            }
+        } catch {
+            print("Error retrieving token: \(error.localizedDescription)")
+            return nil
+        }
+    }
     func removeToken() {
         do {
             try keychain.remove(tokenKey)

@@ -28,6 +28,13 @@ enum QuizType {
   AlphabetStreak
 }
 
+enum QuizStatus {
+  InProgress
+  Completed
+  Failed
+  Locked
+}
+
 enum Difficulty {
   Hard
   Easy
@@ -35,18 +42,20 @@ enum Difficulty {
 }
 
 model User {
-  id                 Int         @id @default(autoincrement())
-  username           String      @unique
+  id                 Int      @id @default(autoincrement())
+  username           String   @unique
   password           String
-  email              String      @unique
-  source             String      @default("Google Search")
-  dailyGoal          String      @default("5") @map("daily_goal")
-  learningReason     String      @default("For work or school") @map("learning_reason")
-  level              Int         @default(1)
-  questions_answered Int         @default(0)
-  createdAt          DateTime    @default(now()) @map("created_at")
-  updatedAt          DateTime    @default(now()) @map("updated_at")
-  badges             UserBadge[]
+  email              String   @unique
+  source             String   @default("Google Search")
+  dailyGoal          String   @default("5") @map("daily_goal")
+  learningReason     String   @default("For work or school") @map("learning_reason")
+  level              Int      @default(1)
+  questions_answered Int      @default(0)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @default(now()) @map("updated_at")
+
+  badges  UserBadge[]
+  quizzes QuizUser[]
 
   @@map("users")
 }
@@ -58,64 +67,99 @@ model Badge {
   type        BadgeType
   icon        String
   description String
-  users       UserBadge[]
+
+  users UserBadge[]
 
   @@map("badges")
 }
 
 model UserBadge {
   id        Int     @id @default(autoincrement())
-  user      User    @relation(fields: [user_id], references: [id])
   user_id   Int
-  badge     Badge   @relation(fields: [badge_id], references: [id])
   badge_id  Int
   progress  Int
   completed Boolean
+
+  user  User  @relation(fields: [user_id], references: [id])
+  badge Badge @relation(fields: [badge_id], references: [id])
 
   @@map("user_badges")
 }
 
 model Lesson {
   id Int @id @default(autoincrement())
-  
+
   @@map("lessons")
 }
 
 model Sign {
-  id         Int          @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   difficulty Difficulty
-  sign_url   String
+  s3Url      String
   text       String
-  quizzes    Quiz[]
-  phrases    PhraseSign[]
+  options    String? //this field can be used only for the Bubble Quiz type
+
+  quizes  QuizSigns[]
+  phrases PhraseSign[]
 
   @@map("signs")
 }
 
 model Quiz {
-  id      Int      @id @default(autoincrement())
-  type    QuizType
-  sign    Sign     @relation(fields: [sign_id], references: [id])
-  sign_id Int
+  id    Int      @id @default(autoincrement())
+  title String
+  type  QuizType
+
+  signs QuizSigns[]
+  users QuizUser[]
 
   @@map("quizzes")
 }
 
 model Phrase {
-  id         Int          @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   difficulty Difficulty
-  signs      PhraseSign[]
+  text       String
+
+  signs PhraseSign[]
 
   @@map("phrases")
 }
 
+model QuizUser {
+  id             Int        @id @default(autoincrement())
+  user_id        Int
+  quiz_id        Int
+  status         QuizStatus @default(Locked)
+  score          Float        @default(0)
+  livesRemaining Int?       @default(5) @map("lives_remaining")
+  createdAt      DateTime   @default(now()) @map("created_at")
+
+  user User @relation(fields: [user_id], references: [id])
+  quiz Quiz @relation(fields: [quiz_id], references: [id])
+
+  @@unique([user_id, quiz_id])  
+}
+
+model QuizSigns {
+  id      Int @id @default(autoincrement())
+  quiz_id Int
+  sign_id Int
+
+  quiz Quiz @relation(fields: [quiz_id], references: [id])
+  sign Sign @relation(fields: [sign_id], references: [id])
+
+  @@map("quiz_signs")
+}
+
 model PhraseSign {
-  id        Int     @id @default(autoincrement())
-  sign      Sign?   @relation(fields: [sign_id], references: [id])
+  id        Int  @id @default(autoincrement())
   sign_id   Int?
-  phrase    Phrase? @relation(fields: [phrase_id], references: [id])
   phrase_id Int?
   order     Int?
+
+  sign   Sign?   @relation(fields: [sign_id], references: [id])
+  phrase Phrase? @relation(fields: [phrase_id], references: [id])
 
   @@map("phrases_sign")
 }

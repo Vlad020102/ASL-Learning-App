@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { BadgesModule } from './badges/badges.module';
-import { LessonsModule } from './lessons/lessons.module';
+import { QuizesModule } from './quizes/quizes.module';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { LessonsModule } from './lessons/lessons.module';
     UsersModule,
     BadgesModule,
     PrismaModule,
-    LessonsModule,
+    QuizesModule,
   ],
   controllers: [],
   providers: [],

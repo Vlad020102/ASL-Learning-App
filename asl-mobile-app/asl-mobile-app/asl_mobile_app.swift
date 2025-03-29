@@ -11,8 +11,7 @@ struct asl_mobile_app: App {
     
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environmentObject(authManager)
+            AlphabetExerciseView()
                 
         }
     }
