@@ -12,10 +12,10 @@ class ProfileViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     func loadProfile() {
-        AuthManager.init().setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsImlhdCI6MTc0MzE5MTI3MSwiZXhwIjoxNzQzMTk0ODcxfQ.q_CISsVj64u_ujT72VscOdU8YJgGZerOjROyVrk3tkE")
         isLoading = true
         errorMessage = nil
         
+        AuthManager.shared.setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsInN1YiI6MSwiaWF0IjoxNzQzMzQxMTI4LCJleHAiOjE3NDMzNDQ3Mjh9.p0JTL1lwn-COtkPFRfTEaBZSRrVgcG9x1fL0IVh8hiY")
         NetworkService.shared.fetchProfile { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false

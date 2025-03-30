@@ -14,7 +14,7 @@ class NetworkService {
     static let shared = NetworkService()
     private let baseURL: String
     
-    init(baseURL: String = "http://192.168.0.122:3001") {
+    init(baseURL: String = "http://192.168.0.198:3001") {
         self.baseURL = baseURL
     }
     
@@ -137,6 +137,7 @@ class NetworkService {
             completion(.failure(.serverError(statusCode: 401, message: "Authentication token not found")))
             return
         }
+        print(token)
         let headers = [
             "Content-Type": "application/json",
             "Authorization": "Bearer \(token)"
