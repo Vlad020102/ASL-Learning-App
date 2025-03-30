@@ -6,8 +6,6 @@ class QuizViewModel: ObservableObject {
     
     func loadQuizes() {
         print("Loading quizes")
-        AuthManager.init().setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsImlhdCI6MTc0MzI3MDA0NCwiZXhwIjoxNzQzMjczNjQ0fQ.m0YXIWRTYv6IVj8uXYa73SbFIT8Y5S1s3rYXLlM6ROM")
-        
         NetworkService.shared.getQuiz() { [weak self] result in
             DispatchQueue.main.async {
                 print(result)
@@ -49,9 +47,9 @@ struct QuizCatalogueView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(AppColors.background, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
-            .foregroundStyle(AppColors.text)
+            .foregroundStyle(AppColors.textSecondary)
         }
-        .accentColor(AppColors.text) // Sets navigation link and button colors
+        .accentColor(AppColors.card) // Sets navigation link and button colors
     }
 }
 
@@ -85,8 +83,8 @@ struct QuizCard: View {
                         .fontWeight(.semibold)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(typeColor(for: quiz.type).opacity(0.2))
-                        .foregroundColor(typeColor(for: quiz.type))
+                        .background(typeColor(for: quiz.type, status: quiz.status).opacity(0.2))
+                        .foregroundColor(typeColor(for: quiz.type, status: quiz.status))
                         .cornerRadius(8)
                     
                     Spacer()
@@ -137,7 +135,7 @@ struct QuizCard: View {
                                 .foregroundColor(AppColors.accent1)
                             Text("Score: \(Int(quiz.score * 100))%")
                                 .font(.caption)
-                                .foregroundColor(AppColors.textSecondary)
+                                .foregroundColor(AppColors.text)
                         }
                         
                         HStack(spacing: 4) {
@@ -146,7 +144,7 @@ struct QuizCard: View {
                                 .foregroundColor(AppColors.primary)
                             Text("Lives: \(quiz.livesRemaining)/5")
                                 .font(.caption)
-                                .foregroundColor(AppColors.textSecondary)
+                                .foregroundColor(AppColors.text)
                         }
                     }
                 }
@@ -176,7 +174,7 @@ struct QuizCard: View {
             .padding()
             .background(AppColors.card)
             .cornerRadius(12)
-            .shadow(color: AppColors.text.opacity(0.1), radius: 5, x: 0, y: 2)
+            .shadow(color: AppColors.textSecondary.opacity(0.1), radius: 5, x: 0, y: 2)
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(PlainButtonStyle())
@@ -186,11 +184,13 @@ struct QuizCard: View {
     }
     
     // Assign different colors based on quiz type
-    private func typeColor(for type: QuizType) -> Color {
+    private func typeColor(for type: QuizType, status: QuizStatus) -> Color {
         switch type {
         case .Bubbles:
-            return AppColors.primary
-        // Add cases for other quiz types when you implement them
+            if(status == .InProgress){
+                return AppColors.accent1
+            }
+            return AppColors.text
         }
     }
 }
@@ -224,9 +224,8 @@ struct QuizFlowView: View {
                         Text("\(numberOfLifes)")
                             .foregroundColor(AppColors.primary)
                     }
-                    .padding(.trailing)
-                }
-                .padding()
+                    .padding(.horizontal, 5)
+                }.padding(.top, 10)
                 
                 // Current Quiz
                 SignView(
@@ -258,9 +257,10 @@ struct QuizFlowView: View {
                     accuracy: Float(correctAttempts) / Float(attempts),
                     livesRemaining: numberOfLifes,
                     onRestart: {
+                       
                         let completeQuizData = CompleteQuizData.init(
                             quizId: quiz.id,
-                            score: quiz.score,
+                            score: String(Float(correctAttempts) / Float(attempts)),
                             livesRemaining: numberOfLifes,
                             status: numberOfLifes > 0 ? .Completed : .Failed
                         )
@@ -312,8 +312,7 @@ struct SignView: View {
             // Quiz title
             Text("What sign is this?")
                 .font(.headline)
-                .foregroundColor(AppColors.text)
-                .padding(.top)
+                .foregroundColor(AppColors.textSecondary)
                 .padding(.bottom, 10)
             
             // Content based on Quiz type
@@ -362,7 +361,7 @@ struct SignView: View {
                         .foregroundColor(AppColors.textSecondary.opacity(0.7))
                 } else {
                     Text(selectedWords.joined(separator: " "))
-                        .foregroundColor(AppColors.text)
+                        .foregroundColor(AppColors.textSecondary)
                         .padding()
                 }
             }
@@ -383,7 +382,8 @@ struct SignView: View {
                                     Text(word)
                                         .padding(.vertical, 10)
                                         .padding(.horizontal, 15)
-                                        .background(Color.white)
+                                        .background(AppColors.card)
+                                        .foregroundColor(selectedWords.contains(word) ? AppColors.textSecondary: AppColors.text)
                                         .cornerRadius(20)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 20)
@@ -397,8 +397,6 @@ struct SignView: View {
                 }
             }
             .padding(.horizontal)
-            
-            Spacer()
             
             Button(action: {
                 // Check if the answer is correct
@@ -414,7 +412,7 @@ struct SignView: View {
             }) {
                 Text("CHECK")
                     .fontWeight(.medium)
-                    .foregroundColor(selectedWords.isEmpty ? AppColors.textSecondary : AppColors.card)
+                    .foregroundColor(selectedWords.isEmpty ? AppColors.text : AppColors.textSecondary)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(selectedWords.isEmpty ? AppColors.disabledBackground : AppColors.primary)
@@ -423,8 +421,6 @@ struct SignView: View {
                     .padding(.vertical, 10)
             }
             .disabled(selectedWords.isEmpty)
-            
-            Spacer()
         }
         .onAppear {
             setupPlayer()
@@ -444,7 +440,6 @@ struct SignView: View {
                     }
                 )
             }
-            .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(AppColors.background)
         }
@@ -473,7 +468,7 @@ struct FeedbackView: View {
             Text(feedbackType == .correct ? "Correct!" : "Wrong Answer!")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(AppColors.text)
+                .foregroundColor(AppColors.textSecondary)
             
             Text(feedbackType == .correct ? "Great job understanding the sign!" : "Try Again! Be careful not to run out of lives!")
                 .multilineTextAlignment(.center)
@@ -491,7 +486,7 @@ struct FeedbackView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.card)
+        .background(AppColors.background)
     }
 }
 
@@ -520,17 +515,17 @@ struct QuizCompletionView: View {
             Text(isSuccess ? "Great job!" : "You have run out of lives!")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(AppColors.text)
+                .foregroundColor(AppColors.textSecondary)
             
             VStack(spacing: 10) {
                 Text("Your accuracy:")
                     .font(.headline)
-                    .foregroundColor(AppColors.text)
+                    .foregroundColor(AppColors.textSecondary)
                 
                 Text(accuracy > 0 ? "\(Int(accuracy * 100))%" : "0%")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(AppColors.text)
+                    .foregroundColor(AppColors.textSecondary)
                 
                 if isSuccess {
                     HStack {

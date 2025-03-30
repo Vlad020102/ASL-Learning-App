@@ -10,6 +10,9 @@ struct ContentView: View {
     // Initially selected tab
     @State private var selectedTab = 0
     
+    @State private var targetSign: String = "Hello"
+    @State private var isCorrectSign: Bool = false
+    
     var body: some View {
         TabView(selection: $selectedTab) {
             // Profile Tab
@@ -21,7 +24,7 @@ struct ContentView: View {
                 .tag(0)
             
             // Camera Tab
-            CameraView()
+            CameraView(targetSign: $targetSign, isCorrectSign: $isCorrectSign)
                 .tabItem {
                     Image(systemName: "camera.fill")
                     Text("Camera")
@@ -29,7 +32,7 @@ struct ContentView: View {
                 .tag(1)
             
             // Lessons Tab
-            CameraView()
+            QuizCatalogueView()
                 .tabItem {
                     Image(systemName: "book.fill")
                     Text("Lessons")

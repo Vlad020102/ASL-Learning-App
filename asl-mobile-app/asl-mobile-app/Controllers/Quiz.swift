@@ -94,7 +94,7 @@ struct Sign: Codable {
 
 struct CompleteQuizData: Codable {
     let quizId: Int
-    let score: Double
+    let score: String
     let livesRemaining: Int
     let status: QuizStatus
 }

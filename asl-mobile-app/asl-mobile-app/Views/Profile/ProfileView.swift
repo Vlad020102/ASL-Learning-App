@@ -12,7 +12,6 @@ class ProfileViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     func loadProfile() {
-        AuthManager.init().setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsImlhdCI6MTc0MzE5MTI3MSwiZXhwIjoxNzQzMTk0ODcxfQ.q_CISsVj64u_ujT72VscOdU8YJgGZerOjROyVrk3tkE")
         isLoading = true
         errorMessage = nil
         

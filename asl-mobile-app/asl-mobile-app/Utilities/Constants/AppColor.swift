@@ -12,9 +12,9 @@ struct AppColors {
     
     // Base colors2c2c44
     static let background = Color(hex: "2c2c44")
-    static let card = Color.white
+    static let card = Color(hex: "E5E5EA")
     static let text = Color(hex: "333333")
-    static let textSecondary = Color(hex: "2c2c44")
+    static let textSecondary = Color(hex: "FFFFFF")
     static let border = Color(hex: "E5E5EA")
     
     // Feedback colors

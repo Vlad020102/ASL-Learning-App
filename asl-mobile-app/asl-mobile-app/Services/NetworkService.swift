@@ -137,6 +137,7 @@ class NetworkService {
             completion(.failure(.serverError(statusCode: 401, message: "Authentication token not found")))
             return
         }
+        print(token)
         let headers = [
             "Content-Type": "application/json",
             "Authorization": "Bearer \(token)"

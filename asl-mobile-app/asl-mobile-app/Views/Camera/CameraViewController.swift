@@ -32,13 +32,13 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     private var handLandmarkerService: HandLandmarkerService?
     private var currentTimeStamp: Int = 0
     
-
+    
     func setTargetSign(_ sign: String) {
             // Pass the target sign to the prediction viewModel
             PredictionViewModel.shared.targetSign = sign
         }
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         checkPermission()
@@ -315,69 +315,6 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
                 }
             }
         }
-}
-    
-    struct HostedViewController: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            let viewController = ViewController()
-            // Pass the camera selection to your ViewController
-            if let cameraVC = viewController as? ViewController {
-            }
-            return viewController
-        }
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        }
-    }
-
-    
-    struct CaptureButtonView: View {
-        @State private var animationAmount: CGFloat = 1
-        var body: some View {
-            Image(systemName: "video").font(.largeTitle)
-                .padding(20)
-                .background(Color.red)
-                .foregroundColor(.white)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .stroke(Color.red)
-                        .scaleEffect(animationAmount)
-                        .opacity(Double(2 - animationAmount))
-                        .animation(Animation.easeOut(duration: 1)
-                            .repeatForever(autoreverses: false))
-                )
-                .onAppear
-            {
-                self.animationAmount = 2
-            }
-        }
-    }
-
-    struct CameraView: View {
-        @State var didTapCapture: Bool = false
-        @State var isFrontCamera: Bool = true
-        var body: some View {
-            ZStack {
-                // Camera view controller
-                HostedViewController()
-                    .ignoresSafeArea()
-
-                // UI Overlay
-                VStack {
-                    PredictionLabelView().padding(.horizontal)
-                    
-                    Spacer()
-                    
-                    // Capture button at the bottom
-                    CaptureButtonView()
-                        .onTapGesture {
-                            self.didTapCapture = true
-                        }
-                        .padding(.bottom, 10)
-                }
-            }
-        }
-    }
     
     func drawHandLandmarks(_ landmarks: [NormalizedLandmark], in view: UIView, handIndex: Int) {
         // Create a shape layer for drawing
@@ -437,25 +374,25 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             // Palm connections
             [5, 9], [9, 13], [13, 17]
         ]
-
+        
         for connection in connections {
             // Ensure indices are valid
             guard connection[0] < points.count, connection[1] < points.count else { continue }
-
+            
             let startPoint = points[connection[0]]
             let endPoint = points[connection[1]]
-
+            
             let path = UIBezierPath()
             path.move(to: startPoint)
             path.addLine(to: endPoint)
-
+            
             let lineLayer = CAShapeLayer()
             lineLayer.name = "handLandmarksLayer"
             lineLayer.path = path.cgPath
             lineLayer.strokeColor = (handIndex == 0) ? UIColor.red.cgColor : UIColor.blue.cgColor
             lineLayer.lineWidth = 2.0
             lineLayer.fillColor = UIColor.clear.cgColor
-
+            
             view.layer.addSublayer(lineLayer)
         }
     }
