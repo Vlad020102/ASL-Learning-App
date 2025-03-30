@@ -81,14 +81,13 @@ model Badge {
 }
 
 model UserBadge {
-  id        Int     @id @default(autoincrement())
-  user_id   Int
-  badge_id  Int
-  progress  Int
-  completed Boolean
-
-  user  User  @relation(fields: [user_id], references: [id])
-  badge Badge @relation(fields: [badge_id], references: [id])
+  id       Int         @id @default(autoincrement())
+  user     User        @relation(fields: [userId], references: [id])
+  userId   Int         @map("user_id")
+  badge    Badge       @relation(fields: [badgeId], references: [id])
+  badgeId  Int         @map("badge_id")
+  progress Int         @default(0)
+  status   BadgeStatus @default(Locked)
 
   @@map("user_badges")
 }
