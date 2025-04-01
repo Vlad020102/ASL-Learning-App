@@ -15,7 +15,7 @@ class ProfileViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        AuthManager.shared.setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsInN1YiI6MSwiaWF0IjoxNzQzMzQxMTI4LCJleHAiOjE3NDMzNDQ3Mjh9.p0JTL1lwn-COtkPFRfTEaBZSRrVgcG9x1fL0IVh8hiY")
+        AuthManager.shared.setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsImlhdCI6MTc0MzUyNjQ5NCwiZXhwIjoxNzQzNTMwMDk0fQ.tfEKVVN_MWtrOVMdiE7-ACdasHqFbRyGAFXQn2Nyf-0")
         NetworkService.shared.fetchProfile { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
@@ -28,38 +28,7 @@ class ProfileViewModel: ObservableObject {
             }
         }
     }
-    
-//    func saveProfile(completion: @escaping (Bool) -> Void) {
-//        guard let _ = profile else {
-//            errorMessage = "No profile data available"
-//            completion(false)
-//            return
-//        }
-//
-//        isLoading = true
-//        errorMessage = nil
-//
-//        let updateRequest = ProfileUpdateRequest(
-//            username: username,
-//            email: email
-//        )
-//
-//        NetworkService.shared.updateProfile(with: updateRequest) { [weak self] result in
-//            DispatchQueue.main.async {
-//                self?.isLoading = false
-//
-//                switch result {
-//                case .success(let updatedProfile):
-//                    self?.profile = updatedProfile
-//                    completion(true)
-//                case .failure(let error):
-//                    self?.errorMessage = "Failed to update profile: \(error.localizedDescription)"
-//                    completion(false)
-//                }
-//            }
-//        }
-//    }
-    
+        
     private func formatDate(_ dateString: String) -> String {
             let inputFormatter = ISO8601DateFormatter()
             if let date = inputFormatter.date(from: dateString) {
@@ -83,7 +52,9 @@ struct ProfileView: View {
                     if viewModel.isLoading{
                         ProgressView()
                     } else if let errorMessage = viewModel.errorMessage{
-                        ErrorView(message: errorMessage)
+                        ErrorView(message: errorMessage, retryAction: {
+                            viewModel.loadProfile()
+                        })
                     } else {
                         ProfileHeaderView(username: viewModel.user?.username ?? "", email: viewModel.user?.email ?? "", createdAt: viewModel.user?.createdAt ?? Date())
                         StatisticsView(level: viewModel.user?.level ?? 0, questionsAnsweredTotal: viewModel.user?.questionsAnsweredTotal ?? 0, questionsAnsweredToday: viewModel.user?.questionsAnsweredToday ?? 0, streak: viewModel.user?.streak ?? 0, dailyGoal: viewModel.user?.dailyGoal ?? 5)

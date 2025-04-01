@@ -93,7 +93,7 @@ struct Sign: Codable {
 }
 
 struct CompleteQuizData: Codable {
-    let quizId: Int
+    let quizID: Int
     let score: String
     let livesRemaining: Int
     let status: QuizStatus
