@@ -9,10 +9,27 @@ import KeychainAccess
 struct asl_mobile_app: App {
     @StateObject private var authManager = AuthManager()
 
+    init() {
+        // Set up notifications when app launches
+        setupNotifications()
+    }
+    
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(authManager)
+        }
+    }
+    
+    private func setupNotifications() {
+        // Request notification permissions
+        NotificationService.shared.requestNotificationPermission { granted in
+            if granted {
+                // Schedule the daily reminder notification
+                NotificationService.shared.scheduleReminderIfNeeded()
+            } else {
+                print("Notification permissions denied")
+            }
         }
     }
 }
@@ -32,6 +49,12 @@ struct RootView: View {
                     .transition(.opacity)
             }
         }
-        .animation(.easeInOut, value:  authManager.isAuthenticated)
+        .animation(.easeInOut, value: authManager.isAuthenticated)
+        .onAppear {
+            // If user logs in, update notification content
+            if authManager.isAuthenticated {
+                NotificationService.shared.updateNotificationContent()
+            }
+        }
     }
 }
