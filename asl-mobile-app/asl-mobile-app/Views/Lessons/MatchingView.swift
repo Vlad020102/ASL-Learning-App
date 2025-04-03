@@ -1,8 +1,8 @@
 import SwiftUI
 import WebKit
 
-struct MatchingView: View {
-    let exercise: MatchingQuizData
+struct ASLMatchingExerciseView: View {
+    let exercise: MatchingExerciseData
     @State private var numberOfLives: Int = 5
     @State private var showCompletionView: Bool = false
     @State private var correctMatches: Int = 0
@@ -13,14 +13,30 @@ struct MatchingView: View {
     @State private var showFeedback: Bool = false
     @State private var feedbackType: SignView.FeedbackType = .incorrect
     
-    @Environment(\.presentationMode) private var presentationMode
     
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 5) {
                 if !showCompletionView {
                     // Progress bar and hearts - more compact
-                    topProgressBar
+                    HStack {
+                        ProgressView(value: Float(correctMatches) / Float(exercise.pairs.count))
+                            .progressViewStyle(LinearProgressViewStyle(tint: AppColors.primary))
+                            .frame(height: 8)
+                            .padding(.horizontal)
+                        
+                        HStack(spacing: 2) {
+                            Image(systemName: "heart.fill")
+                                .foregroundColor(AppColors.primary)
+                                .font(.system(size: 14))
+                            Text("\(numberOfLives)")
+                                .foregroundColor(AppColors.primary)
+                                .font(.system(size: 14))
+                        }
+                        .padding(.horizontal, 5)
+                    }
+                    .padding(.top, 8)
+                    .padding(.bottom, 2)
                     
                     Text("Tap the matching pairs")
                         .font(.subheadline)
@@ -28,8 +44,77 @@ struct MatchingView: View {
                         .padding(.vertical, 5)
                     
                     // Matching exercise content with ScrollView for flexibility
-                    matchingContent(geometry: geometry)
+                    ScrollView {
+                        HStack(spacing: 15) {
+                            // Left column (ASL signs as GIFs)
+                            VStack(spacing: 10) {
+                                ForEach(0..<exercise.pairs.count, id: \.self) { index in
+                                    Button(action: {
+                                        handleLeftSelection(index)
+                                    }) {
+                                        GIFView(
+                                            gifName: exercise.pairs[index].signGif,
+                                            shouldPlay: !correctPairs.contains(where: { $0.key == index })
+                                        )
+                                        .frame(width: (geometry.size.width - 50) / 3, height: (geometry.size.width - 50) / 3)
+                                        .cornerRadius(8)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(selectedLeftItem == index ? AppColors.primary : AppColors.border, lineWidth: 2)
+                                        )
+                                        .opacity(correctPairs.contains(where: { $0.key == index }) ? 0.6 : 1.0)
+                                        .overlay(
+                                            Group {
+                                                if correctPairs.contains(where: { $0.key == index }) {
+                                                    Image(systemName: "checkmark.circle.fill")
+                                                        .foregroundColor(AppColors.primary)
+                                                        .font(.system(size: 30))
+                                                }
+                                            }
+                                        )
+                                    }
+                                    .disabled(correctPairs.contains(where: { $0.key == index }))
+                                }
+                            }
+                            
+                            // Right column (Text translations)
+                            VStack(spacing: 10) {
+                                ForEach(0..<exercise.pairs.count, id: \.self) { index in
+                                    Button(action: {
+                                        handleRightSelection(index)
+                                    }) {
+                                        Text(exercise.pairs[index].text)
+                                            .font(.system(size: min(16, geometry.size.width / 25)))
+                                            .padding(8)
+                                            .frame(width: (geometry.size.width - 50) / 3, height: (geometry.size.width - 50) / 3)
+                                            .background(correctPairs.contains(where: { $0.value == index }) ?
+                                                AppColors.disabledBackground.opacity(0.7) : AppColors.disabledBackground)
+                                            .foregroundColor(correctPairs.contains(where: { $0.value == index }) ? 
+                                                AppColors.text.opacity(0.6) : AppColors.text)
+                                            .cornerRadius(8)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(selectedRightItem == index ? AppColors.primary : AppColors.border, lineWidth: 2)
+                                            )
+                                            .overlay(
+                                                Group {
+                                                    if correctPairs.contains(where: { $0.value == index }) {
+                                                        Image(systemName: "checkmark.circle.fill")
+                                                            .foregroundColor(AppColors.primary)
+                                                            .font(.system(size: 30))
+                                                    }
+                                                }
+                                            )
+                                    }
+                                    .disabled(correctPairs.contains(where: { $0.value == index }))
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                    }
+                    .padding(.vertical, 5)
                     
+                    // Check button with safe area consideration
                 } else {
                     // Completion view
                     QuizCompletionView(
@@ -37,26 +122,25 @@ struct MatchingView: View {
                         accuracy: Float(correctMatches) / Float(attempts),
                         livesRemaining: numberOfLives,
                         onRestart: {
-                            let completeQuizData = CompleteQuizData.init(
-                                quizID: Int(exercise.id),
-                                score: String(Float(correctMatches) / Float(attempts)),
-                                livesRemaining: numberOfLives,
-                                status: numberOfLives > 0 ? .Completed : .Failed
-                        )
-                            print("Completing quiz with data: \(completeQuizData)")
-                            NetworkService.shared.completeQuiz(data: completeQuizData) { result in
-                                DispatchQueue.main.async {
-                                    switch result {
-                                    case .success(let response):
-                                        print("Quiz completed: \(response)")
-                                        self.presentationMode.wrappedValue.dismiss()
-                                        showCompletionView = false
-                                    case .failure(let error):
-                                        self.presentationMode.wrappedValue.dismiss()
-                                        print("Error completing quiz: \(error)")
-                                    }
-                                }
-                            }
+//                            let completeExerciseData = CompleteExerciseData(
+//                                exerciseId: exercise.id,
+//                                score: String(Float(correctMatches) / Float(attempts)),
+//                                livesRemaining: numberOfLives,
+//                                status: numberOfLives > 0 ? .Completed : .Failed
+//                            )
+//                            
+    //                        NetworkService.shared.completeExercise(data: completeExerciseData) { result in
+    //                            DispatchQueue.main.async {
+    //                                switch result {
+    //                                case .success(let response):
+    //                                    print("Exercise completed: \(response)")
+    //                                    self.presentationMode.wrappedValue.dismiss()
+    //                                case .failure(let error):
+    //                                    self.presentationMode.wrappedValue.dismiss()
+    //                                    print("Error completing exercise: \(error)")
+    //                                }
+    //                            }
+    //                        }
                         }
                     )
                 }
@@ -68,13 +152,16 @@ struct MatchingView: View {
                 feedbackType: $feedbackType,
                 correctAnswer: nil,
                 onContinue: {
+                    // Reset selections after feedback
                     if feedbackType == .correct {
-                        // Do nothing here since we've already handled the match
+                        // Correct match already recorded in checkMatch()
                     } else {
+                        // Wrong match
                         selectedLeftItem = nil
                         selectedRightItem = nil
                     }
                     
+                    // Check if all pairs are matched
                     if correctPairs.count == exercise.pairs.count {
                         showCompletionView = true
                     }
@@ -85,180 +172,45 @@ struct MatchingView: View {
         }
     }
     
-    // MARK: - Extracted Views
-    
-    private var topProgressBar: some View {
-        HStack {
-            ProgressView(value: Float(correctMatches) / Float(exercise.pairs.count))
-                .progressViewStyle(LinearProgressViewStyle(tint: AppColors.primary))
-                .frame(height: 8)
-                .padding(.horizontal)
-            
-            HStack(spacing: 2) {
-                Image(systemName: "heart.fill")
-                    .foregroundColor(AppColors.primary)
-                    .font(.system(size: 14))
-                Text("\(numberOfLives)")
-                    .foregroundColor(AppColors.primary)
-                    .font(.system(size: 14))
-            }
-            .padding(.horizontal, 5)
-        }
-        .padding(.top, 8)
-        .padding(.bottom, 2)
-    }
-    
-    private func matchingContent(geometry: GeometryProxy) -> some View {
-        ScrollView {
-            HStack(spacing: 15) {
-                // Left column (ASL signs as GIFs)
-                VStack(spacing: 10) {
-                    ForEach(0..<exercise.pairs.count, id: \.self) { index in
-                        leftItemButton(index: index, geometry: geometry)
-                    }
-                }
-                
-                // Right column (Text translations)
-                VStack(spacing: 10) {
-                    ForEach(0..<exercise.pairs.count, id: \.self) { index in
-                        rightItemButton(index: index, geometry: geometry)
-                    }
-                }
-            }
-            .padding(.horizontal, 10)
-        }
-        .padding(.vertical, 5)
-    }
-    
-    private func leftItemButton(index: Int, geometry: GeometryProxy) -> some View {
-        let isCompleted = correctPairs.contains(where: { $0.key == index })
-        let itemSize = (geometry.size.width - 50) / 3
-        
-        return Button(action: {
-            handleLeftSelection(index)
-        }) {
-            GIFView(
-                gifName: exercise.pairs[index].signGif,
-            )
-            .frame(width: itemSize, height: itemSize)
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(selectedLeftItem == index ? AppColors.primary : AppColors.border, lineWidth: 2)
-            )
-            .opacity(isCompleted ? 0.6 : 1.0)
-            .overlay(leftItemCheckmark(index: index))
-        }
-        .disabled(isCompleted)
-    }
-    
-    private func leftItemCheckmark(index: Int) -> some View {
-        Group {
-            if correctPairs.contains(where: { $0.key == index }) {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(AppColors.primary)
-                    .font(.system(size: 30))
-            }
-        }
-    }
-    
-    private func rightItemButton(index: Int, geometry: GeometryProxy) -> some View {
-        let isCompleted = correctPairs.contains(where: { $0.value == index })
-        let itemSize = (geometry.size.width - 50) / 3
-        let backgroundColor = isCompleted ? AppColors.disabledBackground.opacity(0.7) : AppColors.disabledBackground
-        let textColor = isCompleted ? AppColors.text.opacity(0.6) : AppColors.text
-        
-        return Button(action: {
-            handleRightSelection(index)
-        }) {
-            Text(exercise.pairs[index].text)
-                .font(.system(size: min(16, geometry.size.width / 25)))
-                .padding(8)
-                .frame(width: itemSize, height: itemSize)
-                .background(backgroundColor)
-                .foregroundColor(textColor)
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(selectedRightItem == index ? AppColors.primary : AppColors.border, lineWidth: 2)
-                )
-                .overlay(rightItemCheckmark(index: index))
-        }
-        .disabled(isCompleted)
-    }
-    
-    private func rightItemCheckmark(index: Int) -> some View {
-        Group {
-            if correctPairs.contains(where: { $0.value == index }) {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(AppColors.primary)
-                    .font(.system(size: 30))
-            }
-        }
-    }
-    
-    private var quizCompletionView: some View {
-        QuizCompletionView(
-            isSuccess: numberOfLives > 0,
-            accuracy: Float(correctMatches) / Float(attempts),
-            livesRemaining: numberOfLives,
-            onRestart: {
-                let completeQuizData = CompleteQuizData(
-                    quizID: Int(exercise.id),
-                    score: String(Float(correctMatches) / Float(attempts)),
-                    livesRemaining: numberOfLives,
-                    status: numberOfLives > 0 ? .Completed : .Failed
-                )
-                print("Completing quiz with data: \(completeQuizData)")
-                NetworkService.shared.completeQuiz(data: completeQuizData) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let response):
-                            print("Quiz completed: \(response)")
-                            self.presentationMode.wrappedValue.dismiss()
-                            showCompletionView = false
-                        case .failure(let error):
-                            self.presentationMode.wrappedValue.dismiss()
-                            print("Error completing quiz: \(error)")
-                        }
-                    }
-                }
-            }
-        )
-    }
-    
-    // MARK: - Helper Methods
-    
     private var isCheckEnabled: Bool {
         selectedLeftItem != nil && selectedRightItem != nil
     }
     
     private func handleLeftSelection(_ index: Int) {
+        // If the same item is tapped again, deselect it
         if selectedLeftItem == index {
             selectedLeftItem = nil
         } else {
             selectedLeftItem = index
         }
         
+        // Remove automatic check when both sides are selected
         checkMatch()
     }
     
     private func handleRightSelection(_ index: Int) {
+        // If the same item is tapped again, deselect it
         if selectedRightItem == index {
             selectedRightItem = nil
         } else {
             selectedRightItem = index
         }
-
+        
+        // Remove automatic check when both sides are selected
         checkMatch()
     }
     
+    // This function was previously used for automatic checking
+    // Now we'll only use it when the Check button is pressed
     private func checkMatch() {
         guard let leftIndex = selectedLeftItem, let rightIndex = selectedRightItem else {
             return
         }
         
         attempts += 1
+        
+        // Check if correct match (in this example, matching indexes are correct pairs)
+        // In a real app, you'd check against actual matching pairs data
         let isMatch = exercise.pairs[leftIndex].matchIndex == rightIndex
         
         if isMatch {
@@ -283,16 +235,21 @@ struct MatchingView: View {
     }
 }
 
+// GIF View Component
 struct GIFView: View {
     let gifName: String
+    let shouldPlay: Bool
     
     init(gifName: String, shouldPlay: Bool = true) {
         self.gifName = gifName
+        self.shouldPlay = shouldPlay
     }
     
     var body: some View {
+        // In a real implementation, you would use a GIF player
+        // This is a placeholder that would be replaced with actual GIF functionality
         ZStack {
-            GIFImageView(gifName: gifName)
+            GIFImageView(gifName, shouldPlay: shouldPlay)
                 .aspectRatio(contentMode: .fit)
                 .cornerRadius(10)
         }
@@ -301,10 +258,11 @@ struct GIFView: View {
 
 struct GIFImageView: UIViewRepresentable {
     let gifName: String
+    let shouldPlay: Bool
     
-    init(gifName: String) {
-        print(gifName)
+    init(_ gifName: String, shouldPlay: Bool = true) {
         self.gifName = gifName
+        self.shouldPlay = shouldPlay
     }
     
     func makeUIView(context: Context) -> WKWebView {
@@ -312,23 +270,68 @@ struct GIFImageView: UIViewRepresentable {
         let url = Bundle.main.url(forResource: gifName, withExtension: "gif")!
         let data = try! Data(contentsOf: url)
         
-        webView.load(
-            data,
-            mimeType: "image/gif",
-            characterEncodingName: "UTF-8",
-            baseURL: URL(fileURLWithPath: "")
-        )
-      
+        if shouldPlay {
+            webView.load(
+                data,
+                mimeType: "image/gif",
+                characterEncodingName: "UTF-8",
+                baseURL: URL(fileURLWithPath: "")
+            )
+        } else {
+            // Load the GIF as a static image by using HTML with CSS to pause it
+            webView.loadHTMLString("""
+                <html>
+                <head>
+                    <style>
+                        body { margin: 0; padding: 0; }
+                        img { width: 100%; height: 100%; object-fit: contain; }
+                    </style>
+                </head>
+                <body>
+                    <img src="data:image/gif;base64,\(data.base64EncodedString())" style="animation-play-state: paused;">
+                </body>
+                </html>
+            """, baseURL: nil)
+        }
+        
         return webView
     }
     
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        uiView.reload()
+        // Only reload if playing is enabled
+        if shouldPlay {
+            uiView.reload()
+        }
     }
 }
 
-extension MatchingView{
-    static var mockExercise: MatchingQuizData {
+// Data models
+struct MatchingExerciseData {
+    let id: String
+    let pairs: [MatchingPair]
+}
+
+struct MatchingPair {
+    let signGif: String
+    let text: String
+    let matchIndex: Int  // Indicates the correct matching index
+}
+
+enum CompletionStatus {
+    case Completed
+    case Failed
+}
+
+struct CompleteExerciseData {
+    let exerciseId: String
+    let score: String
+    let livesRemaining: Int
+    let status: CompletionStatus
+}
+
+
+extension ASLMatchingExerciseView {
+    static var mockExercise: MatchingExerciseData {
         let pairs = [
             MatchingPair(signGif: "how-are-you", text: "hello", matchIndex: 1),
             MatchingPair(signGif: "how-are-you", text: "thank you", matchIndex: 3),
@@ -337,15 +340,15 @@ extension MatchingView{
             MatchingPair(signGif: "how-are-you", text: "how are you", matchIndex: 0)
         ]
         
-        return MatchingQuizData(id: 1, title: "Matching Exercise", type: .Matching, status: .InProgress, score: 0.0, livesRemaining: 5, pairs: pairs)
+        return MatchingExerciseData(id: "exercise1", pairs: pairs)
     }
 }
 
-struct MatchingView_Preview: PreviewProvider {
+struct ASLMatchingExerciseView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             // Default state
-            MatchingView(exercise: MatchingView.mockExercise)
+            ASLMatchingExerciseView(exercise: ASLMatchingExerciseView.mockExercise)
                 .previewDisplayName("Default State")
         }
     }
