@@ -144,7 +144,7 @@ export class UsersService {
     const calendar = {
       january: [],
       february: [],
-      march: [],
+      march: [22],
       april: [],
       may: [],
       june: [],
