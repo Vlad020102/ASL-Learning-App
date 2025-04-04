@@ -259,7 +259,7 @@ struct QuizFlowView: View {
                     onRestart: {
                        
                         let completeQuizData = CompleteQuizData.init(
-                            quizId: quiz.id,
+                            quizID: quiz.id,
                             score: String(Float(correctAttempts) / Float(attempts)),
                             livesRemaining: numberOfLifes,
                             status: numberOfLifes > 0 ? .Completed : .Failed

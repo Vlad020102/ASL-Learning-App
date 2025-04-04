@@ -8,6 +8,7 @@ import SwiftUI
 
 struct ErrorView: View {
     var message: String
+    var retryAction: () -> Void
     
     var body: some View {
         VStack(spacing: 20) {
@@ -27,9 +28,7 @@ struct ErrorView: View {
                 .foregroundColor(AppColors.accent2)
                 .multilineTextAlignment(.center)
             
-            Button(action: {
-                // Implement retry logic
-            }) {
+            Button(action: retryAction) {
                 Text("Try Again")
                     .foregroundColor(.white)
                     .padding()
