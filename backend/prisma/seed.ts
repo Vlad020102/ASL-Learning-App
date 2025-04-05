@@ -169,6 +169,27 @@ const quizData = [
       },
     ],
   },
+  {
+    type: QuizType.Matching,
+    title: 'Basic Signs Matching',
+    pairs: [
+      {
+        text: "Hello",
+        signGif: "url",
+        matchIndex: 0,
+      },
+      {
+        text: "Goodbye",
+        signGif: "url",
+        matchIndex: 1,
+      },
+      {
+        text: "Thank you",
+        signGif: "url",
+        matchIndex: 2,
+      }
+    ]
+  }
 ]
 
 async function createBadges() {
@@ -178,12 +199,12 @@ async function createBadges() {
     });
     console.log(`Created badge with ID: ${createdBadge.id}`);
   }
-  
+
   console.log('Seeding badges completed successfully');
 }
 
-async function createQuizes(){
-  for(const quiz of quizData){
+async function createQuizes() {
+  for (const quiz of quizData) {
     const createdQuiz = await prisma.quiz.create({
       data: {
         type: quiz.type,
@@ -191,31 +212,59 @@ async function createQuizes(){
       },
     });
 
-    console.log(createdQuiz.id)
-    for(const sign of quiz.signs){
-      const createdSign = await prisma.sign.create({
-        data: {
-          difficulty: sign.difficulty,
-          text: sign.text,
-          s3Url: sign.s3Url,
-          options: sign.options,
-        }
-      });
+    if (quiz.type === QuizType.Bubbles) {
+      for (const sign of quiz.signs) {
+        const createdSign = await prisma.sign.create({
+          data: {
+            difficulty: sign.difficulty,
+            text: sign.text,
+            s3Url: sign.s3Url,
+            options: sign.options,
+          }
+        });
 
-      await prisma.quizSigns.create({
-        data: {
-          quiz: {
-            connect: {
-              id: createdQuiz.id
-            } 
-          },
-          sign: {
-            connect: {
-              id: createdSign.id
+        await prisma.quizSigns.create({
+          data: {
+            quiz: {
+              connect: {
+                id: createdQuiz.id
+              }
+            },
+            sign: {
+              connect: {
+                id: createdSign.id
+              }
             }
           }
-        }
-      });
+        });
+      }
+    }
+
+    else if (quiz.type === QuizType.Matching) {
+      for (const pair of quiz.pairs) {
+        const createdPair = await prisma.pair.create({
+          data: {
+            text: pair.text,
+            signGif: pair.signGif,
+          }
+        });
+
+        await prisma.quizPair.create({
+          data: {
+            quiz: {
+              connect: {
+                id: createdQuiz.id
+              }
+            },
+            pair: {
+              connect: {
+                id: createdPair.id
+              }
+            },
+            matchIndex: pair.matchIndex,
+          }
+        });
+      }
     }
     console.log(`Created quiz with ID: ${createdQuiz.id}`);
   }
@@ -223,7 +272,7 @@ async function createQuizes(){
 
 async function main() {
   console.log('Start seeding badges...');
-  
+
   await createBadges();
   await createQuizes();
 }

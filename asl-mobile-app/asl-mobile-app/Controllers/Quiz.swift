@@ -41,12 +41,15 @@ extension NetworkService {
 
 enum QuizType: String, Codable {
     case Bubbles
+    case Matching
     /*Matching, VideoText, VideoAudio, AlphabetStreak*/
     // Can add more types in the future like image, text, etc.
     func toString() -> String {
         switch self {
         case .Bubbles:
             return "Bubbles"
+        case .Matching:
+            return "Matching"
         }
     }
 }
@@ -70,18 +73,22 @@ enum QuizStatus: String, Codable {
 
 
 struct QuizResponse: Codable {
-    let quizes: [QuizData]
-
+    let quizes: QuizData
 }
 
 struct QuizData: Codable {
+    let bubblesQuizes: [BubblesQuizData]
+    let matchingQuizes: [MatchingQuizData]
+}
+
+struct BubblesQuizData: Codable {
     let id: Int
     let title: String
     let type: QuizType
     let status: QuizStatus
-    let signs: [Sign]?
     let score: Double
     let livesRemaining: Int
+    let signs: [Sign]?
 }
 
 struct Sign: Codable {
@@ -101,5 +108,43 @@ struct CompleteQuizData: Codable {
 
 struct CompleteQuizResponse: Codable {
     let status: String
+}
+
+struct MatchingQuizData: Codable {
+    let id: Int
+    let title: String
+    let type: QuizType
+    let status: QuizStatus
+    let score: Double
+    let livesRemaining: Int
+    let pairs: [MatchingPair]
+}
+
+struct MatchingPair: Codable {
+    let signGif: String
+    let text: String
+    let matchIndex: Int  // Indicates the correct matching index
+}
+
+enum CompletionStatus: Codable {
+    case Completed
+    case Failed
+}
+
+struct CompleteExerciseData: Codable {
+    let exerciseId: String
+    let score: String
+    let livesRemaining: Int
+    let status: CompletionStatus
+}
+
+
+struct QuizCardData: Codable {
+    let id: Int
+    let title: String
+    let type: QuizType
+    let status: QuizStatus
+    let score: Double
+    let livesRemaining: Int
 }
     

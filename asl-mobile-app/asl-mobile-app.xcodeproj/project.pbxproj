@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		020DDF5E2D8359D20004CE0E /* what-is-your-name.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */; };
+		02B5F25D2D9D927000B61D9F /* how-are-you.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02B5F25C2D9D927000B61D9F /* how-are-you.gif */; };
 		4E4FAA3D025248B47529C4F7 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D507315076B2C97D17F8F15 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework */; };
 		DBE15E56609D40810E4778C1 /* Pods_asl_mobile_appTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DA165319D8EF7938EA61255 /* Pods_asl_mobile_appTests.framework */; };
 		F08683CC32080908750815F7 /* Pods_asl_mobile_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7FB5C01C732F6D0B3E6A5F2 /* Pods_asl_mobile_app.framework */; };
@@ -32,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "what-is-your-name.mp4"; sourceTree = "<group>"; };
+		02B5F25C2D9D927000B61D9F /* how-are-you.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "how-are-you.gif"; sourceTree = "<group>"; };
 		03F33B210E48AEAF80E1EDF1 /* Pods-asl-mobile-appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-appTests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-appTests/Pods-asl-mobile-appTests.release.xcconfig"; sourceTree = "<group>"; };
 		18A39A6EFAEB837D5B2AFC9F /* Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; sourceTree = "<group>"; };
 		3578E30A2D62406D003660F8 /* asl-mobile-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "asl-mobile-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +97,7 @@
 		020DDF5F2D8369190004CE0E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				02B5F25C2D9D927000B61D9F /* how-are-you.gif */,
 				020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */,
 			);
 			path = Resources;
@@ -265,6 +268,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02B5F25D2D9D927000B61D9F /* how-are-you.gif in Resources */,
 				020DDF5E2D8359D20004CE0E /* what-is-your-name.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

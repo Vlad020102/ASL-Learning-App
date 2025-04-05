@@ -13,9 +13,7 @@ class ProfileViewModel: ObservableObject {
 
     func loadProfile() {
         isLoading = true
-        errorMessage = nil
-        
-        AuthManager.shared.setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsImlhdCI6MTc0MzUyNjQ5NCwiZXhwIjoxNzQzNTMwMDk0fQ.tfEKVVN_MWtrOVMdiE7-ACdasHqFbRyGAFXQn2Nyf-0")
+        errorMessage = nil      
         NetworkService.shared.fetchProfile { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
