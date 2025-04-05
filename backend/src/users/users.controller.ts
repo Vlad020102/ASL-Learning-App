@@ -33,4 +33,12 @@ export class UsersController {
     this.usersService.getUserBadges(user);
     return this.usersService.findProfile(user);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('streaks')
+  getStreaks(
+    @ReqUser() user: User
+  ) {
+    return this.usersService.getStreaks(user);
+  }
 }

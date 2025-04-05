@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct StatisticsView: View {
+    @State private var showingStreakCalendar = false
     var level: Int
     var questionsAnsweredTotal: Int
     var questionsAnsweredToday: Int
@@ -16,15 +17,12 @@ struct StatisticsView: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
-                // Day streak stat
                 StatCard(icon: "flame.fill", iconColor: .orange, value: String(questionsAnsweredTotal), label: "Total Questions Answered")
                 
-                // Total XP stat
                 StatCard(icon: "bolt.fill", iconColor: .yellow, value: String(level), label: "Current Level")
             }
             
             HStack(spacing: 10) {
-                // League stat
                 ZStack(alignment: .topTrailing) {
                     StatCard(icon: "trophy.fill", iconColor: .yellow, value: "\(questionsAnsweredToday)/\(dailyGoal)", label: "Daily Goal")
                         .overlay(
@@ -40,9 +38,14 @@ struct StatisticsView: View {
                         )
                 }
                 
-                // Top 3 finishes stat
                 StatCard(icon: "rosette", iconColor: .gray, value: String(streak), label: "Streak")
-            }
+                        .onTapGesture {
+                            showingStreakCalendar = true
+                        }
+                }
+        }
+        .sheet(isPresented: $showingStreakCalendar) {
+            StreakCalendarView()
         }
         .padding(.bottom, 16)
     }

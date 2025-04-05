@@ -82,10 +82,10 @@ model Badge {
 
 model UserBadge {
   id       Int         @id @default(autoincrement())
-  user     User        @relation(fields: [userId], references: [id])
-  userId   Int         @map("user_id")
-  badge    Badge       @relation(fields: [badgeId], references: [id])
-  badgeId  Int         @map("badge_id")
+  user     User        @relation(fields: [userID], references: [id])
+  userID   Int         @map("user_id")
+  badge    Badge       @relation(fields: [badgeID], references: [id])
+  badgeID  Int         @map("badge_id")
   progress Int         @default(0)
   status   BadgeStatus @default(Locked)
 
@@ -144,38 +144,38 @@ model Phrase {
 
 model QuizUser {
   id             Int        @id @default(autoincrement())
-  user_id        Int
-  quiz_id        Int
+  userID         Int        @map("user_id")
+  quizID         Int        @map("quiz_id")
   status         QuizStatus @default(Locked)
   score          Float      @default(0)
   livesRemaining Int?       @default(5) @map("lives_remaining")
   createdAt      DateTime   @default(now()) @map("created_at")
+  answeredAt     DateTime?  @map("answered_at")
+  user User @relation(fields: [userID], references: [id])
+  quiz Quiz @relation(fields: [quizID], references: [id])
 
-  user User @relation(fields: [user_id], references: [id])
-  quiz Quiz @relation(fields: [quiz_id], references: [id])
-
-  @@unique([user_id, quiz_id])
+  @@unique([userID, quizID])
 }
 
 model QuizSigns {
   id      Int @id @default(autoincrement())
-  quiz_id Int
-  sign_id Int
+  quizID Int  @map("quiz_id")
+  signID Int @map("sign_id")
 
-  quiz Quiz @relation(fields: [quiz_id], references: [id])
-  sign Sign @relation(fields: [sign_id], references: [id])
+  quiz Quiz @relation(fields: [quizID], references: [id])
+  sign Sign @relation(fields: [signID], references: [id])
 
   @@map("quiz_signs")
 }
 
 model PhraseSign {
   id        Int  @id @default(autoincrement())
-  sign_id   Int?
-  phrase_id Int?
-  order     Int?
+  signID  Int? @map("sign_id")
+  phraseID Int? @map("phrase_id")
+  order     Int? 
 
-  sign   Sign?   @relation(fields: [sign_id], references: [id])
-  phrase Phrase? @relation(fields: [phrase_id], references: [id])
+  sign   Sign?   @relation(fields: [signID], references: [id])
+  phrase Phrase? @relation(fields: [phraseID], references: [id])
 
   @@map("phrases_sign")
 }

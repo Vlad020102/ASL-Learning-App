@@ -3,7 +3,7 @@ import { IsEnum, IsNumber, IsString } from "class-validator";
 
 export class CompleteQuizDTO {
     @IsNumber()
-    quizId: number;
+    quizID: number;
 
     @IsEnum(QuizStatus)
     status: QuizStatus;

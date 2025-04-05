@@ -6,11 +6,11 @@ import {
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
+import { QuizStatus, User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
@@ -52,26 +52,26 @@ export class UsersService {
     });
   }
 
-async findProfile(user: User) {
+  async findProfile(user: User) {
     const userWithBadges = await this.prisma.user.findUnique({
       where: { username: user.username },
       include: {
-      badges: {
-        select: {
-        id: true,
-        progress: true,
-        status: true,
-        badge: {
+        badges: {
           select: {
-          name: true,
-          description: true,
-          icon: true,
-          type: true,
-          rarity: true,
-          },
+            id: true,
+            progress: true,
+            status: true,
+            badge: {
+              select: {
+                name: true,
+                description: true,
+                icon: true,
+                type: true,
+                rarity: true,
+              },
+            },
+          }
         },
-        }
-      },
       },
     });
 
@@ -92,16 +92,16 @@ async findProfile(user: User) {
     return profileWithoutId;
   }
 
-  async getUserBadges(user: any) {
+  async getUserBadges(user: User) {
     const userBadges = await this.prisma.userBadge.findMany({
       where: {
-        user:{
+        user: {
           username: user.username,
         }
       },
     });
     const badges = await this.prisma.badge.findMany({})
-    if (userBadges.length == badges.length) 
+    if (userBadges.length == badges.length)
       return userBadges;
     else {
       for (const badge of badges) {
@@ -112,7 +112,7 @@ async findProfile(user: User) {
                 username: user.username,
               },
             },
-            badge:{
+            badge: {
               connect: {
                 id: badge.id,
               },
@@ -120,7 +120,64 @@ async findProfile(user: User) {
           },
         });
       }
-      }
     }
+  }
+
+  async getStreaks(user: User) {
+    const quizUserAnsweredDates = await this.prisma.quizUser.findMany({
+      where: {
+        userID: user.id,
+        status: QuizStatus.Completed,
+      },
+      select: {
+        answeredAt: true,
+        user: {
+          select: {
+            streak: true,
+          }
+        }
+      },
+
+    });
+
+    // Initialize calendar object
+    const calendar = {
+      january: [],
+      february: [],
+      march: [22],
+      april: [],
+      may: [],
+      june: [],
+      july: [],
+      august: [],
+      september: [],
+      october: [],
+      november: [],
+      december: []
+    };
+  
+
+    // Group dates by month
+    quizUserAnsweredDates.forEach(({ answeredAt }) => {
+      if (answeredAt) {
+        const month = answeredAt.toLocaleString('en-US', { month: 'long' }).toLowerCase();
+        const day = answeredAt.getDate();
+
+        if (!calendar[month].includes(day)) {
+          calendar[month].push(day);
+        }
+      }
+    });
+
+    Object.keys(calendar).forEach(month => {
+      calendar[month].sort((a, b) => a - b);
+    });
+
+    return {
+      "currentStreak": quizUserAnsweredDates[0]?.user.streak ?? 0,
+      "calendar": calendar,
+    }
+  }
+
 }
 

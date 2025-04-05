@@ -67,13 +67,12 @@ extension NetworkService {
         authenticatedRequest(endpoint: "users/profile", method: .get, completion: completion)
     }
         
-    func updateProfile(with user: UpdateUser, completion: @escaping (Result<User, NetworkError>) -> Void) {
-        authenticatedRequest(endpoint: "users/profile", method: .put, body: user, completion: completion)
+    func fetchStreaks(completion: @escaping (Result<StreakData, NetworkError>) -> Void) {
+        authenticatedRequest(endpoint: "users/streaks", method: .get, completion: completion)
     }
     
 }
 
-struct UpdateUser: Codable {
-    let email: String
-    let username: String
+struct StreakData: Codable {
+    let streakDays: [String] // Dates in ISO8601 format
 }

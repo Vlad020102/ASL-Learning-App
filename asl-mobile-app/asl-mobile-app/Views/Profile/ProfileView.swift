@@ -13,7 +13,7 @@ class ProfileViewModel: ObservableObject {
 
     func loadProfile() {
         isLoading = true
-        errorMessage = nil
+        errorMessage = nil      
         NetworkService.shared.fetchProfile { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
@@ -26,38 +26,7 @@ class ProfileViewModel: ObservableObject {
             }
         }
     }
-    
-//    func saveProfile(completion: @escaping (Bool) -> Void) {
-//        guard let _ = profile else {
-//            errorMessage = "No profile data available"
-//            completion(false)
-//            return
-//        }
-//
-//        isLoading = true
-//        errorMessage = nil
-//
-//        let updateRequest = ProfileUpdateRequest(
-//            username: username,
-//            email: email
-//        )
-//
-//        NetworkService.shared.updateProfile(with: updateRequest) { [weak self] result in
-//            DispatchQueue.main.async {
-//                self?.isLoading = false
-//
-//                switch result {
-//                case .success(let updatedProfile):
-//                    self?.profile = updatedProfile
-//                    completion(true)
-//                case .failure(let error):
-//                    self?.errorMessage = "Failed to update profile: \(error.localizedDescription)"
-//                    completion(false)
-//                }
-//            }
-//        }
-//    }
-    
+        
     private func formatDate(_ dateString: String) -> String {
             let inputFormatter = ISO8601DateFormatter()
             if let date = inputFormatter.date(from: dateString) {
@@ -81,7 +50,9 @@ struct ProfileView: View {
                     if viewModel.isLoading{
                         ProgressView()
                     } else if let errorMessage = viewModel.errorMessage{
-                        ErrorView(message: errorMessage)
+                        ErrorView(message: errorMessage, retryAction: {
+                            viewModel.loadProfile()
+                        })
                     } else {
                         ProfileHeaderView(username: viewModel.user?.username ?? "", email: viewModel.user?.email ?? "", createdAt: viewModel.user?.createdAt ?? Date())
                         StatisticsView(level: viewModel.user?.level ?? 0, questionsAnsweredTotal: viewModel.user?.questionsAnsweredTotal ?? 0, questionsAnsweredToday: viewModel.user?.questionsAnsweredToday ?? 0, streak: viewModel.user?.streak ?? 0, dailyGoal: viewModel.user?.dailyGoal ?? 5)

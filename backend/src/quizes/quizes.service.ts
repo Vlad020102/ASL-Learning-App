@@ -5,20 +5,20 @@ import { CompleteQuizDTO } from './entities/completeQuiz';
 
 @Injectable()
 export class QuizesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
   async populateQuiz(user) {
     const userQuizes = await this.prisma.quiz.findMany({
       include: {
         users: {
           where: {
-            user:{
+            user: {
               username: user.username
             }
           },
         },
         signs: {
-          select:{
-            sign:true
+          select: {
+            sign: true
           }
         }
       }
@@ -29,39 +29,39 @@ export class QuizesService {
       return !userQuizes.some((userQuiz) => userQuiz.id === quiz.id);
     });
 
-    if(userQuizes.length === 0){
+    if (userQuizes.length === 0) {
       return userQuizes
-    }else{
-      for(const quiz of filteredQuizes){
-       await this.prisma.quizUser.create({
-          data:{
+    } else {
+      for (const quiz of filteredQuizes) {
+        await this.prisma.quizUser.create({
+          data: {
             quiz: {
-              connect:{
+              connect: {
                 id: quiz.id
               }
             },
             user: {
-              connect:{
+              connect: {
                 username: user.username
               }
             },
           }
         })
-       }
       }
     }
+  }
 
   async findAllQuizesForUser(user: User) {
     const userQuizes = await this.prisma.user.findUnique({
       where: { username: user.username },
       include: {
-      quizzes: {
-        select: {
-          status: true,
-          livesRemaining: true,
-          score: true,
-          quiz: {
-            select: {
+        quizzes: {
+          select: {
+            status: true,
+            livesRemaining: true,
+            score: true,
+            quiz: {
+              select: {
                 id: true,
                 title: true,
                 type: true,
@@ -134,12 +134,72 @@ export class QuizesService {
     if (!userData) {
       throw new Error('User not found');
     }
-    try{
+    try {
+      if (completeQuizDTO.status === QuizStatus.Completed) {
+        const latestCompletedQuiz = await this.prisma.quizUser.findFirst({
+          where: {
+            userID: userData.id,
+            status: QuizStatus.Completed
+          },
+          orderBy: {
+            answeredAt: 'desc'
+          }
+        });
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        if (latestCompletedQuiz && latestCompletedQuiz.answeredAt) {
+          const latestDate = new Date(latestCompletedQuiz.answeredAt);
+          latestDate.setHours(0, 0, 0, 0);
+          
+          // Compare the dates (as timestamps)
+          const completedToday = latestDate.getTime() === today.getTime();
+          const completedYesterday = latestDate.getTime() === yesterday.getTime();
+          if (completedYesterday && !completedToday) {
+            await this.prisma.user.update({
+              where: {
+                id: userData.id,
+              },
+              data: {
+                streak: {
+                  increment: 1,
+                },
+              },
+            });
+          }
+          
+          else if (!completedYesterday && !completedToday) {
+            await this.prisma.user.update({
+              where: {
+                id: userData.id,
+              },
+              data: {
+                streak: 1,
+              },
+            });
+          }
+        } else {
+          await this.prisma.user.update({
+            where: {
+              id: userData.id,
+            },
+            data: {
+              streak: 1,
+            },
+          });
+        }
+
+      }
+
       return await this.prisma.quizUser.update({
         where: {
-          user_id_quiz_id: {
-            user_id: userData.id,
-            quiz_id: completeQuizDTO.quizId,
+          userID_quizID: {
+            userID: userData.id,
+            quizID: completeQuizDTO.quizID,
           },
           status: {
             not: QuizStatus.Completed,
@@ -149,15 +209,16 @@ export class QuizesService {
           status: completeQuizDTO.status,
           livesRemaining: completeQuizDTO.livesRemaining,
           score: +completeQuizDTO.score,
+          answeredAt: new Date(),
         },
         select: {
           status: true
         }
-      }); 
+      });
     }
     catch (error) {
       if (error.code === 'P2025') {
-        throw new HttpException('Quiz not found or already completed', 404);
+        throw new HttpException('Quiz not found or already completed', 400);
       } else {
         throw error;
       }
