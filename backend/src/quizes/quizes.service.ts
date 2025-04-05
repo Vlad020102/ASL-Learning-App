@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { QuizStatus, User } from '@prisma/client';
+import { QuizStatus, QuizType, User } from '@prisma/client';
 import { CompleteQuizDTO } from './entities/completeQuiz';
 
 @Injectable()
@@ -70,24 +70,58 @@ export class QuizesService {
                     sign: true,
                   }
                 },
+                pairs: {
+                  select: {
+                    matchIndex: true,
+                    pair: {
+                      select: {
+                        id: true,
+                        text: true,
+                        signGif: true,
+                      }
+                    }
+                  }
+                }
               },
             },
           }
         },
       },
     });
+
     return {
-      "quizes": userQuizes?.quizzes.map((quiz) => {
-        return {
-          id: quiz.quiz.id,
-          title: quiz.quiz.title,
-          type: quiz.quiz.type,
-          status: quiz.status,
-          score: quiz.score,
-          livesRemaining: quiz.livesRemaining,
-          signs: quiz.quiz.signs.map((sign) => sign.sign),
-        }
-      })
+      "quizes": {
+        "bubblesQuizes": userQuizes?.quizzes.filter((quiz) => quiz.quiz.type === QuizType.Bubbles).map((quiz) => {
+          return {
+            id: quiz.quiz.id,
+            title: quiz.quiz.title,
+            type: quiz.quiz.type,
+            status: quiz.status,
+            score: quiz.score,
+            livesRemaining: quiz.livesRemaining,
+            signs: quiz.quiz.signs.map((sign) => sign.sign),
+          }
+        }),
+
+        "matchingQuizes": userQuizes?.quizzes.filter((quiz) => quiz.quiz.type === QuizType.Matching).map((quiz) => {
+          return {
+            id: quiz.quiz.id,
+            title: quiz.quiz.title,
+            type: quiz.quiz.type,
+            status: quiz.status,
+            score: quiz.score,
+            livesRemaining: quiz.livesRemaining,
+            pairs: quiz.quiz.pairs.map((pair) => {
+              return {
+                id: pair.pair.id,
+                text: pair.pair.text,
+                signGif: pair.pair.signGif,
+                matchIndex: pair.matchIndex,
+              }
+            }),
+          }
+        }),
+      }
     }
   }
 

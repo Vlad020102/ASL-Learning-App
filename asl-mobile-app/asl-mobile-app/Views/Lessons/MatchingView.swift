@@ -1,8 +1,8 @@
 import SwiftUI
 import WebKit
 
-struct ASLMatchingExerciseView: View {
-    let exercise: MatchingExerciseData
+struct MatchingView: View {
+    let exercise: MatchingQuizData
     @State private var numberOfLives: Int = 5
     @State private var showCompletionView: Bool = false
     @State private var correctMatches: Int = 0
@@ -13,6 +13,7 @@ struct ASLMatchingExerciseView: View {
     @State private var showFeedback: Bool = false
     @State private var feedbackType: SignView.FeedbackType = .incorrect
     
+    @Environment(\.presentationMode) private var presentationMode
     
     var body: some View {
         GeometryReader { geometry in
@@ -122,25 +123,26 @@ struct ASLMatchingExerciseView: View {
                         accuracy: Float(correctMatches) / Float(attempts),
                         livesRemaining: numberOfLives,
                         onRestart: {
-//                            let completeExerciseData = CompleteExerciseData(
-//                                exerciseId: exercise.id,
-//                                score: String(Float(correctMatches) / Float(attempts)),
-//                                livesRemaining: numberOfLives,
-//                                status: numberOfLives > 0 ? .Completed : .Failed
-//                            )
-//                            
-    //                        NetworkService.shared.completeExercise(data: completeExerciseData) { result in
-    //                            DispatchQueue.main.async {
-    //                                switch result {
-    //                                case .success(let response):
-    //                                    print("Exercise completed: \(response)")
-    //                                    self.presentationMode.wrappedValue.dismiss()
-    //                                case .failure(let error):
-    //                                    self.presentationMode.wrappedValue.dismiss()
-    //                                    print("Error completing exercise: \(error)")
-    //                                }
-    //                            }
-    //                        }
+                            let completeQuizData = CompleteQuizData.init(
+                                quizId: Int(exercise.id),
+                                score: String(Float(correctMatches) / Float(attempts)),
+                                livesRemaining: numberOfLives,
+                                status: numberOfLives > 0 ? .Completed : .Failed
+                        )
+                            print("Completing quiz with data: \(completeQuizData)")
+                            NetworkService.shared.completeQuiz(data: completeQuizData) { result in
+                                DispatchQueue.main.async {
+                                    switch result {
+                                    case .success(let response):
+                                        print("Quiz completed: \(response)")
+                                        self.presentationMode.wrappedValue.dismiss()
+                                        showCompletionView = false
+                                    case .failure(let error):
+                                        self.presentationMode.wrappedValue.dismiss()
+                                        print("Error completing quiz: \(error)")
+                                    }
+                                }
+                            }
                         }
                     )
                 }
@@ -152,16 +154,12 @@ struct ASLMatchingExerciseView: View {
                 feedbackType: $feedbackType,
                 correctAnswer: nil,
                 onContinue: {
-                    // Reset selections after feedback
                     if feedbackType == .correct {
-                        // Correct match already recorded in checkMatch()
                     } else {
-                        // Wrong match
                         selectedLeftItem = nil
                         selectedRightItem = nil
                     }
                     
-                    // Check if all pairs are matched
                     if correctPairs.count == exercise.pairs.count {
                         showCompletionView = true
                     }
@@ -177,40 +175,31 @@ struct ASLMatchingExerciseView: View {
     }
     
     private func handleLeftSelection(_ index: Int) {
-        // If the same item is tapped again, deselect it
         if selectedLeftItem == index {
             selectedLeftItem = nil
         } else {
             selectedLeftItem = index
         }
         
-        // Remove automatic check when both sides are selected
         checkMatch()
     }
     
     private func handleRightSelection(_ index: Int) {
-        // If the same item is tapped again, deselect it
         if selectedRightItem == index {
             selectedRightItem = nil
         } else {
             selectedRightItem = index
         }
-        
-        // Remove automatic check when both sides are selected
+
         checkMatch()
     }
     
-    // This function was previously used for automatic checking
-    // Now we'll only use it when the Check button is pressed
     private func checkMatch() {
         guard let leftIndex = selectedLeftItem, let rightIndex = selectedRightItem else {
             return
         }
         
         attempts += 1
-        
-        // Check if correct match (in this example, matching indexes are correct pairs)
-        // In a real app, you'd check against actual matching pairs data
         let isMatch = exercise.pairs[leftIndex].matchIndex == rightIndex
         
         if isMatch {
@@ -235,7 +224,6 @@ struct ASLMatchingExerciseView: View {
     }
 }
 
-// GIF View Component
 struct GIFView: View {
     let gifName: String
     let shouldPlay: Bool
@@ -246,10 +234,8 @@ struct GIFView: View {
     }
     
     var body: some View {
-        // In a real implementation, you would use a GIF player
-        // This is a placeholder that would be replaced with actual GIF functionality
         ZStack {
-            GIFImageView(gifName, shouldPlay: shouldPlay)
+            GIFImageView(gifName: gifName, shouldPlay: shouldPlay)
                 .aspectRatio(contentMode: .fit)
                 .cornerRadius(10)
         }
@@ -260,7 +246,8 @@ struct GIFImageView: UIViewRepresentable {
     let gifName: String
     let shouldPlay: Bool
     
-    init(_ gifName: String, shouldPlay: Bool = true) {
+    init(gifName: String, shouldPlay: Bool = true) {
+        print(gifName)
         self.gifName = gifName
         self.shouldPlay = shouldPlay
     }
@@ -278,7 +265,6 @@ struct GIFImageView: UIViewRepresentable {
                 baseURL: URL(fileURLWithPath: "")
             )
         } else {
-            // Load the GIF as a static image by using HTML with CSS to pause it
             webView.loadHTMLString("""
                 <html>
                 <head>
@@ -298,40 +284,14 @@ struct GIFImageView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        // Only reload if playing is enabled
         if shouldPlay {
             uiView.reload()
         }
     }
 }
 
-// Data models
-struct MatchingExerciseData {
-    let id: String
-    let pairs: [MatchingPair]
-}
-
-struct MatchingPair {
-    let signGif: String
-    let text: String
-    let matchIndex: Int  // Indicates the correct matching index
-}
-
-enum CompletionStatus {
-    case Completed
-    case Failed
-}
-
-struct CompleteExerciseData {
-    let exerciseId: String
-    let score: String
-    let livesRemaining: Int
-    let status: CompletionStatus
-}
-
-
-extension ASLMatchingExerciseView {
-    static var mockExercise: MatchingExerciseData {
+extension MatchingView{
+    static var mockExercise: MatchingQuizData {
         let pairs = [
             MatchingPair(signGif: "how-are-you", text: "hello", matchIndex: 1),
             MatchingPair(signGif: "how-are-you", text: "thank you", matchIndex: 3),
@@ -340,15 +300,15 @@ extension ASLMatchingExerciseView {
             MatchingPair(signGif: "how-are-you", text: "how are you", matchIndex: 0)
         ]
         
-        return MatchingExerciseData(id: "exercise1", pairs: pairs)
+        return MatchingQuizData(id: 1, title: "Matching Exercise", type: .Matching, status: .InProgress, score: 0.0, livesRemaining: 5, pairs: pairs)
     }
 }
 
-struct ASLMatchingExerciseView_Previews: PreviewProvider {
+struct MatchingView_Preview: PreviewProvider {
     static var previews: some View {
         Group {
             // Default state
-            ASLMatchingExerciseView(exercise: ASLMatchingExerciseView.mockExercise)
+            MatchingView(exercise: MatchingView.mockExercise)
                 .previewDisplayName("Default State")
         }
     }
