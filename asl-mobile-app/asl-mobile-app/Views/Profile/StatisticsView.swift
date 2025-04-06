@@ -17,7 +17,7 @@ struct StatisticsView: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
-                StatCard(icon: "flame.fill", iconColor: .orange, value: String(questionsAnsweredTotal), label: "Total Questions Answered")
+                StatCard(icon: "rosette", iconColor: .orange, value: String(questionsAnsweredTotal), label: "Total Questions Answered")
                 
                 StatCard(icon: "bolt.fill", iconColor: .yellow, value: String(level), label: "Current Level")
             }
@@ -38,7 +38,7 @@ struct StatisticsView: View {
                         )
                 }
                 
-                StatCard(icon: "rosette", iconColor: .gray, value: String(streak), label: "Streak")
+                StatCard(icon: "flame.fill", iconColor: .red, value: String(streak), label: "Streak")
                         .onTapGesture {
                             showingStreakCalendar = true
                         }
@@ -46,6 +46,7 @@ struct StatisticsView: View {
         }
         .sheet(isPresented: $showingStreakCalendar) {
             StreakCalendarView()
+                .presentationDetents([.height(420)])
         }
         .padding(.bottom, 16)
     }

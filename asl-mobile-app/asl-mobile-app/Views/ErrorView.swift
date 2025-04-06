@@ -28,10 +28,7 @@ struct ErrorView: View {
                 .foregroundColor(AppColors.accent2)
                 .multilineTextAlignment(.center)
             
-
-            Button(action: {
-                AuthManager.shared.removeToken()
-            }) {
+            Button(action: retryAction) {
                 Text("Try Again")
                     .foregroundColor(.white)
                     .padding()
