@@ -32,7 +32,33 @@ struct MatchingView: View {
                     
                 } else {
                     // Completion view
-                    quizCompletionView
+                    QuizCompletionView(
+                        isSuccess: numberOfLives > 0,
+                        accuracy: Float(correctMatches) / Float(attempts),
+                        livesRemaining: numberOfLives,
+                        onRestart: {
+                            let completeQuizData = CompleteQuizData.init(
+                                quizID: Int(exercise.id),
+                                score: String(Float(correctMatches) / Float(attempts)),
+                                livesRemaining: numberOfLives,
+                                status: numberOfLives > 0 ? .Completed : .Failed
+                        )
+                            print("Completing quiz with data: \(completeQuizData)")
+                            NetworkService.shared.completeQuiz(data: completeQuizData) { result in
+                                DispatchQueue.main.async {
+                                    switch result {
+                                    case .success(let response):
+                                        print("Quiz completed: \(response)")
+                                        self.presentationMode.wrappedValue.dismiss()
+                                        showCompletionView = false
+                                    case .failure(let error):
+                                        self.presentationMode.wrappedValue.dismiss()
+                                        print("Error completing quiz: \(error)")
+                                    }
+                                }
+                            }
+                        }
+                    )
                 }
             }
             .background(AppColors.background)
