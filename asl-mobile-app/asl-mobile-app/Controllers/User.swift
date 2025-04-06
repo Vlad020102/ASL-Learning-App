@@ -74,5 +74,6 @@ extension NetworkService {
 }
 
 struct StreakData: Codable {
-    let streakDays: [String] // Dates in ISO8601 format
+    let calendar: [String: [Int]]
+    let currentStreak: Int
 }
