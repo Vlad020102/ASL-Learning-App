@@ -69,7 +69,7 @@ struct BubblesView: View {
                     onRestart: {
                        
                         let completeQuizData = CompleteQuizData.init(
-                            quizId: Int(quiz.id) ?? 0,
+                            quizID: Int(quiz.id),
                             score: String(Float(correctAttempts) / Float(attempts)),
                             livesRemaining: numberOfLifes,
                             status: numberOfLifes > 0 ? .Completed : .Failed

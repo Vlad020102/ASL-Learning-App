@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  HttpException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -101,26 +102,26 @@ export class UsersService {
       },
     });
     const badges = await this.prisma.badge.findMany({})
-    if (userBadges.length == badges.length)
-      return userBadges;
-    else {
-      for (const badge of badges) {
-        await this.prisma.userBadge.create({
-          data: {
-            user: {
-              connect: {
-                username: user.username,
-              },
+    const filteredBadges = badges.filter((badge) => {
+      return !userBadges.some((userBadge) => userBadge.badgeID === badge.id);
+    });
+    for (const badge of filteredBadges) {
+      await this.prisma.userBadge.create({
+        data: {
+          user: {
+            connect: {
+              username: user.username,
             },
-            badge: {
-              connect: {
-                id: badge.id,
-              },
-            }
           },
-        });
-      }
+          badge: {
+            connect: {
+              id: badge.id,
+            },
+          }
+        },
+      });
     }
+
   }
 
   async getStreaks(user: User) {
@@ -155,7 +156,7 @@ export class UsersService {
       november: [],
       december: []
     };
-  
+
 
     // Group dates by month
     quizUserAnsweredDates.forEach(({ answeredAt }) => {

@@ -175,17 +175,17 @@ const quizData = [
     pairs: [
       {
         text: "Hello",
-        signGif: "url",
+        signGif: "how-are-you",
         matchIndex: 0,
       },
       {
         text: "Goodbye",
-        signGif: "url",
+        signGif: "how-are-you",
         matchIndex: 1,
       },
       {
         text: "Thank you",
-        signGif: "url",
+        signGif: "how-are-you",
         matchIndex: 2,
       }
     ]
