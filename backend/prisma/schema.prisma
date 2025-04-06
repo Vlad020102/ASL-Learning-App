@@ -90,6 +90,7 @@ model UserBadge {
   status   BadgeStatus @default(Locked)
 
   @@map("user_badges")
+  @@unique([userID, badgeID])
 }
 
 model Lesson {
@@ -131,7 +132,6 @@ model Pair {
   quizes QuizPair[]
 }
 
-
 model Phrase {
   id         Int        @id @default(autoincrement())
   difficulty Difficulty
@@ -151,15 +151,15 @@ model QuizUser {
   livesRemaining Int?       @default(5) @map("lives_remaining")
   createdAt      DateTime   @default(now()) @map("created_at")
   answeredAt     DateTime?  @map("answered_at")
-  user User @relation(fields: [userID], references: [id])
-  quiz Quiz @relation(fields: [quizID], references: [id])
+  user           User       @relation(fields: [userID], references: [id])
+  quiz           Quiz       @relation(fields: [quizID], references: [id])
 
   @@unique([userID, quizID])
 }
 
 model QuizSigns {
-  id      Int @id @default(autoincrement())
-  quizID Int  @map("quiz_id")
+  id     Int @id @default(autoincrement())
+  quizID Int @map("quiz_id")
   signID Int @map("sign_id")
 
   quiz Quiz @relation(fields: [quizID], references: [id])
@@ -169,10 +169,10 @@ model QuizSigns {
 }
 
 model PhraseSign {
-  id        Int  @id @default(autoincrement())
-  signID  Int? @map("sign_id")
+  id       Int  @id @default(autoincrement())
+  signID   Int? @map("sign_id")
   phraseID Int? @map("phrase_id")
-  order     Int? 
+  order    Int?
 
   sign   Sign?   @relation(fields: [signID], references: [id])
   phrase Phrase? @relation(fields: [phraseID], references: [id])

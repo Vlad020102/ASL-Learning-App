@@ -5,51 +5,37 @@ import { CompleteQuizDTO } from './entities/completeQuiz';
 
 @Injectable()
 export class QuizesService {
-  constructor(private prisma: PrismaService) { }
-  async populateQuiz(user) {
-    const userQuizes = await this.prisma.quiz.findMany({
-      include: {
-        users: {
-          where: {
-            user: {
-              username: user.username
-            }
-          },
-        },
-        signs: {
-          select: {
-            sign: true
-          }
+  constructor(private readonly prisma: PrismaService) { }
+  async populateQuiz(user: User) {
+    const userQuizes = await this.prisma.quizUser.findMany({
+      where: {
+        user: {
+          username: user.username
         }
-      }
+      },
     });
 
     const quizes = await this.prisma.quiz.findMany({})
     const filteredQuizes = quizes.filter((quiz) => {
-      return !userQuizes.some((userQuiz) => userQuiz.id === quiz.id);
+      return !userQuizes.some((userQuiz) => userQuiz.quizID === quiz.id);
     });
-
-    if (userQuizes.length === 0) {
-      return userQuizes
-    } else {
-      for (const quiz of filteredQuizes) {
-        await this.prisma.quizUser.create({
-          data: {
-            quiz: {
-              connect: {
-                id: quiz.id
-              }
-            },
-            user: {
-              connect: {
-                username: user.username
-              }
-            },
-          }
-        })
-      }
+    for (const quiz of filteredQuizes) {
+      await this.prisma.quizUser.create({
+        data: {
+          quiz: {
+            connect: {
+              id: quiz.id
+            }
+          },
+          user: {
+            connect: {
+              username: user.username
+            }
+          },
+        }
+      })
     }
-  }
+}
 
   async findAllQuizesForUser(user: User) {
     const userQuizes = await this.prisma.user.findUnique({
