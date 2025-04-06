@@ -117,10 +117,20 @@ model Quiz {
   type  QuizType
 
   signs QuizSigns[]
+  pairs QuizPair[]
   users QuizUser[]
 
   @@map("quizzes")
 }
+
+model Pair {
+  id      Int    @id @default(autoincrement())
+  text    String
+  signGif String
+
+  quizes QuizPair[]
+}
+
 
 model Phrase {
   id         Int        @id @default(autoincrement())
@@ -168,4 +178,17 @@ model PhraseSign {
   phrase Phrase? @relation(fields: [phraseID], references: [id])
 
   @@map("phrases_sign")
+}
+
+model QuizPair {
+  id      Int @id @default(autoincrement())
+  quiz_id Int
+  pair_id Int
+
+  matchIndex Int? @map("match_index")
+
+  quiz Quiz @relation(fields: [quiz_id], references: [id])
+  pair Pair @relation(fields: [pair_id], references: [id])
+
+  @@map("quiz_pairs")
 }
