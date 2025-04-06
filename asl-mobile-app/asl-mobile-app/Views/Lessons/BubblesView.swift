@@ -211,8 +211,6 @@ struct SignView: View {
             Button(action: {
                 // Check if the answer is correct
                 isCorrect = selectedWords.joined(separator: " ") == sign?.text
-                print(selectedWords)
-                print(sign?.text)
                 feedbackType = isCorrect ? .correct : .incorrect
                 showFeedback = true
                 

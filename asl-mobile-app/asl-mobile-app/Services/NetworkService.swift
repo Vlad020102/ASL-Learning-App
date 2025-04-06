@@ -130,8 +130,6 @@ class NetworkService {
         body: T? = nil,
         completion: @escaping (Result<U, NetworkError>) -> Void
     ) {
-  
-        let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
         guard let token = AuthManager.init().getToken() else {
             completion(.failure(.serverError(statusCode: 401, message: "Authentication token not found")))
             return
