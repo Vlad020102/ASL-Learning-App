@@ -232,7 +232,7 @@ class StreakCalendarViewModel: ObservableObject {
         let daysInPreviousMonth = calendar.range(of: .day, in: .month, for: previousMonth)?.count ?? 0
             
         for i in 1..<firstWeekday {
-            let day = daysInPreviousMonth - firstWeekday + i + 1
+            _ = daysInPreviousMonth - firstWeekday + i + 1
             if let date = calendar.date(byAdding: .day, value: -firstWeekday + i, to: startOfMonth) {
                 let isStreakDay = streakDays.contains { calendar.isDate($0, inSameDayAs: date) }
                 let isAnsweredDay = answeredDays.contains { calendar.isDate($0, inSameDayAs: date) }
