@@ -124,7 +124,7 @@ struct MatchingView: View {
                         livesRemaining: numberOfLives,
                         onRestart: {
                             let completeQuizData = CompleteQuizData.init(
-                                quizId: Int(exercise.id),
+                                quizID: Int(exercise.id),
                                 score: String(Float(correctMatches) / Float(attempts)),
                                 livesRemaining: numberOfLives,
                                 status: numberOfLives > 0 ? .Completed : .Failed

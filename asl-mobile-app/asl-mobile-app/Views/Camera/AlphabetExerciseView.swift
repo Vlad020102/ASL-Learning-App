@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct AlphabetExerciseView: View {
+    let testStrings: [String]
+    @State var targetSign: String
+    
     @State private var currentIndex: Int = 0
     @State private var isCorrectSign: Bool = false
-    @State private var targetSign: String = "Hello" // Start with the first string
-    private let testStrings: [String] = ["Hello", "I Love You", "Wow", "No", "Yes"]
     
     var body: some View {
         ZStack {

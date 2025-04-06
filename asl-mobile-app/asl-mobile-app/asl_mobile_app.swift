@@ -25,7 +25,8 @@ struct RootView: View {
     var body: some View {
         Group {
             if authManager.isAuthenticated {
-                ContentView()
+                AlphabetExerciseView(testStrings: ["Hello", "Goodbye", "Please", "Thank you", "Sorry"], targetSign: "Hello")
+                                        
             } else {
                 HomeView()
                     .transition(.opacity)
