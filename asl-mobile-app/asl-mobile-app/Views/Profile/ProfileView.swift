@@ -43,6 +43,10 @@ struct ProfileView: View {
     @StateObject private var viewModel: ProfileViewModel = ProfileViewModel()
     @State private var showEditProfileView: Bool = false
     
+    var completedBadges: [Badge] {
+        return (viewModel.user?.badges ?? []).filter { $0.status == "Completed" }
+    }
+    
     var body: some View {
         NavigationStack{
             ScrollView {
@@ -56,7 +60,28 @@ struct ProfileView: View {
                     } else {
                         ProfileHeaderView(username: viewModel.user?.username ?? "", email: viewModel.user?.email ?? "", createdAt: viewModel.user?.createdAt ?? Date())
                         StatisticsView(level: viewModel.user?.level ?? 0, questionsAnsweredTotal: viewModel.user?.questionsAnsweredTotal ?? 0, questionsAnsweredToday: viewModel.user?.questionsAnsweredToday ?? 0, streak: viewModel.user?.streak ?? 0, dailyGoal: viewModel.user?.dailyGoal ?? 5)
-                        BadgesView(badges: viewModel.user?.badges ?? [])
+                        
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text("Badges")
+                                    .foregroundColor(AppColors.secondary)
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                
+                                Spacer()
+                                
+                                NavigationLink(destination: AllBadgesView(badges: viewModel.user?.badges ?? [])) {
+                                    Text("View all")
+                                        .foregroundColor(AppColors.primary)
+                                        .font(.subheadline)
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top)
+                            
+                            BadgesView(badges: completedBadges, title: "")
+                        }
+                        
                         Spacer(minLength: 20)
                         Button(action: {
                             AuthManager.shared.removeToken()

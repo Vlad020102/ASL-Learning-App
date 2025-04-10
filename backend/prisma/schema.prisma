@@ -56,6 +56,7 @@ model User {
   dailyGoal              Int         @default(5) @map("daily_goal")
   learningReason         String      @default("For work or school") @map("learning_reason")
   level                  Int         @default(1)
+  level_progress         Int         @default(0) @map("level_progress")
   questionsAnsweredTotal Int         @default(0) @map("questions_answered_total")
   questionsAnsweredToday Int         @default(0) @map("questions_correct_today")
   streak                 Int         @default(0)

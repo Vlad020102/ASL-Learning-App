@@ -59,7 +59,7 @@ struct HomeView: View {
                                     .foregroundColor(AppColors.textSecondary)
                                     .cornerRadius(10)
                                     .bold(true)
-                            }
+                            }.navigationBarBackButtonHidden(true)
                             NavigationLink(destination: LoginView()) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
                                     .fontWeight(.bold)

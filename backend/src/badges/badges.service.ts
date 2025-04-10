@@ -7,24 +7,26 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class BadgesService {
   constructor(private readonly  prisma: PrismaService) {}
 
-  create(createBadgeDto: CreateBadgeDto) {
-    return 'This action adds a new badge';
-  }
+  async checkIfBadgeEligible(userId: string) {
 
-  findAll() {
-    return `This action returns all badges`;
-  }
+    const userBadges = await this.prisma.userBadge.findMany({
+      where: {
+        userID: +userId
+      },
+      include: {
+        badge: {
+          select: {
+            id: true,
+            name: true,
+            rarity: true,
+            type: true,
+            icon: true,
+            description: true,
+          }
+        }
+      }
+    })
 
-  findOne(id: number) {
-    return `This action returns a #${id} badge`;
+    
   }
-
-  update(id: number, updateBadgeDto: UpdateBadgeDto) {
-    return `This action updates a #${id} badge`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} badge`;
-  }
-
 }

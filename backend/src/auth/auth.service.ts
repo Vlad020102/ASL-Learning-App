@@ -25,11 +25,12 @@ export class AuthService {
       return null;
     }
 
-    const { password: excludedPassword, id: excludedId, ...result } = user;
+    const { password: excludedPassword, ...result } = user;
     return result;
   }
 
   async login(user: any) {
+    console.log(user.id);
     const payload = { username: user.username, sub: user.id };
     return {
       accessToken: this.jwtService.sign(payload),
