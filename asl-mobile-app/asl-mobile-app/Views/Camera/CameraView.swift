@@ -47,26 +47,6 @@ struct CaptureButtonView: View {
     }
 }
 
-struct LogoutButton: View {
-    @EnvironmentObject var authManager: AuthManager
-    var body: some View {
-        Button(action: {
-            authManager.removeToken()
-        }) {
-            HStack {
-                Image(systemName: "arrow.left")
-                    .font(.headline)
-                Text("Logout")
-                    .fontWeight(.medium)
-            }
-            .padding()
-            .foregroundColor(.white)
-            .background(Color.black)
-            .cornerRadius(10)
-        }
-    }
-}
-
 struct CameraView: View {
     @State var didTapCapture: Bool = false
     @Binding var targetSign: String

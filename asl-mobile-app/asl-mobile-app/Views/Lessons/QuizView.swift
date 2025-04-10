@@ -2,14 +2,13 @@ import SwiftUI
 import AVKit
 
 class QuizViewModel: ObservableObject {
-    @Published var quizes: QuizData = .init(bubblesQuizes: [], matchingQuizes: [])
+    @Published var quizes: QuizData = .init(bubblesQuizes: [], matchingQuizes: [], alphabetQuizes: [])
     @Published var isLoading = false
     @Published var errorMessage: String?
     
     func loadQuizes() {
         NetworkService.shared.getQuiz() { [weak self] result in
             DispatchQueue.main.async {
-                print(result)
                 switch result {
                 case .success(let response):
                     self?.quizes = response.quizes
@@ -45,6 +44,8 @@ struct QuizCatalogueView: View {
                             ForEach(viewModel.quizes.matchingQuizes, id: \.id) { quiz in
                                 matchingCardView(for: quiz)
                             }
+                            .listRowBackground(AppColors.background)
+                            ForEach(viewModel.quizes.alphabetQuizes, id: \.id) { quiz in alphabetCardView(for: quiz)}
                             .listRowBackground(AppColors.background)
                             
                         }
@@ -97,7 +98,44 @@ struct QuizCatalogueView: View {
         }
     }
     
-    
+    @ViewBuilder
+    private func alphabetCardView(for alphabetQuiz: AlphabetQuizData) -> some View {
+        if alphabetQuiz.status.toString() == "Locked" {
+            AlphabetQuizCard(alphabetQuiz: alphabetQuiz)
+                .opacity(0.6)
+        } else if alphabetQuiz.status.toString() == "InProgress" {
+            AlphabetQuizCard(alphabetQuiz: alphabetQuiz)
+        } else if alphabetQuiz.status.toString() == "Completed" {
+            AlphabetQuizCard(alphabetQuiz: alphabetQuiz)
+                .opacity(0.6)
+        } else if alphabetQuiz.status.toString() == "Failed" {
+            AlphabetQuizCard(alphabetQuiz: alphabetQuiz)
+                .opacity(0.6)
+        }
+    }
+    struct AlphabetQuizCard: View {
+        let alphabetQuiz: AlphabetQuizData
+        var body: some View {
+            
+            NavigationLink(destination: AlphabetExerciseView(
+                testStrings: alphabetQuiz.signs?.map { $0.text} ?? ["A", "B", "C", "D", "E"],
+                quizID: alphabetQuiz.id,
+                startSign: alphabetQuiz.signs?.first?.text ?? "A"
+                )) {
+                GenericQuizCard(
+                    title: alphabetQuiz.title,
+                    type: alphabetQuiz.type,
+                    status: alphabetQuiz.status,
+                    score: alphabetQuiz.score,
+                    livesRemaining: alphabetQuiz.livesRemaining
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+            .disabled(alphabetQuiz.status.toString() == "Locked" ||
+                      alphabetQuiz.status.toString() == "Failed" ||
+                      alphabetQuiz.status.toString() == "Completed")
+        }
+    }
     struct BubblesQuizCard: View {
         let bubblesQuiz: BubblesQuizData
         

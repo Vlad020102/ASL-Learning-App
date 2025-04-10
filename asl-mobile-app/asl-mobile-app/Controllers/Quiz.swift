@@ -42,6 +42,7 @@ extension NetworkService {
 enum QuizType: String, Codable {
     case Bubbles
     case Matching
+    case AlphabetStreak
     /*Matching, VideoText, VideoAudio, AlphabetStreak*/
     // Can add more types in the future like image, text, etc.
     func toString() -> String {
@@ -50,6 +51,8 @@ enum QuizType: String, Codable {
             return "Bubbles"
         case .Matching:
             return "Matching"
+        case .AlphabetStreak:
+            return "Alphabet"
         }
     }
 }
@@ -79,6 +82,7 @@ struct QuizResponse: Codable {
 struct QuizData: Codable {
     let bubblesQuizes: [BubblesQuizData]
     let matchingQuizes: [MatchingQuizData]
+    let alphabetQuizes: [AlphabetQuizData]
 }
 
 struct BubblesQuizData: Codable {
@@ -118,6 +122,16 @@ struct MatchingQuizData: Codable {
     let score: Double
     let livesRemaining: Int
     let pairs: [MatchingPair]
+}
+
+struct AlphabetQuizData: Codable {
+    let id: Int
+    let title: String
+    let type: QuizType
+    let status: QuizStatus
+    let score: Double
+    let livesRemaining: Int
+    let signs: [Sign]?
 }
 
 struct MatchingPair: Codable {

@@ -88,7 +88,7 @@ struct GenericQuizCard: View {
                 }
             }
             
-            if status.toString() == "Failed" {
+            if status.toString() == "Failed"{
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 4) {
                         Image(systemName: "star.fill")
@@ -130,15 +130,13 @@ struct GenericQuizCard: View {
                 return AppColors.accent2
             }
             return AppColors.text
+        case .AlphabetStreak:
+            if(status == .InProgress){
+                return AppColors.accent3
+            }
+            return AppColors.text
         }
+    
     }
     
-    private func getDestination(for quiz: BubblesQuizData) -> some View {
-        switch quiz.type {
-        case .Bubbles:
-            return AnyView(BubblesView(quiz: quiz))
-        case .Matching:
-            return AnyView(Text("Matching Quiz Not Implemented Yet"))
-        }
-    }
 }

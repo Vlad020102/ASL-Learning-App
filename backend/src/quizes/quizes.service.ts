@@ -113,6 +113,23 @@ export class QuizesService {
             }),
           }
         }),
+
+        "alphabetQuizes": userQuizes?.quizzes.filter((quiz) => quiz.quiz.type === QuizType.AlphabetStreak).map((quiz) => {
+          return {
+            id: quiz.quiz.id,
+            title: quiz.quiz.title,
+            type: quiz.quiz.type,
+            status: quiz.status,
+            score: quiz.score,
+            livesRemaining: quiz.livesRemaining,
+            signs: quiz.quiz.signs.map((sign) => {
+              return {
+                ...sign.sign,
+                options: sign.options
+              }
+            }),
+          }
+        }),
       }
     }
   }
