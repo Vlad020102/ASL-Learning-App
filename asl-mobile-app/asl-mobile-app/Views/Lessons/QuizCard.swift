@@ -15,100 +15,9 @@ struct GenericQuizCard: View {
     let livesRemaining: Int
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Card header with quiz type and status indicator
-            HStack {
-                Text(type.toString())
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(typeColor(for: type, status: status).opacity(0.2))
-                    .foregroundColor(typeColor(for: type, status: status))
-                    .cornerRadius(8)
-                
-                Spacer()
-                
-                // Status indicator
-                if status.toString() == "Completed" {
-                    HStack(spacing: 4) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(AppColors.success)
-                        Text("Completed")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(AppColors.success)
-                    }
-                } else if status.toString() == "Failed" {
-                    HStack(spacing: 4) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(AppColors.error)
-                        Text("Failed")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(AppColors.error)
-                    }
-                } else if status.toString() == "Locked" {
-                    HStack(spacing: 4) {
-                        Image(systemName: "lock.fill")
-                            .foregroundColor(AppColors.textSecondary)
-                        Text("Locked")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                }
-            }
-            
-            // Quiz title
-            Text(title)
-                .font(.headline)
-                .foregroundColor(AppColors.text)
-                .lineLimit(2)
-            
-            // Show score and lives for completed quizzes
-            if status.toString() == "Completed" {
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill")
-                            .font(.caption2)
-                            .foregroundColor(AppColors.accent1)
-                        Text("Score: \(Int(score * 100))%")
-                            .font(.caption)
-                            .foregroundColor(AppColors.text)
-                    }
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "heart.fill")
-                            .font(.caption2)
-                            .foregroundColor(AppColors.primary)
-                        Text("Lives: \(livesRemaining)/5")
-                            .font(.caption)
-                            .foregroundColor(AppColors.text)
-                    }
-                }
-            }
-            
-            if status.toString() == "Failed"{
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill")
-                            .font(.caption2)
-                            .foregroundColor(AppColors.accent1)
-                        Text("Progress: \(score, specifier: "%.2f")%")
-                            .font(.caption)
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "heart.fill")
-                            .font(.caption2)
-                            .foregroundColor(AppColors.primary)
-                        Text("Lives: \(livesRemaining)/5")
-                            .font(.caption)
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                }
-            }
+            cardHeader
+            quizTitle
+            statusInfo
         }
         .padding()
         .background(AppColors.card)
@@ -116,27 +25,121 @@ struct GenericQuizCard: View {
         .shadow(color: AppColors.textSecondary.opacity(0.1), radius: 5, x: 0, y: 2)
         .frame(maxWidth: .infinity)
     }
-       
     
-    private func typeColor(for type: QuizType, status: QuizStatus) -> Color {
-        switch type {
-        case .Bubbles:
-            if(status == .InProgress){
-                return AppColors.accent1
-            }
-            return AppColors.text
-        case .Matching:
-            if(status == .InProgress){
-                return AppColors.accent2
-            }
-            return AppColors.text
-        case .AlphabetStreak:
-            if(status == .InProgress){
-                return AppColors.accent3
-            }
-            return AppColors.text
+    private var cardHeader: some View {
+        HStack {
+            quizTypeLabel
+            Spacer()
+            statusIndicator
         }
-    
     }
     
+    private var quizTypeLabel: some View {
+        Text(type.toString())
+            .font(.caption)
+            .fontWeight(.semibold)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(typeColor.opacity(0.2))
+            .foregroundColor(typeColor)
+            .cornerRadius(8)
+    }
+    
+    private var statusIndicator: some View {
+        Group {
+            switch status {
+            case .Completed:
+                HStack(spacing: 4) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(AppColors.success)
+                    Text("Completed")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(AppColors.success)
+                }
+            case .Failed:
+                HStack(spacing: 4) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(AppColors.error)
+                    Text("Failed")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(AppColors.error)
+                }
+            case .Locked:
+                HStack(spacing: 4) {
+                    Image(systemName: "lock.fill")
+                        .foregroundColor(AppColors.textSecondary)
+                    Text("Locked")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(AppColors.textSecondary)
+                }
+            case .InProgress:
+                EmptyView()
+            }
+        }
+    }
+    
+    private var quizTitle: some View {
+        Text(title)
+            .font(.headline)
+            .foregroundColor(AppColors.text)
+            .lineLimit(2)
+    }
+    
+    private var statusInfo: some View {
+        Group {
+            if status == .Completed || status == .Failed {
+                VStack(alignment: .leading, spacing: 4) {
+                    if type != .AlphabetStreak {
+                        livesView
+                    }
+                    scoreView
+                }
+            }
+        }
+    }
+    
+    private var scoreView: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "star.fill")
+                .font(.caption2)
+                .foregroundColor(AppColors.accent1)
+            
+            if status == .Completed {
+                Text("Score: \(Int(score * 100))%")
+                    .font(.caption)
+                    .foregroundColor(AppColors.text)
+            } else {
+                Text("Progress: \(score, specifier: "%.2f")%")
+                    .font(.caption)
+                    .foregroundColor(AppColors.textSecondary)
+            }
+        }
+    }
+    
+    private var livesView: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "heart.fill")
+                .font(.caption2)
+                .foregroundColor(AppColors.primary)
+            Text("Lives: \(livesRemaining)/5")
+                .font(.caption)
+                .foregroundColor(status == .Completed ? AppColors.text : AppColors.textSecondary)
+        }
+    }
+    
+    private var typeColor: Color {
+        switch (type, status) {
+        case (.Bubbles, .InProgress):
+            return AppColors.secondary
+        case (.Matching, .InProgress):
+            return AppColors.accent1
+        case (.AlphabetStreak, .InProgress):
+            return AppColors.primary
+        default:
+            return AppColors.text
+        }
+    }
 }

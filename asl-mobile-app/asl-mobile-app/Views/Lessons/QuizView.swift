@@ -7,13 +7,15 @@ class QuizViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     func loadQuizes() {
+        isLoading = true
         NetworkService.shared.getQuiz() { [weak self] result in
             DispatchQueue.main.async {
+                self?.isLoading = false
                 switch result {
                 case .success(let response):
                     self?.quizes = response.quizes
                 case .failure(let error):
-                    self?.errorMessage = "Failed to load profile: \(error.localizedDescription)"
+                    self?.errorMessage = "Failed to load quizzes: \(error.localizedDescription)"
                 }
             }
         }
@@ -32,153 +34,109 @@ struct QuizCatalogueView: View {
                     if viewModel.isLoading {
                         ProgressView()
                     } else if let errorMessage = viewModel.errorMessage {
-                        ErrorView(message: errorMessage, retryAction:{
+                        ErrorView(message: errorMessage, retryAction: {
                             AuthManager.shared.removeToken()
                         })
                     } else {
-                        List {
-                            ForEach(viewModel.quizes.bubblesQuizes, id: \.id) { quiz in
-                                bubblesCardView(for: quiz)
-                            }
-                            .listRowBackground(AppColors.background)
-                            ForEach(viewModel.quizes.matchingQuizes, id: \.id) { quiz in
-                                matchingCardView(for: quiz)
-                            }
-                            .listRowBackground(AppColors.background)
-                            ForEach(viewModel.quizes.alphabetQuizes, id: \.id) { quiz in alphabetCardView(for: quiz)}
-                            .listRowBackground(AppColors.background)
-                            
-                        }
-                        .onAppear {
-                            viewModel.loadQuizes()
-                        }
-                        .listStyle(PlainListStyle())
-                        .background(AppColors.background)
+                        quizList
                     }
                 }
-                .navigationTitle("Quizes")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(AppColors.background, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
                 .foregroundStyle(AppColors.textSecondary)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Quizzes")
+                            .font(.headline)
+                    
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                }
             }
             .accentColor(AppColors.card) // Sets navigation link and button colors
+            .onAppear {
+                viewModel.loadQuizes()
+            }
         }
     }
     
-    @ViewBuilder
-    private func bubblesCardView(for bubblesQuiz: BubblesQuizData) -> some View {
-        if bubblesQuiz.status.toString() == "Locked" {
-            BubblesQuizCard(bubblesQuiz: bubblesQuiz)
-                .opacity(0.6)
-        } else if bubblesQuiz.status.toString() == "InProgress" {
-            BubblesQuizCard(bubblesQuiz: bubblesQuiz)
-        } else if bubblesQuiz.status.toString() == "Completed" {
-            BubblesQuizCard(bubblesQuiz: bubblesQuiz)
-                .opacity(0.6)
-        } else if bubblesQuiz.status.toString() == "Failed" {
-            BubblesQuizCard(bubblesQuiz: bubblesQuiz)
-                .opacity(0.6)
-        }
-    }
-    
-    @ViewBuilder
-    private func matchingCardView(for matchingQuiz: MatchingQuizData) -> some View {
-        if matchingQuiz.status.toString() == "Locked" {
-            MatchingQuizCard(matchingQuiz: matchingQuiz)
-                .opacity(0.6)
-        } else if matchingQuiz.status.toString() == "InProgress" {
-            MatchingQuizCard(matchingQuiz: matchingQuiz)
-        } else if matchingQuiz.status.toString() == "Completed" {
-            MatchingQuizCard(matchingQuiz: matchingQuiz)
-                .opacity(0.6)
-        } else if matchingQuiz.status.toString() == "Failed" {
-            MatchingQuizCard(matchingQuiz: matchingQuiz)
-                .opacity(0.6)
-        }
-    }
-    
-    @ViewBuilder
-    private func alphabetCardView(for alphabetQuiz: AlphabetQuizData) -> some View {
-        if alphabetQuiz.status.toString() == "Locked" {
-            AlphabetQuizCard(alphabetQuiz: alphabetQuiz)
-                .opacity(0.6)
-        } else if alphabetQuiz.status.toString() == "InProgress" {
-            AlphabetQuizCard(alphabetQuiz: alphabetQuiz)
-        } else if alphabetQuiz.status.toString() == "Completed" {
-            AlphabetQuizCard(alphabetQuiz: alphabetQuiz)
-                .opacity(0.6)
-        } else if alphabetQuiz.status.toString() == "Failed" {
-            AlphabetQuizCard(alphabetQuiz: alphabetQuiz)
-                .opacity(0.6)
-        }
-    }
-    struct AlphabetQuizCard: View {
-        let alphabetQuiz: AlphabetQuizData
-        var body: some View {
+    private var quizList: some View {
+        List {
+            ForEach(viewModel.quizes.bubblesQuizes, id: \.id) { quiz in
+                quizCardView(for: .bubbles(quiz))
+            }
+            .listRowBackground(AppColors.background)
             
-            NavigationLink(destination: AlphabetExerciseView(
-                testStrings: alphabetQuiz.signs?.map { $0.text} ?? ["A", "B", "C", "D", "E"],
-                quizID: alphabetQuiz.id,
-                startSign: alphabetQuiz.signs?.first?.text ?? "A"
+            ForEach(viewModel.quizes.matchingQuizes, id: \.id) { quiz in
+                quizCardView(for: .matching(quiz))
+            }
+            .listRowBackground(AppColors.background)
+            
+            ForEach(viewModel.quizes.alphabetQuizes, id: \.id) { quiz in
+                quizCardView(for: .alphabet(quiz))
+            }
+            .listRowBackground(AppColors.background)
+        }
+
+        .listStyle(PlainListStyle())
+        .background(AppColors.background)
+    }
+    
+    @ViewBuilder
+    private func quizCardView(for quizType: QuizTypeWrapper) -> some View {
+        let status = quizType.status
+        let isDisabled = status == .Locked || status == .Failed || status == .Completed
+        
+        Group {
+            switch quizType {
+            case .bubbles(let quiz):
+                NavigationLink(destination: BubblesView(quiz: quiz)) {
+                    GenericQuizCard(
+                        title: quiz.title,
+                        type: quiz.type,
+                        status: quiz.status,
+                        score: quiz.score,
+                        livesRemaining: quiz.livesRemaining
+                    )
+                }
+                
+            case .matching(let quiz):
+                NavigationLink(destination: MatchingView(exercise: quiz)) {
+                    GenericQuizCard(
+                        title: quiz.title,
+                        type: quiz.type,
+                        status: quiz.status,
+                        score: quiz.score,
+                        livesRemaining: quiz.livesRemaining
+                    )
+                }
+                
+            case .alphabet(let quiz):
+                NavigationLink(destination: AlphabetExerciseView(
+                    testStrings: quiz.signs?.map { $0.text } ?? ["A", "B", "C", "D", "E"],
+                    quizID: quiz.id,
+                    startSign: quiz.signs?.first?.text ?? "A"
                 )) {
-                GenericQuizCard(
-                    title: alphabetQuiz.title,
-                    type: alphabetQuiz.type,
-                    status: alphabetQuiz.status,
-                    score: alphabetQuiz.score,
-                    livesRemaining: alphabetQuiz.livesRemaining
-                )
+                    GenericQuizCard(
+                        title: quiz.title,
+                        type: quiz.type,
+                        status: quiz.status,
+                        score: quiz.score,
+                        livesRemaining: quiz.livesRemaining
+                    )
+                }
             }
-            .buttonStyle(PlainButtonStyle())
-            .disabled(alphabetQuiz.status.toString() == "Locked" ||
-                      alphabetQuiz.status.toString() == "Failed" ||
-                      alphabetQuiz.status.toString() == "Completed")
         }
+        .buttonStyle(PlainButtonStyle())
+        .disabled(isDisabled)
+        .opacity(status == .Locked ? 0.6 : 1.0)
     }
-    struct BubblesQuizCard: View {
-        let bubblesQuiz: BubblesQuizData
-        
-        var body: some View {
-            NavigationLink(destination: BubblesView(quiz: bubblesQuiz)) {
-                GenericQuizCard(
-                    title: bubblesQuiz.title,
-                    type: bubblesQuiz.type,
-                    status: bubblesQuiz.status,
-                    score: bubblesQuiz.score,
-                    livesRemaining: bubblesQuiz.livesRemaining
-                )
-            }
-            .buttonStyle(PlainButtonStyle())
-            .disabled(bubblesQuiz.status.toString() == "Locked" ||
-                      bubblesQuiz.status.toString() == "Failed" ||
-                      bubblesQuiz.status.toString() == "Completed")
-        }
-    }
-    
-    struct MatchingQuizCard: View {
-        let matchingQuiz: MatchingQuizData
-        
-        var body: some View {
-            NavigationLink(destination: MatchingView(exercise: matchingQuiz)) {
-                GenericQuizCard(
-                    title: matchingQuiz.title,
-                    type: matchingQuiz.type,
-                    status: matchingQuiz.status,
-                    score: matchingQuiz.score,
-                    livesRemaining: matchingQuiz.livesRemaining
-                )
-            }
-            .buttonStyle(PlainButtonStyle())
-            .disabled(matchingQuiz.status.toString() == "Locked" ||
-                      matchingQuiz.status.toString() == "Failed" ||
-                      matchingQuiz.status.toString() == "Completed")
-        }
-    }
-    
-    struct QuizContainerView_Previews: PreviewProvider {
-        static var previews: some View {
-            QuizCatalogueView()
-        }
+}
+
+// Preview provider
+struct QuizContainerView_Previews: PreviewProvider {
+    static var previews: some View {
+        QuizCatalogueView()
     }
 }
