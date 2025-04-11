@@ -1,3 +1,4 @@
+import { targetModulesByContainer } from '@nestjs/core/router/router-module';
 import { Difficulty, PrismaClient, QuizType } from '@prisma/client';
 import { BadgeRarity, BadgeType } from '@prisma/client';
 import { title } from 'process';
@@ -12,6 +13,7 @@ const badgeData = [
     type: BadgeType.Level,
     icon: 'figure.step.training',
     description: 'Reach level 1 in your learning journey',
+    target: 10,
   },
   {
     name: 'Getting Started',
@@ -19,6 +21,7 @@ const badgeData = [
     type: BadgeType.Level,
     icon: 'flag.pattern.checkered',
     description: 'Reach level 5 in your learning journey',
+    target: 50,
   },
   {
     name: 'Steady Progress',
@@ -26,6 +29,7 @@ const badgeData = [
     type: BadgeType.Level,
     icon: 'figure.run.treadmill',
     description: 'Reach level 10 in your learning journey',
+    target: 100,
   },
   {
     name: 'Dedicated Learner',
@@ -33,6 +37,7 @@ const badgeData = [
     type: BadgeType.Level,
     icon: 'graduationcap',
     description: 'Reach level 25 in your learning journey',
+    target: 250,
   },
   {
     name: 'Master Signer',
@@ -40,6 +45,7 @@ const badgeData = [
     type: BadgeType.Level,
     icon: 'medal.fill',
     description: 'Reach level 50 in your learning journey',
+    target: 500,
   },
   {
     name: 'First Question',
@@ -47,6 +53,7 @@ const badgeData = [
     type: BadgeType.Question,
     icon: '1.circle',
     description: 'Answer your first question correctly',
+    target: 1
   },
   {
     name: 'Curious Mind',
@@ -54,6 +61,7 @@ const badgeData = [
     type: BadgeType.Question,
     icon: 'brain.head.profile',
     description: 'Answer 50 questions correctly',
+    target: 50
   },
   {
     name: 'Knowledge Seeker',
@@ -61,6 +69,7 @@ const badgeData = [
     type: BadgeType.Question,
     icon: 'sparkle.magnifyingglass',
     description: 'Answer 100 questions correctly',
+    target: 100
   },
   {
     name: 'Expert Answerer',
@@ -68,6 +77,7 @@ const badgeData = [
     type: BadgeType.Question,
     icon: 'medal.star',
     description: 'Answer 250 questions correctly',
+    target: 250
   },
   {
     name: 'Sign Language Master',
@@ -75,6 +85,7 @@ const badgeData = [
     type: BadgeType.Question,
     icon: 'crown.fill',
     description: 'Answer 500 questions correctly',
+    target: 500
   },
 ];
 
