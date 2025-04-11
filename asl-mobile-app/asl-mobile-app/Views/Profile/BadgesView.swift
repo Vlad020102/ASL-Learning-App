@@ -28,7 +28,10 @@ struct BadgesView: View {
                 GridItem(.flexible())
             ], spacing: 16) {
                 ForEach(badges) { badge in
-                    BadgeCard(badge: badge)
+                    NavigationLink(destination: BadgeDetailView(badge: badge)) {
+                        BadgeCard(badge: badge)
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }
