@@ -65,6 +65,7 @@ struct BadgeCard: View {
                     .frame(width: 40, height: 40)
                     .opacity(badge.status == "Locked" ? 0.5 : 1.0)
                     .symbolEffect(.scale, options: .speed(2), isActive: isEffectActive)
+                    .foregroundColor(.white)
                     .onTapGesture {
                         // Toggle the effect state when tapped
                         isEffectActive.toggle()
