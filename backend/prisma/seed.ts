@@ -1,7 +1,7 @@
 import { Difficulty, PrismaClient, QuizType } from '@prisma/client';
 import { BadgeRarity, BadgeType } from '@prisma/client';
-import { sign } from 'crypto';
-import { connect } from 'http2';
+import { title } from 'process';
+import { start } from 'repl';
 
 const prisma = new PrismaClient();
 
@@ -189,84 +189,171 @@ const quizData = [
         matchIndex: 2,
       }
     ]
+  },
+  {
+    type: QuizType.AlphabetStreak,
+    title: 'Basic Alphabet Streak Quiz',
   }
 ]
 
+const alphabet = [
+  "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+  "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+  "U", "V", "W", "X", "Y", "Z"
+]
+
 async function createBadges() {
-  for (const badge of badgeData) {
-    const createdBadge = await prisma.badge.create({
-      data: badge,
-    });
-    console.log(`Created badge with ID: ${createdBadge.id}`);
+  for (let i = 0; i < badgeData.length; i++) {
+    const badge = badgeData[i];
+    try {
+      const createdBadge = await prisma.badge.create({
+        data: {
+          id: i,
+          ...badge
+        }
+      });
+      console.log(`Created badge with ID: ${createdBadge.id}`)
+    }
+    catch (error) {
+      console.error(`Error creating badge with ID: ${i}`, error);
+    }
   }
+
 
   console.log('Seeding badges completed successfully');
 }
 
 async function createQuizes() {
-  for (const quiz of quizData) {
-    const createdQuiz = await prisma.quiz.create({
-      data: {
-        type: quiz.type,
-        title: quiz.title,
-      },
-    });
+  try {
+    for (let i = 0; i < quizData.length; i++) {
+      const quiz = quizData[i];
 
-    if (quiz.type === QuizType.Bubbles) {
-      for (const sign of quiz.signs) {
-        const createdSign = await prisma.sign.create({
-          data: {
-            difficulty: sign.difficulty,
-            text: sign.text,
-            s3Url: sign.s3Url,
-            options: sign.options,
+      if (quiz.type === QuizType.AlphabetStreak) {
+
+        for (let l = 0; l < 5; l++) {
+          const startIndex = l * 5;
+          const letters = alphabet.slice(startIndex, startIndex + 5);
+          if (startIndex == 20) {
+            letters.push("Z");
           }
+          try { 
+            let createdQuiz = await prisma.quiz.create({
+              data: {
+                type: quiz.type,
+                title: quiz.title + ` #${l + 1}`,
+              }
+            });
+            for (const letter of letters) {
+              const sign = await prisma.sign.create({
+                data: {
+                  text: letter,
+                  s3Url: `alphabet/${letter.toLowerCase()}`,
+                  difficulty: Difficulty.Easy
+                }
+              });
+              await prisma.quizSigns.create({
+                data: {
+                  quiz: {
+                    connect: {
+                      id: createdQuiz.id
+                    }
+                  },
+                  sign: {
+                    connect: {
+                      id: sign.id
+                    }
+                  }
+                }
+              });
+            }
+          } catch (error) {
+            console.error(`Error creating alphabet streak signs for quiz ${quiz.title}:`, error);
+          }
+        }
+        continue; 
+      }
+      try {
+        const createdQuiz = await prisma.quiz.create({
+          data: {
+            id: i,
+            type: quiz.type,
+            title: quiz.title,
+          },
         });
 
-        await prisma.quizSigns.create({
-          data: {
-            quiz: {
-              connect: {
-                id: createdQuiz.id
+
+        if (quiz.type === QuizType.Bubbles) {
+          for (let j = 0; j < quiz.signs.length; j++) {
+            const sign = quiz.signs[j];
+            const createdSign = await prisma.sign.create({
+              data: {
+                text: sign.text,
+                s3Url: sign.s3Url,
+                difficulty: sign.difficulty,
               }
-            },
-            sign: {
-              connect: {
-                id: createdSign.id
-              }
+            });
+            try {
+              await prisma.quizSigns.create({
+                data: {
+                  options: sign.options,
+                  quiz: {
+                    connect: {
+                      id: createdQuiz.id
+                    }
+                  },
+                  sign: {
+                    connect: {
+                      id: createdSign.id
+                    }
+                  }
+                }
+              });
+            } catch (error) {
+              console.error(`Error creating sign ${j} for quiz ${i}:`, error);
             }
           }
-        });
+        }
+
+        else if (quiz.type === QuizType.Matching) {
+          for (let k = 0; k < quiz.pairs.length; k++) {
+            try {
+              const pair = quiz.pairs[k];
+              const createdPair = await prisma.pair.create({
+                data: {
+                  id: k,
+                  text: pair.text,
+                  signGif: pair.signGif,
+                }
+              });
+
+              await prisma.quizPair.create({
+                data: {
+                  quiz: {
+                    connect: {
+                      id: createdQuiz.id
+                    }
+                  },
+                  pair: {
+                    connect: {
+                      id: createdPair.id
+                    }
+                  },
+                  matchIndex: pair.matchIndex,
+                }
+              });
+            } catch (error) {
+              console.error(`Error creating pair ${k} for quiz ${i}:`, error);
+            }
+          }
+        }
+        console.log(`Created quiz with ID: ${createdQuiz.id}`);
+      } catch (error) {
+        console.error(`Error creating quiz ${i}:`, error);
       }
     }
-
-    else if (quiz.type === QuizType.Matching) {
-      for (const pair of quiz.pairs) {
-        const createdPair = await prisma.pair.create({
-          data: {
-            text: pair.text,
-            signGif: pair.signGif,
-          }
-        });
-
-        await prisma.quizPair.create({
-          data: {
-            quiz: {
-              connect: {
-                id: createdQuiz.id
-              }
-            },
-            pair: {
-              connect: {
-                id: createdPair.id
-              }
-            },
-            matchIndex: pair.matchIndex,
-          }
-        });
-      }
-    }
-    console.log(`Created quiz with ID: ${createdQuiz.id}`);
+  } catch (error) {
+    console.error('Error in createQuizes function:', error);
+    throw error; // Re-throw the error to be caught by the main function
   }
 }
 

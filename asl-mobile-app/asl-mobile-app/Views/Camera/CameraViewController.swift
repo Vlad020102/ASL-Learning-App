@@ -124,48 +124,6 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         }
     }
     
-    func switchCamera() {
-            // Stop the current session
-            captureSession.stopRunning()
-            
-            // Remove existing inputs
-            if let currentInput = captureSession.inputs.first {
-                captureSession.removeInput(currentInput)
-            }
-            
-            // Get the appropriate camera device
-        let deviceType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera
-            
-        guard let videoDevice = AVCaptureDevice.default(deviceType, for: .video, position: .front) else {
-                return
-            }
-            do {
-                let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
-                
-                if captureSession.canAddInput(videoDeviceInput) {
-                    captureSession.addInput(videoDeviceInput)
-                    
-                    // Configure the preview layer for the selected camera
-                    if let connection = previewLayer.connection {
-                        connection.videoOrientation = .portrait
-                    }
-                    
-                    // Start the session
-                    DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                        self?.captureSession.startRunning()
-                    }
-                    
-                    // Update the hand landmark processing to account for camera type
-                    // This assumes your MediaPipe processing code is updated to handle the front camera flag\
-                    // You can also pass the camera type to the hand landmarker service
-                    setupHandLandmarker()
-                    
-                }
-            } catch {
-                print("Could not create video device input: \(error)")
-            }
-        }
-    
     func setupHandLandmarker() {
         print("Setting up hand landmarker")
         // You'll need to provide a path to the hand landmarker model

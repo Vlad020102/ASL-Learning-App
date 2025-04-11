@@ -70,7 +70,7 @@ model User {
 
 model Badge {
   id          Int         @id @default(autoincrement())
-  name        String
+  name        String      @unique
   rarity      BadgeRarity
   type        BadgeType
   icon        String
@@ -91,8 +91,8 @@ model UserBadge {
   progress Int         @default(0)
   status   BadgeStatus @default(Locked)
 
-  @@map("user_badges")
   @@unique([userID, badgeID])
+  @@map("user_badges")
 }
 
 model Lesson {
@@ -105,8 +105,7 @@ model Sign {
   id         Int        @id @default(autoincrement())
   difficulty Difficulty
   s3Url      String
-  text       String
-  options    String? //this field can be used only for the Bubble Quiz type
+  text       String     @unique
 
   quizes  QuizSigns[]
   phrases PhraseSign[]
@@ -115,10 +114,9 @@ model Sign {
 }
 
 model Quiz {
-  id    Int      @id @default(autoincrement())
-  title String
+  id    Int         @id @default(autoincrement())
+  title String      @unique
   type  QuizType
-
   signs QuizSigns[]
   pairs QuizPair[]
   users QuizUser[]
@@ -128,7 +126,7 @@ model Quiz {
 
 model Pair {
   id      Int    @id @default(autoincrement())
-  text    String
+  text    String @unique
   signGif String
 
   quizes QuizPair[]
@@ -137,7 +135,7 @@ model Pair {
 model Phrase {
   id         Int        @id @default(autoincrement())
   difficulty Difficulty
-  text       String
+  text       String     @unique
 
   signs PhraseSign[]
 
@@ -160,9 +158,10 @@ model QuizUser {
 }
 
 model QuizSigns {
-  id     Int @id @default(autoincrement())
-  quizID Int @map("quiz_id")
-  signID Int @map("sign_id")
+  id      Int     @id @default(autoincrement())
+  quizID  Int     @map("quiz_id")
+  signID  Int     @map("sign_id")
+  options String? //this field can be used only for the Bubble Quiz type
 
   quiz Quiz @relation(fields: [quizID], references: [id])
   sign Sign @relation(fields: [signID], references: [id])

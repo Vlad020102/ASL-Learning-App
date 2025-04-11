@@ -4,14 +4,13 @@
 //
 //  Created by Rares Achim on 24.03.2025.
 //
-
+import Foundation
 extension NetworkService {
     func getQuiz(completion: @escaping (Result<QuizResponse, Error>) -> Void) {
         authenticatedRequest(
             endpoint: "quizes",
             method: .get)
         { (result: Result<QuizResponse, NetworkError>) in
-            print(result)
             switch result {
             case .success(let response):
                 completion(.success(response))
@@ -35,21 +34,21 @@ extension NetworkService {
             }
         }
     }
-            
-            
 }
 
 enum QuizType: String, Codable {
     case Bubbles
     case Matching
-    /*Matching, VideoText, VideoAudio, AlphabetStreak*/
-    // Can add more types in the future like image, text, etc.
+    case AlphabetStreak
+    
     func toString() -> String {
         switch self {
         case .Bubbles:
             return "Bubbles"
         case .Matching:
             return "Matching"
+        case .AlphabetStreak:
+            return "Alphabet"
         }
     }
 }
@@ -58,19 +57,18 @@ enum QuizStatus: String, Codable {
     case Completed, InProgress, Failed, Locked
     
     func toString() -> String {
-        switch self {
-        case .Completed:
-            return "Completed"
-        case .InProgress:
-            return "InProgress"
-        case .Failed:
-            return "Failed"
-        case .Locked:
-            return "Locked"
-        }
+        rawValue
     }
 }
 
+protocol QuizCardDisplayable {
+    var id: Int { get }
+    var title: String { get }
+    var type: QuizType { get }
+    var status: QuizStatus { get }
+    var score: Double { get }
+    var livesRemaining: Int { get }
+}
 
 struct QuizResponse: Codable {
     let quizes: QuizData
@@ -79,9 +77,10 @@ struct QuizResponse: Codable {
 struct QuizData: Codable {
     let bubblesQuizes: [BubblesQuizData]
     let matchingQuizes: [MatchingQuizData]
+    let alphabetQuizes: [AlphabetQuizData]
 }
 
-struct BubblesQuizData: Codable {
+struct BubblesQuizData: Codable, QuizCardDisplayable {
     let id: Int
     let title: String
     let type: QuizType
@@ -110,7 +109,7 @@ struct CompleteQuizResponse: Codable {
     let status: String
 }
 
-struct MatchingQuizData: Codable {
+struct MatchingQuizData: Codable, QuizCardDisplayable {
     let id: Int
     let title: String
     let type: QuizType
@@ -120,10 +119,20 @@ struct MatchingQuizData: Codable {
     let pairs: [MatchingPair]
 }
 
+struct AlphabetQuizData: Codable, QuizCardDisplayable {
+    let id: Int
+    let title: String
+    let type: QuizType
+    let status: QuizStatus
+    let score: Double
+    let livesRemaining: Int
+    let signs: [Sign]?
+}
+
 struct MatchingPair: Codable {
     let signGif: String
     let text: String
-    let matchIndex: Int  // Indicates the correct matching index
+    let matchIndex: Int
 }
 
 enum CompletionStatus: Codable {
@@ -138,13 +147,16 @@ struct CompleteExerciseData: Codable {
     let status: CompletionStatus
 }
 
-
-struct QuizCardData: Codable {
-    let id: Int
-    let title: String
-    let type: QuizType
-    let status: QuizStatus
-    let score: Double
-    let livesRemaining: Int
-}
+enum QuizTypeWrapper {
+    case bubbles(BubblesQuizData)
+    case matching(MatchingQuizData)
+    case alphabet(AlphabetQuizData)
     
+    var status: QuizStatus {
+        switch self {
+        case .bubbles(let quiz): return quiz.status
+        case .matching(let quiz): return quiz.status
+        case .alphabet(let quiz): return quiz.status
+        }
+    }
+}
