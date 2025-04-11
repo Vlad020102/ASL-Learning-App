@@ -54,6 +54,7 @@ export class QuizesService {
                 signs: {
                   select: {
                     sign: true,
+                    options: true,
                   }
                 },
                 pairs: {
@@ -74,7 +75,7 @@ export class QuizesService {
         },
       },
     });
-
+    console.log(userQuizes);
     return {
       "quizes": {
         "bubblesQuizes": userQuizes?.quizzes.filter((quiz) => quiz.quiz.type === QuizType.Bubbles).map((quiz) => {
@@ -85,7 +86,12 @@ export class QuizesService {
             status: quiz.status,
             score: quiz.score,
             livesRemaining: quiz.livesRemaining,
-            signs: quiz.quiz.signs.map((sign) => sign.sign),
+            signs: quiz.quiz.signs.map((sign) => {
+              return {
+                ...sign.sign,
+                options: sign.options
+              }
+            }),
           }
         }),
 
@@ -103,6 +109,23 @@ export class QuizesService {
                 text: pair.pair.text,
                 signGif: pair.pair.signGif,
                 matchIndex: pair.matchIndex,
+              }
+            }),
+          }
+        }),
+
+        "alphabetQuizes": userQuizes?.quizzes.filter((quiz) => quiz.quiz.type === QuizType.AlphabetStreak).map((quiz) => {
+          return {
+            id: quiz.quiz.id,
+            title: quiz.quiz.title,
+            type: quiz.quiz.type,
+            status: quiz.status,
+            score: quiz.score,
+            livesRemaining: quiz.livesRemaining,
+            signs: quiz.quiz.signs.map((sign) => {
+              return {
+                ...sign.sign,
+                options: sign.options
               }
             }),
           }

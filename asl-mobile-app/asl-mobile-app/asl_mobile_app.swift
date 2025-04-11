@@ -25,7 +25,8 @@ struct RootView: View {
     var body: some View {
         Group {
             if authManager.isAuthenticated {
-                AlphabetExerciseView(testStrings: ["Hello", "Goodbye", "Please", "Thank you", "Sorry"], targetSign: "Hello")
+//                AlphabetExerciseView(testStrings: ["Hello", "Goodbye", "Please", "Thank you", "Sorry"], targetSign: "Hello")
+                ContentView()
                                         
             } else {
                 HomeView()
