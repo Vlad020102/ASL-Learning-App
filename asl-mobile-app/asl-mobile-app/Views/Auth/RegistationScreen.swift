@@ -83,97 +83,94 @@ struct RegistrationView: View {
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                if navigateToHome {
-                    HomeView()
-                } else {
-                    VStack {
-                        // Progress indicator
-                        GeometryReader { geometry in
-                            ZStack(alignment: .leading) {
-                                Rectangle()
-                                    .foregroundColor(AppColors.disabledBackground)
-                                    .frame(width: geometry.size.width, height: 8)
-                                
-                                Rectangle()
-                                    .foregroundColor(AppColors.primary)
-                                    .frame(width: geometry.size.width * registrationViewModel.progressPercentage, height: 8)
-                            }
-                            .clipShape(Capsule())
+        ZStack {
+            if navigateToHome {
+                HomeView()
+            } else {
+                VStack {
+                    // Progress indicator
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            Rectangle()
+                                .foregroundColor(AppColors.disabledBackground)
+                                .frame(width: geometry.size.width, height: 8)
+                            
+                            Rectangle()
+                                .foregroundColor(AppColors.primary)
+                                .frame(width: geometry.size.width * registrationViewModel.progressPercentage, height: 8)
                         }
-                        .frame(height: 8)
-                        .padding(.horizontal)
-                        
-                        // Current step view
-                        switch registrationViewModel.currentStep {
-                        case 1:
-                            CredentialsView(registrationViewModel: registrationViewModel)
-                        case 2:
-                            SourceView(registrationViewModel: registrationViewModel)
-                        case 3:
-                            DailyGoalView(registrationViewModel: registrationViewModel)
-                        case 4:
-                            ReasonView(registrationViewModel: registrationViewModel)
-                        case 5:
-                            ExperienceView(registrationViewModel: registrationViewModel)
-                        default:
-                            Text("Error: Unknown step")
-                        }
-                        
-                        Spacer()
-                        
-                        // Continue button
-                        Button(action: {
-                            if registrationViewModel.currentStep < registrationViewModel.maxSteps {
-                                withAnimation {
-                                    registrationViewModel.currentStep += 1
-                                }
-                            } else {
-                                registrationViewModel.register()
-                            }
-                        }) {
-                            Text("CONTINUE")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(AppColors.primary)
-                                .foregroundColor(AppColors.textSecondary)
-                                .bold(true)
-                                .cornerRadius(10)
-                        }
-                        .padding()
+                        .clipShape(Capsule())
                     }
-                    .navigationBarItems(leading: 
+                    .frame(height: 8)
+                    .padding(.horizontal)
+                    
+                    // Current step view
+                    switch registrationViewModel.currentStep {
+                    case 1:
+                        CredentialsView(registrationViewModel: registrationViewModel)
+                    case 2:
+                        SourceView(registrationViewModel: registrationViewModel)
+                    case 3:
+                        DailyGoalView(registrationViewModel: registrationViewModel)
+                    case 4:
+                        ReasonView(registrationViewModel: registrationViewModel)
+                    case 5:
+                        ExperienceView(registrationViewModel: registrationViewModel)
+                    default:
+                        Text("Error: Unknown step")
+                    }
+                    
+                    Spacer()
+                    
+                    // Continue button
+                    Button(action: {
+                        if registrationViewModel.currentStep < registrationViewModel.maxSteps {
+                            withAnimation {
+                                registrationViewModel.currentStep += 1
+                            }
+                        } else {
+                            registrationViewModel.register()
+                        }
+                    }) {
+                        Text("CONTINUE")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(AppColors.primary)
+                            .foregroundColor(AppColors.textSecondary)
+                            .bold(true)
+                            .cornerRadius(10)
+                    }
+                    .padding()
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
                             if registrationViewModel.currentStep > 1 {
                                 withAnimation {
                                     registrationViewModel.currentStep -= 1
                                 }
+                            } else {
+                                presentationMode.wrappedValue.dismiss()
                             }
                         }) {
                             Image(systemName: "chevron.left")
-                                .foregroundColor(.gray)
+                                .foregroundColor(AppColors.accent2)
+                                .imageScale(.large)
                         }
-                        .opacity(registrationViewModel.currentStep > 1 ? 1.0 : 0.0)
-                    )
+                    }
                 }
             }
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading: Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(AppColors.accent2)
-                    .imageScale(.large)
-            })
-            .navigationViewStyle(StackNavigationViewStyle())
-            .navigationBarTitleDisplayMode(.inline)
-            .background(AppColors.background)
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
+        .background(AppColors.background)
+        // Force hiding of back button with empty title
+        .navigationTitle("")
     }
 }
+
 
 struct CredentialsView: View {
     @ObservedObject var registrationViewModel: RegistrationViewModel

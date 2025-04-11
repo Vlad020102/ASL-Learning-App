@@ -1,3 +1,4 @@
+import { targetModulesByContainer } from '@nestjs/core/router/router-module';
 import { Difficulty, PrismaClient, QuizType } from '@prisma/client';
 import { BadgeRarity, BadgeType } from '@prisma/client';
 import { title } from 'process';
@@ -10,71 +11,81 @@ const badgeData = [
     name: 'First Steps',
     rarity: BadgeRarity.Bronze,
     type: BadgeType.Level,
-    icon: 'level_bronze_1',
+    icon: 'figure.step.training',
     description: 'Reach level 1 in your learning journey',
+    target: 10,
   },
   {
     name: 'Getting Started',
     rarity: BadgeRarity.Bronze,
     type: BadgeType.Level,
-    icon: 'level_bronze_5',
+    icon: 'flag.pattern.checkered',
     description: 'Reach level 5 in your learning journey',
+    target: 50,
   },
   {
     name: 'Steady Progress',
     rarity: BadgeRarity.Silver,
     type: BadgeType.Level,
-    icon: 'level_silver_10',
+    icon: 'figure.run.treadmill',
     description: 'Reach level 10 in your learning journey',
+    target: 100,
   },
   {
     name: 'Dedicated Learner',
     rarity: BadgeRarity.Silver,
     type: BadgeType.Level,
-    icon: 'level_silver_25',
+    icon: 'graduationcap',
     description: 'Reach level 25 in your learning journey',
+    target: 250,
   },
   {
     name: 'Master Signer',
     rarity: BadgeRarity.Gold,
     type: BadgeType.Level,
-    icon: 'level_gold_50',
+    icon: 'medal.fill',
     description: 'Reach level 50 in your learning journey',
+    target: 500,
   },
   {
     name: 'First Question',
     rarity: BadgeRarity.Bronze,
     type: BadgeType.Question,
-    icon: 'question_bronze_1',
+    icon: '1.circle',
     description: 'Answer your first question correctly',
+    target: 1
   },
   {
     name: 'Curious Mind',
     rarity: BadgeRarity.Bronze,
     type: BadgeType.Question,
-    icon: 'question_bronze_50',
+    icon: 'brain.head.profile',
     description: 'Answer 50 questions correctly',
+    target: 50
   },
   {
     name: 'Knowledge Seeker',
     rarity: BadgeRarity.Silver,
     type: BadgeType.Question,
-    icon: 'question_silver_100',
+    icon: 'sparkle.magnifyingglass',
     description: 'Answer 100 questions correctly',
+    target: 100
   },
   {
     name: 'Expert Answerer',
     rarity: BadgeRarity.Silver,
     type: BadgeType.Question,
-    icon: 'question_silver_250',
+    icon: 'medal.star',
     description: 'Answer 250 questions correctly',
+    target: 250
   },
   {
     name: 'Sign Language Master',
     rarity: BadgeRarity.Gold,
     type: BadgeType.Question,
-    icon: 'question_gold_500',
+    icon: 'crown.fill',
     description: 'Answer 500 questions correctly',
+    target: 500
   },
 ];
 

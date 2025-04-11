@@ -7,7 +7,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { QuizStatus, User } from '@prisma/client';
+import { QuizStatus, QuizType, User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -69,6 +69,7 @@ export class UsersService {
                 icon: true,
                 type: true,
                 rarity: true,
+                target: true,
               },
             },
           }
@@ -180,5 +181,68 @@ export class UsersService {
     }
   }
 
+  async updateUserLevel(user: User, score: number, livesRemaining: number, quizId: number) {
+    const quiz = await this.prisma.quiz.findUnique({
+      where: {
+        id: quizId,
+      },
+      select: {
+        type: true,
+        title: true,
+      }
+    });
+    if (!quiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+
+    const quizDifficulty = quiz.title.includes("Basic") ? 1 : quiz.title.includes("Advanced") ? 2 : 3;
+    const amount = await this.computeLevelAmount(score, livesRemaining, quiz.type, quizDifficulty)
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        level_progress: {
+          increment: amount,
+        }
+      },
+      select: {
+        level: true,
+        level_progress: true,
+      }
+    });
+
+    return await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        level: updatedUser.level_progress / 10
+      }
+    });
+  }
+
+  async updateUserQuestionsAnswered(user: User) {
+    return await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        questionsAnsweredTotal: {
+          increment: 5,
+        }
+      }
+    });
+  }
+
+  private async computeLevelAmount(score: number, livesRemaining: number, quizType: QuizType, quizDifficulty: number) {
+    let amount = 0;
+    if (quizType === QuizType.Bubbles) {
+      amount = Math.floor(score * (livesRemaining + 1) * quizDifficulty);
+    } else if (quizType === QuizType.Matching) {
+      amount = Math.floor(score * (livesRemaining + 1) * quizDifficulty)
+    }    
+    return amount;
+  }
 }
 

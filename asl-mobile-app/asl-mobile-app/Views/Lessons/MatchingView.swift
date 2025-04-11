@@ -138,7 +138,7 @@ struct MatchingView: View {
             handleLeftSelection(index)
         }) {
             GIFView(
-                gifName: exercise.pairs[index].signGif,
+                gifName: exercise.pairs[index].signGif
             )
             .frame(width: itemSize, height: itemSize)
             .cornerRadius(8)

@@ -16,4 +16,5 @@ struct Badge: Codable, Identifiable {
     let rarity: String
     let progress: Int
     let status: String
+    let target: Int
 }
