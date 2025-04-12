@@ -59,7 +59,11 @@ struct ProfileView: View {
                         })
                     } else {
                         ProfileHeaderView(username: viewModel.user?.username ?? "", email: viewModel.user?.email ?? "", createdAt: viewModel.user?.createdAt ?? Date())
-                        StatisticsView(level: viewModel.user?.level ?? 0, questionsAnsweredTotal: viewModel.user?.questionsAnsweredTotal ?? 0, questionsAnsweredToday: viewModel.user?.questionsAnsweredToday ?? 0, streak: viewModel.user?.streak ?? 0, dailyGoal: viewModel.user?.dailyGoal ?? 5)
+                        StatisticsView(
+                            level: viewModel.user?.level ?? 0,
+                            levelProgress: viewModel.user?.level_progress ?? 0,
+                            questionsAnsweredTotal: viewModel.user?.questionsAnsweredTotal ?? 0, questionsAnsweredToday: viewModel.user?.questionsAnsweredToday ?? 0, streak: viewModel.user?.streak ?? 0,
+                            dailyGoal: viewModel.user?.dailyGoal ?? 5)
                         
                         VStack(alignment: .leading) {
                             HStack {

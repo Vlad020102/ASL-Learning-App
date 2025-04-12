@@ -8,6 +8,7 @@ struct User: Codable {
     let dailyGoal: Int
     let learningReason: String
     let level: Int
+    let level_progress: Double
     let questionsAnsweredTotal: Int
     let questionsAnsweredToday: Int
     let streak: Int
@@ -23,6 +24,7 @@ struct User: Codable {
         dailyGoal = try container.decode(Int.self, forKey: .dailyGoal)
         learningReason = try container.decode(String.self, forKey: .learningReason)
         level = try container.decode(Int.self, forKey: .level)
+        level_progress = try container.decode(Double.self, forKey: .level_progress)
         questionsAnsweredTotal = try container.decode(Int.self, forKey: .questionsAnsweredTotal)
         questionsAnsweredToday = try container.decode(Int.self, forKey: .questionsAnsweredToday)
         streak = try container.decode(Int.self, forKey: .streak)
