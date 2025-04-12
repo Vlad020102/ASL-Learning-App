@@ -16,7 +16,13 @@ struct AllBadgesView: View {
                 .background(Color.clear)
                 .padding()
         }
-        .navigationTitle("All Badges")
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("All Badges")
+                    .font(.headline)
+                    .foregroundColor(AppColors.textSecondary)
+            }
+        }
         .background(AppColors.background)
     }
 }

@@ -11,7 +11,12 @@ struct BadgesView: View {
     let title: String
     
     init(badges: [Badge], title: String = "Badges") {
-        self.badges = badges
+        self.badges = badges.sorted { badge1, badge2 in
+            let rarityOrder: [String: Int] = ["Bronze": 0, "Silver": 1, "Gold": 2]
+            let value1 = rarityOrder[badge1.rarity] ?? 3
+            let value2 = rarityOrder[badge2.rarity] ?? 3
+            return value1 < value2
+        }
         self.title = title
     }
     
@@ -46,9 +51,9 @@ struct BadgeCard: View {
     
     var rarityColor: Color {
         switch badge.rarity {
-        case "Bronze": return .brown
-        case "Silver": return .gray
-        case "Gold": return .yellow
+        case "Bronze": return Color(hex: "CD7F32")
+        case "Silver": return Color(hex: "C4C4C4")
+        case "Gold": return Color(hex: "EFBF04")
         default: return .gray
         }
     }
@@ -68,7 +73,7 @@ struct BadgeCard: View {
                     .frame(width: 40, height: 40)
                     .opacity(badge.status == "Locked" ? 0.5 : 1.0)
                     .symbolEffect(.scale, options: .speed(2), isActive: isEffectActive)
-                    .foregroundColor(.white)
+                    .foregroundColor(rarityColor)
                     .onTapGesture {
                         // Toggle the effect state when tapped
                         isEffectActive.toggle()
