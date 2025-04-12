@@ -36,7 +36,7 @@
 		02B5F25C2D9D927000B61D9F /* how-are-you.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "how-are-you.gif"; sourceTree = "<group>"; };
 		03F33B210E48AEAF80E1EDF1 /* Pods-asl-mobile-appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-appTests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-appTests/Pods-asl-mobile-appTests.release.xcconfig"; sourceTree = "<group>"; };
 		18A39A6EFAEB837D5B2AFC9F /* Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; sourceTree = "<group>"; };
-		3578E30A2D62406D003660F8 /* asl-mobile-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "asl-mobile-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3578E30A2D62406D003660F8 /* ASLearning.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ASLearning.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3578E31A2D62406E003660F8 /* asl-mobile-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "asl-mobile-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3578E3242D62406E003660F8 /* asl-mobile-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "asl-mobile-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41CCD7C4AF565285F9DE6CBA /* Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -119,7 +119,7 @@
 		3578E30B2D62406D003660F8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3578E30A2D62406D003660F8 /* asl-mobile-app.app */,
+				3578E30A2D62406D003660F8 /* ASLearning.app */,
 				3578E31A2D62406E003660F8 /* asl-mobile-appTests.xctest */,
 				3578E3242D62406E003660F8 /* asl-mobile-appUITests.xctest */,
 			);
@@ -171,7 +171,7 @@
 			);
 			name = "asl-mobile-app";
 			productName = "asl-mobile-app";
-			productReference = 3578E30A2D62406D003660F8 /* asl-mobile-app.app */;
+			productReference = 3578E30A2D62406D003660F8 /* ASLearning.app */;
 			productType = "com.apple.product-type.application";
 		};
 		3578E3192D62406E003660F8 /* asl-mobile-appTests */ = {
@@ -563,16 +563,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"asl-mobile-app/Preview Content\"";
-				DEVELOPMENT_TEAM = SW8PV68P39;
+				DEVELOPMENT_TEAM = 3F74QMWA5M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = ASLearning;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app uses the camera for the gesture recognition feature ";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0.1;
@@ -582,7 +585,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app-1";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ASLearning;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -595,16 +598,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"asl-mobile-app/Preview Content\"";
-				DEVELOPMENT_TEAM = SW8PV68P39;
+				DEVELOPMENT_TEAM = 3F74QMWA5M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = ASLearning;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app uses the camera for the gesture recognition feature ";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0.1;
@@ -614,7 +620,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app-1";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ASLearning;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -10,16 +10,26 @@ import SwiftUI
 struct StatisticsView: View {
     @State private var showingStreakCalendar = false
     var level: Int
+    var levelProgress: Double
     var questionsAnsweredTotal: Int
     var questionsAnsweredToday: Int
     var streak: Int
     var dailyGoal: Int
+    
+    private var totalPointsForLevel: Int {
+        return 10 * (level + 1) // Level 3 needs 40 points, Level 4 needs 50 points
+    }
+    
+    private var progressPercentage: Double {
+        return min(levelProgress / Double(totalPointsForLevel), 1.0)
+    }
+    
     var body: some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
-                StatCard(icon: "rosette", iconColor: .orange, value: String(questionsAnsweredTotal), label: "Total Questions Answered")
+                LevelStatCard(icon: "star.circle.fill", iconColor: AppColors.accent1, level: level, progress: levelProgress, totalPoints: totalPointsForLevel)
                 
-                StatCard(icon: "bolt.fill", iconColor: .yellow, value: String(level), label: "Current Level")
+                StatCard(icon: "rosette", iconColor: .orange, value: String(questionsAnsweredTotal), label: "Total Questions Answered")
             }
             
             HStack(spacing: 10) {
@@ -52,6 +62,68 @@ struct StatisticsView: View {
     }
 }
 
+struct LevelStatCard: View {
+    var icon: String
+    var iconColor: Color
+    var level: Int
+    var progress: Double
+    var totalPoints: Int
+    
+    init(icon: String, iconColor: Color, level: Int, progress: Double, totalPoints: Int) {
+        self.icon = icon
+        self.iconColor = iconColor
+        self.level = level
+        self.progress = progress.truncatingRemainder(dividingBy: 10.0)
+        self.totalPoints = totalPoints
+    }
+    var progressPercentage: Double {
+        return min(progress / 10.0, 1.0)
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(iconColor)
+                    .font(.system(size: 18))
+                
+                Text("Level \(String(level))")
+                    .font(.system(size: 18, weight: .bold))
+                
+                Spacer()
+            }
+            
+            Text("Progress: \(Int(progress)) / 10")
+                .font(.caption)
+                .foregroundColor(.gray)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                ProgressView(value: progressPercentage)
+                    .progressViewStyle(LinearProgressViewStyle(tint: AppColors.accent1))
+                    .frame(height: 6)
+                
+                HStack {
+                    Text("\(level)")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    Spacer()
+                    
+                    Text("\(level+1)")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .fontWeight(.semibold)
+                }
+            }
+            .padding(.top, 2)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppColors.accent3)
+        .cornerRadius(10)
+    }
+}
+
 struct StatCard: View {
     var icon: String
     var iconColor: Color
@@ -74,6 +146,8 @@ struct StatCard: View {
             Text(label)
                 .font(.caption)
                 .foregroundColor(.gray)
+                
+            Spacer() // Add spacer to push content to the top
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)

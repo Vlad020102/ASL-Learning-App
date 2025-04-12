@@ -25,7 +25,7 @@ export class AuthService {
       return null;
     }
 
-    const { password: excludedPassword, id: excludedId, ...result } = user;
+    const { password: excludedPassword, ...result } = user;
     return result;
   }
 
