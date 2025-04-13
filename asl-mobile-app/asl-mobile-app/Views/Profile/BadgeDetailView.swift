@@ -12,9 +12,9 @@ struct BadgeDetailView: View {
     
     var rarityColor: Color {
         switch badge.rarity {
-        case "Bronze": return Color(hex: "CD7F32")
-        case "Silver": return Color(hex: "C4C4C4")
-        case "Gold": return Color(hex: "EFBF04")
+        case "Bronze": return .bronze
+        case "Silver": return .silver
+        case "Gold": return .gold
         default: return .gray
         }
     }
@@ -45,14 +45,14 @@ struct BadgeDetailView: View {
                         .font(.body)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AppColors.accent3)
+                        .background(.accent3)
                         .cornerRadius(10)
                     
                     // Progress Section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Progress")
                             .font(.headline)
-                            .foregroundColor(AppColors.secondary)
+                            .foregroundColor(.secondary)
                         
                         Text("\(badge.progress) / 100")
                             .font(.subheadline)
@@ -62,14 +62,14 @@ struct BadgeDetailView: View {
                             .padding(.vertical, 5)
                     }
                     .padding()
-                    .background(AppColors.accent3)
+                    .background(.accent3)
                     .cornerRadius(10)
                 }
                 .padding(.horizontal)
             }
             .padding(.vertical)
         }
-        .background(AppColors.background)
+        .background(Color.background)
     }
 }
 
@@ -86,7 +86,7 @@ struct ProgressBar: View {
                 
                 Rectangle()
                     .frame(width: min(CGFloat(self.progress) * geometry.size.width, geometry.size.width), height: geometry.size.height)
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
             }
             .cornerRadius(45)
         }

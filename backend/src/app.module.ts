@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { BadgesModule } from './badges/badges.module';
 import { QuizesModule } from './quizes/quizes.module';
+// import { PhrasesModule } from './phrases/phrases.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { QuizesModule } from './quizes/quizes.module';
     BadgesModule,
     PrismaModule,
     QuizesModule,
+    // PhrasesModule,
   ],
   controllers: [],
   providers: [],

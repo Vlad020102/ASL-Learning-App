@@ -14,9 +14,9 @@
             buildForArchiving = "YES"
             buildForAnalyzing = "YES">
             <BuildableReference
-               BuildableIdentifier = "primary"
+               BuildableIdentifier = "main"
                BlueprintIdentifier = "3578E3092D62406D003660F8"
-               BuildableName = "ASLearning.app"
+               BuildableName = "asl-mobile-app.app"
                BlueprintName = "asl-mobile-app"
                ReferencedContainer = "container:asl-mobile-app.xcodeproj">
             </BuildableReference>
@@ -34,7 +34,7 @@
             skipped = "NO"
             parallelizable = "YES">
             <BuildableReference
-               BuildableIdentifier = "primary"
+               BuildableIdentifier = "main"
                BlueprintIdentifier = "3578E3192D62406E003660F8"
                BuildableName = "asl-mobile-appTests.xctest"
                BlueprintName = "asl-mobile-appTests"
@@ -45,7 +45,7 @@
             skipped = "NO"
             parallelizable = "YES">
             <BuildableReference
-               BuildableIdentifier = "primary"
+               BuildableIdentifier = "main"
                BlueprintIdentifier = "3578E3232D62406E003660F8"
                BuildableName = "asl-mobile-appUITests.xctest"
                BlueprintName = "asl-mobile-appUITests"
@@ -67,9 +67,9 @@
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
-            BuildableIdentifier = "primary"
+            BuildableIdentifier = "main"
             BlueprintIdentifier = "3578E3092D62406D003660F8"
-            BuildableName = "ASLearning.app"
+            BuildableName = "asl-mobile-app.app"
             BlueprintName = "asl-mobile-app"
             ReferencedContainer = "container:asl-mobile-app.xcodeproj">
          </BuildableReference>
@@ -84,9 +84,9 @@
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
-            BuildableIdentifier = "primary"
+            BuildableIdentifier = "main"
             BlueprintIdentifier = "3578E3092D62406D003660F8"
-            BuildableName = "ASLearning.app"
+            BuildableName = "asl-mobile-app.app"
             BlueprintName = "asl-mobile-app"
             ReferencedContainer = "container:asl-mobile-app.xcodeproj">
          </BuildableReference>

@@ -75,7 +75,6 @@ export class QuizesService {
         },
       },
     });
-    console.log(userQuizes);
     return {
       "quizes": {
         "bubblesQuizes": userQuizes?.quizzes.filter((quiz) => quiz.quiz.type === QuizType.Bubbles).map((quiz) => {

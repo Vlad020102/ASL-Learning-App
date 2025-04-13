@@ -92,11 +92,11 @@ struct RegistrationView: View {
                     GeometryReader { geometry in
                         ZStack(alignment: .leading) {
                             Rectangle()
-                                .foregroundColor(AppColors.disabledBackground)
+                                .foregroundColor(.disabledBackground)
                                 .frame(width: geometry.size.width, height: 8)
                             
                             Rectangle()
-                                .foregroundColor(AppColors.primary)
+                                .foregroundColor(.main)
                                 .frame(width: geometry.size.width * registrationViewModel.progressPercentage, height: 8)
                         }
                         .clipShape(Capsule())
@@ -137,8 +137,8 @@ struct RegistrationView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(AppColors.primary)
-                            .foregroundColor(AppColors.textSecondary)
+                            .background(.main)
+                            .foregroundColor(.textSecondary)
                             .bold(true)
                             .cornerRadius(10)
                     }
@@ -156,7 +156,7 @@ struct RegistrationView: View {
                             }
                         }) {
                             Image(systemName: "chevron.left")
-                                .foregroundColor(AppColors.accent2)
+                                .foregroundColor(.accent2)
                                 .imageScale(.large)
                         }
                     }
@@ -165,7 +165,7 @@ struct RegistrationView: View {
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
-        .background(AppColors.background)
+        .background(Color.background)
         // Force hiding of back button with empty title
         .navigationTitle("")
     }
@@ -183,7 +183,7 @@ struct CredentialsView: View {
                 .multilineTextAlignment(.center)
                 .padding(.top, 30)
                 .padding(.horizontal)
-                .foregroundColor(AppColors.primary)
+                .foregroundColor(.main)
             Spacer()
             
             ScrollView {
@@ -192,7 +192,7 @@ struct CredentialsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Email")
                             .font(.headline)
-                            .foregroundColor(AppColors.accent3)
+                            .foregroundColor(.accent3)
                         
                         TextField("Enter your email", text: $registrationViewModel.email)
                             .padding()
@@ -214,7 +214,7 @@ struct CredentialsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Username")
                             .font(.headline)
-                            .foregroundColor(AppColors.accent3)
+                            .foregroundColor(.accent3)
                         
                         TextField("Choose a username", text: $registrationViewModel.username)
                             .padding()
@@ -235,7 +235,7 @@ struct CredentialsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Password")
                             .font(.headline)
-                            .foregroundColor(AppColors.accent3)
+                            .foregroundColor(.accent3)
                         
                         HStack {
                             if registrationViewModel.showPassword {
@@ -252,7 +252,7 @@ struct CredentialsView: View {
                                 registrationViewModel.showPassword.toggle()
                             }) {
                                 Image(systemName: registrationViewModel.showPassword ? "eye.slash" : "eye")
-                                    .foregroundColor(AppColors.accent1)
+                                    .foregroundColor(.accent1)
                             }
                             .padding(.trailing)
                         }
@@ -272,7 +272,7 @@ struct CredentialsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Confirm Password")
                             .font(.headline)
-                            .foregroundColor(AppColors.accent3)
+                            .foregroundColor(.accent3)
                         
                         HStack {
                             if registrationViewModel.showConfirmPassword {
@@ -289,7 +289,7 @@ struct CredentialsView: View {
                                 registrationViewModel.showConfirmPassword.toggle()
                             }) {
                                 Image(systemName: registrationViewModel.showConfirmPassword ? "eye.slash" : "eye")
-                                    .foregroundColor(AppColors.accent1)
+                                    .foregroundColor(.accent1)
                             }
                             .padding(.trailing)
                         }
@@ -334,7 +334,7 @@ struct SourceView: View {
                 .multilineTextAlignment(.center)
                 .padding(.top, 50)
                 .padding(.horizontal)
-                .foregroundColor(AppColors.primary)
+                .foregroundColor(.main)
             
             ScrollView {
                 VStack(spacing: 0) {
@@ -347,17 +347,17 @@ struct SourceView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 24, height: 24)
-                                    .foregroundColor(AppColors.accent1)
+                                    .foregroundColor(.accent1)
                                 
                                 Text(source)
                                     .font(.headline)
-                                    .foregroundColor(AppColors.accent3)
+                                    .foregroundColor(.accent3)
                                 
                                 Spacer()
                                 
                                 if registrationViewModel.source == source {
                                     Image(systemName: "checkmark")
-                                        .foregroundColor(AppColors.accent1)
+                                        .foregroundColor(.accent1)
                                 }
                             }
                             .padding()
@@ -366,7 +366,7 @@ struct SourceView: View {
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                     .background(
                                         registrationViewModel.source == source ?
-                                        AppColors.secondary : AppColors.background
+                                        .secondary : Color.background
                                     )
                             )
                             .cornerRadius(10)
@@ -408,7 +408,7 @@ struct DailyGoalView: View {
                         HStack {
                             Text(name)
                                 .font(.headline)
-                                .foregroundColor(AppColors.accent3)
+                                .foregroundColor(.accent3)
                             
                             Spacer()
                             

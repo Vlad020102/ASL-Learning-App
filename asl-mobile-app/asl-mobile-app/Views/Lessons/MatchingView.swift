@@ -24,7 +24,7 @@ struct MatchingView: View {
                     
                     Text("Tap the matching pairs")
                         .font(.subheadline)
-                        .foregroundColor(AppColors.textSecondary)
+                        .foregroundColor(.textSecondary)
                         .padding(.vertical, 5)
                     
                     // Matching exercise content with ScrollView for flexibility
@@ -61,7 +61,7 @@ struct MatchingView: View {
                     )
                 }
             }
-            .background(AppColors.background)
+            .background(Color.background)
         }
         .sheet(isPresented: $showFeedback) {
             FeedbackView(
@@ -90,16 +90,16 @@ struct MatchingView: View {
     private var topProgressBar: some View {
         HStack {
             ProgressView(value: Float(correctMatches) / Float(exercise.pairs.count))
-                .progressViewStyle(LinearProgressViewStyle(tint: AppColors.primary))
+                .progressViewStyle(LinearProgressViewStyle(tint: .main))
                 .frame(height: 8)
                 .padding(.horizontal)
             
             HStack(spacing: 2) {
                 Image(systemName: "heart.fill")
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
                     .font(.system(size: 14))
                 Text("\(numberOfLives)")
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
                     .font(.system(size: 14))
             }
             .padding(.horizontal, 5)
@@ -144,7 +144,7 @@ struct MatchingView: View {
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(selectedLeftItem == index ? AppColors.primary : AppColors.border, lineWidth: 2)
+                    .stroke(selectedLeftItem == index ? .main : Color.border, lineWidth: 2)
             )
             .opacity(isCompleted ? 0.6 : 1.0)
             .overlay(leftItemCheckmark(index: index))
@@ -156,7 +156,7 @@ struct MatchingView: View {
         Group {
             if correctPairs.contains(where: { $0.key == index }) {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
                     .font(.system(size: 30))
             }
         }
@@ -165,8 +165,8 @@ struct MatchingView: View {
     private func rightItemButton(index: Int, geometry: GeometryProxy) -> some View {
         let isCompleted = correctPairs.contains(where: { $0.value == index })
         let itemSize = (geometry.size.width - 50) / 3
-        let backgroundColor = isCompleted ? AppColors.disabledBackground.opacity(0.7) : AppColors.disabledBackground
-        let textColor = isCompleted ? AppColors.text.opacity(0.6) : AppColors.text
+        let backgroundColor = isCompleted ? Color.disabledBackground.opacity(0.7) : Color.disabledBackground
+        let textColor = isCompleted ? Color.text.opacity(0.6) : .text
         
         return Button(action: {
             handleRightSelection(index)
@@ -180,7 +180,7 @@ struct MatchingView: View {
                 .cornerRadius(8)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(selectedRightItem == index ? AppColors.primary : AppColors.border, lineWidth: 2)
+                        .stroke(selectedRightItem == index ? Color.main : Color.border, lineWidth: 2)
                 )
                 .overlay(rightItemCheckmark(index: index))
         }
@@ -191,7 +191,7 @@ struct MatchingView: View {
         Group {
             if correctPairs.contains(where: { $0.value == index }) {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
                     .font(.system(size: 30))
             }
         }

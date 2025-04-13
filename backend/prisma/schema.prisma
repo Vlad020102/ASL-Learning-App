@@ -105,7 +105,7 @@ model Sign {
   id         Int        @id @default(autoincrement())
   difficulty Difficulty
   s3Url      String
-  text       String     @unique
+  name       String     @unique
 
   quizes  QuizSigns[]
   phrases PhraseSign[]
@@ -126,7 +126,7 @@ model Quiz {
 
 model Pair {
   id      Int    @id @default(autoincrement())
-  text    String @unique
+  name    String @unique
   signGif String
 
   quizes QuizPair[]
@@ -135,7 +135,7 @@ model Pair {
 model Phrase {
   id         Int        @id @default(autoincrement())
   difficulty Difficulty
-  text       String     @unique
+  name       String     @unique
 
   signs PhraseSign[]
 

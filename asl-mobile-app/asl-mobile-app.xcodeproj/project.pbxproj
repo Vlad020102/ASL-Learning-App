@@ -36,7 +36,7 @@
 		02B5F25C2D9D927000B61D9F /* how-are-you.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "how-are-you.gif"; sourceTree = "<group>"; };
 		03F33B210E48AEAF80E1EDF1 /* Pods-asl-mobile-appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-appTests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-appTests/Pods-asl-mobile-appTests.release.xcconfig"; sourceTree = "<group>"; };
 		18A39A6EFAEB837D5B2AFC9F /* Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; sourceTree = "<group>"; };
-		3578E30A2D62406D003660F8 /* ASLearning.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ASLearning.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3578E30A2D62406D003660F8 /* asl-mobile-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "asl-mobile-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3578E31A2D62406E003660F8 /* asl-mobile-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "asl-mobile-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3578E3242D62406E003660F8 /* asl-mobile-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "asl-mobile-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41CCD7C4AF565285F9DE6CBA /* Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -106,20 +106,20 @@
 		3578E3012D62406D003660F8 = {
 			isa = PBXGroup;
 			children = (
-				020DDF5F2D8369190004CE0E /* Resources */,
 				3578E30C2D62406D003660F8 /* asl-mobile-app */,
 				3578E31D2D62406E003660F8 /* asl-mobile-appTests */,
 				3578E3272D62406E003660F8 /* asl-mobile-appUITests */,
-				3578E30B2D62406D003660F8 /* Products */,
-				86BDBC8A7B954078A4F67B29 /* Pods */,
 				5AE7C2C0E2E7F272CCC61714 /* Frameworks */,
+				86BDBC8A7B954078A4F67B29 /* Pods */,
+				3578E30B2D62406D003660F8 /* Products */,
+				020DDF5F2D8369190004CE0E /* Resources */,
 			);
 			sourceTree = "<group>";
 		};
 		3578E30B2D62406D003660F8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3578E30A2D62406D003660F8 /* ASLearning.app */,
+				3578E30A2D62406D003660F8 /* asl-mobile-app.app */,
 				3578E31A2D62406E003660F8 /* asl-mobile-appTests.xctest */,
 				3578E3242D62406E003660F8 /* asl-mobile-appUITests.xctest */,
 			);
@@ -171,7 +171,7 @@
 			);
 			name = "asl-mobile-app";
 			productName = "asl-mobile-app";
-			productReference = 3578E30A2D62406D003660F8 /* ASLearning.app */;
+			productReference = 3578E30A2D62406D003660F8 /* asl-mobile-app.app */;
 			productType = "com.apple.product-type.application";
 		};
 		3578E3192D62406E003660F8 /* asl-mobile-appTests */ = {
@@ -584,8 +584,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app-1";
-				PRODUCT_NAME = ASLearning;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -619,8 +619,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app-1";
-				PRODUCT_NAME = ASLearning;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bachelor.asl-mobile-app";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

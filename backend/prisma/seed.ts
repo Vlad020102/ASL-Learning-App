@@ -96,25 +96,25 @@ const quizData = [
     signs: [
       {
         difficulty: Difficulty.Easy,
-        text: "Hello",
+        name: "Hello",
         s3Url: "url",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
-        text: "Goodbye",
+        name: "Goodbye",
         s3Url: "url",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
-        text: "Thank you",
+        name: "Thank you",
         s3Url: "url",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
-        text: "Please",
+        name: "Please",
         s3Url: "url",
         options: "Hello, Goodbye, Thank you, Please"
       },
@@ -126,25 +126,25 @@ const quizData = [
     signs: [
       {
         difficulty: Difficulty.Moderate,
-        text: "Good morning",
+        name: "Good morning",
         s3Url: "url",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
-        text: "Good night",
+        name: "Good night",
         s3Url: "url",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
-        text: "Good afternoon",
+        name: "Good afternoon",
         s3Url: "url",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
-        text: "Good evening",
+        name: "Good evening",
         s3Url: "url",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
@@ -156,25 +156,25 @@ const quizData = [
     signs: [
       {
         difficulty: Difficulty.Hard,
-        text: "How are you?",
+        name: "How are you?",
         s3Url: "url",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
-        text: "What is your name?",
+        name: "What is your name?",
         s3Url: "url",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
-        text: "Where are you from?",
+        name: "Where are you from?",
         s3Url: "url",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
-        text: "What do you do?",
+        name: "What do you do?",
         s3Url: "url",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
@@ -185,17 +185,17 @@ const quizData = [
     title: 'Basic Signs Matching',
     pairs: [
       {
-        text: "Hello",
+        name: "Hello",
         signGif: "how-are-you",
         matchIndex: 0,
       },
       {
-        text: "Goodbye",
+        name: "Goodbye",
         signGif: "how-are-you",
         matchIndex: 1,
       },
       {
-        text: "Thank you",
+        name: "Thank you",
         signGif: "how-are-you",
         matchIndex: 2,
       }
@@ -257,7 +257,7 @@ async function createQuizes() {
             for (const letter of letters) {
               const sign = await prisma.sign.create({
                 data: {
-                  text: letter,
+                  name: letter,
                   s3Url: `alphabet/${letter.toLowerCase()}`,
                   difficulty: Difficulty.Easy
                 }
@@ -298,7 +298,7 @@ async function createQuizes() {
             const sign = quiz.signs[j];
             const createdSign = await prisma.sign.create({
               data: {
-                text: sign.text,
+                name: sign.name,
                 s3Url: sign.s3Url,
                 difficulty: sign.difficulty,
               }
@@ -332,7 +332,7 @@ async function createQuizes() {
               const createdPair = await prisma.pair.create({
                 data: {
                   id: k,
-                  text: pair.text,
+                  name: pair.name,
                   signGif: pair.signGif,
                 }
               });

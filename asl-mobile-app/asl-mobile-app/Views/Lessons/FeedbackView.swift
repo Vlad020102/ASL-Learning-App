@@ -16,16 +16,16 @@ struct FeedbackView: View {
         VStack(spacing: 20) {
             Image(systemName: feedbackType == .correct ? "checkmark.circle.fill" : "xmark.circle.fill")
                 .font(.system(size: 60))
-                .foregroundColor(feedbackType == .correct ? AppColors.success : AppColors.error)
+                .foregroundColor(feedbackType == .correct ? .success : .error)
             
             Text(feedbackType == .correct ? "Correct!" : "Wrong Answer!")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(AppColors.textSecondary)
+                .foregroundColor(.textSecondary)
             
             Text(feedbackType == .correct ? "Great job understanding the sign!" : "Try Again! Be careful not to run out of lives!")
                 .multilineTextAlignment(.center)
-                .foregroundColor(AppColors.textSecondary)
+                .foregroundColor(.textSecondary)
                 .padding()
             
             Button(action: onContinue) {
@@ -33,13 +33,13 @@ struct FeedbackView: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .frame(width: 200, height: 50)
-                    .background(feedbackType == .correct ? AppColors.success : AppColors.accent1)
+                    .background(feedbackType == .correct ? .success : .accent1)
                     .cornerRadius(25)
             }
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.background)
+        .background(Color.background)
     }
 }
 
@@ -63,29 +63,29 @@ struct QuizCompletionView: View {
         VStack(spacing: 30) {
             Image(systemName: isSuccess ? "trophy.fill" : "xmark.circle.fill")
                 .font(.system(size: 80))
-                .foregroundColor(isSuccess ? AppColors.accent1 : AppColors.error)
+                .foregroundColor(isSuccess ? .accent1 : .error)
             
             Text(isSuccess ? "Great job!" : "You have run out of lives!")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(AppColors.textSecondary)
+                .foregroundColor(.textSecondary)
             
             VStack(spacing: 10) {
                 Text("Your accuracy:")
                     .font(.headline)
-                    .foregroundColor(AppColors.textSecondary)
+                    .foregroundColor(.textSecondary)
                 
                 Text(accuracy > 0 ? "\(Int(accuracy * 100))%" : "0%")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(AppColors.textSecondary)
+                    .foregroundColor(.textSecondary)
                 
                 if isSuccess {
                     HStack {
                         Image(systemName: "heart.fill")
-                            .foregroundColor(AppColors.success)
+                            .foregroundColor(.success)
                         Text("\(livesRemaining) lives remaining")
-                            .foregroundColor(AppColors.success)
+                            .foregroundColor(.success)
                     }
                 }
             }
@@ -96,13 +96,13 @@ struct QuizCompletionView: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .frame(width: 200, height: 50)
-                    .background(AppColors.primary)
+                    .background(.main)
                     .cornerRadius(25)
             }
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.background)
+        .background(Color.background)
     }
 }
 

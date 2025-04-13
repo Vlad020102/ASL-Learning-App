@@ -22,7 +22,7 @@ struct StreakCalendarView: View {
                         // Current streak indicator
                         HStack {
                             Image(systemName: "flame.fill")
-                                .foregroundColor(AppColors.accent1)
+                                .foregroundColor(.accent1)
                             Text("\(viewModel.currentStreak) day streak")
                                 .font(.headline)
                                 .foregroundColor(.white)
@@ -75,7 +75,7 @@ struct StreakCalendarView: View {
                                                 // Background for streak days or answered days
                                                 if day.isStreak {
                                                     Circle()
-                                                        .fill(AppColors.accent1)
+                                                        .fill(.accent1)
                                                         .frame(width: 35, height: 35)
                                                 } else if day.isAnswered {
                                                     Circle()
@@ -101,7 +101,7 @@ struct StreakCalendarView: View {
                     }
                 }
             }
-            .background(AppColors.background)
+            .background(Color.background)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
