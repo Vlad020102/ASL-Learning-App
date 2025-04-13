@@ -46,12 +46,6 @@ struct NotificationSettingsView: View {
                         .datePickerStyle(WheelDatePickerStyle())
                         .labelsHidden()
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .onChange(of: reminderTime) { newValue in
-                            let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
-                            if let hour = components.hour, let minute = components.minute {
-                                scheduleNotificationWithTime(hour: hour, minute: minute)
-                            }
-                        }
                 }
                 .padding()
                 .background(AppColors.accent3)
@@ -61,6 +55,15 @@ struct NotificationSettingsView: View {
             Spacer()
             
             Button(action: {
+                if notificationsEnabled {
+                    // Get the hour and minute from the selected time
+                    let components = Calendar.current.dateComponents([.hour, .minute], from: reminderTime)
+                    if let hour = components.hour, let minute = components.minute {
+                        // Schedule notification at the selected time
+                        NotificationService.shared.scheduleReminderIfNeeded(hour: hour, minute: minute)
+                    }
+                }
+                
                 presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Save")
@@ -85,6 +88,9 @@ struct NotificationSettingsView: View {
         }
         .onAppear {
             checkNotificationStatus()
+            
+            // Initialize the time picker to show the currently scheduled time
+            initializeTimePicker()
         }
     }
     
@@ -92,6 +98,29 @@ struct NotificationSettingsView: View {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 notificationsEnabled = (settings.authorizationStatus == .authorized)
+            }
+        }
+    }
+    
+    private func initializeTimePicker() {
+        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
+            if let request = requests.first(where: { $0.identifier == "ASLDailyReminder" }),
+               let trigger = request.trigger as? UNCalendarNotificationTrigger {
+                
+                // Get the hour and minute from the trigger
+                let hour = trigger.dateComponents.hour ?? 18
+                let minute = trigger.dateComponents.minute ?? 0
+                
+                // Create a date with those components
+                var components = DateComponents()
+                components.hour = hour
+                components.minute = minute
+                
+                if let date = Calendar.current.date(from: components) {
+                    DispatchQueue.main.async {
+                        self.reminderTime = date
+                    }
+                }
             }
         }
     }
@@ -105,11 +134,6 @@ struct NotificationSettingsView: View {
                 }
             }
         }
-    }
-    
-    private func scheduleNotificationWithTime(hour: Int, minute: Int) {
-        // Check user's conditions first
-        NotificationService.shared.scheduleReminderIfNeeded(hour: hour, minute: minute)
     }
     
     private func openSettings() {

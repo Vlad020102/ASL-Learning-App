@@ -53,7 +53,7 @@ struct RootView: View {
         .onAppear {
             // If user logs in, update notification content
             if authManager.isAuthenticated {
-                NotificationService.shared.updateNotificationContent()
+                NotificationService.shared.scheduleReminderIfNeeded()
             }
         }
     }
