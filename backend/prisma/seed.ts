@@ -213,6 +213,50 @@ const alphabet = [
   "U", "V", "W", "X", "Y", "Z"
 ]
 
+const phraseData = [
+  {
+    id: 1,
+    name: "I can't sleep. I've been tossing and turning all night",
+    s3Url: 'url',
+    description: 'A common greeting',
+    difficulty: Difficulty.Easy,
+    meaning: "ME CAN'T SLEEP ME TOSS-AND-TURN ALL-NIGHT",
+    explanation: "Move your fuck, Then move your other fuck, And now get them together",
+    words: [
+      {
+        name: "Me",
+        s3Url: 'url',
+        description: 'I ME',
+        difficulty: Difficulty.Easy,
+        explanation: "Move your fuck"
+      },
+      {
+        name: "Can't",
+        s3Url: 'url',
+        description: 'Cannot',
+        difficulty: Difficulty.Easy,
+        explanation: "Move your fuck"
+      },
+      {
+        id: 2,
+        name: 'Sleep',
+        s3Url: 'url',
+        description: 'Sleep',
+        difficulty: Difficulty.Easy,
+        explanation: "Move your fuck"
+      },
+      {
+        name: "All Night",
+        s3Url: 'url',
+        description: 'All night',
+        difficulty: Difficulty.Easy,
+        explanation: "Move your fuck"
+      },
+    ]
+  }
+]
+
+
 async function createBadges() {
   for (let i = 0; i < badgeData.length; i++) {
     const badge = badgeData[i];
@@ -368,11 +412,62 @@ async function createQuizes() {
   }
 }
 
+async function createPhrases() {
+  try {
+    for (let i = 0; i < phraseData.length; i++) {
+      const phrase = phraseData[i];
+      const createdPhrase = await prisma.phrase.create({
+        data: {
+          id: phrase.id,
+          name: phrase.name,
+          s3Url: phrase.s3Url,
+          description: phrase.description,
+          explanation: phrase.explanation,
+          meaning: phrase.meaning,
+          difficulty: phrase.difficulty
+        }
+      });
+
+      for (let j = 0; j < phrase.words.length; j++) {
+        const word = phrase.words[j];
+        const createdWord = await prisma.word.create({
+          data: {
+            name: word.name,
+            s3Url: word.s3Url,
+            description: word.description,
+            difficulty: word.difficulty,
+            explanation: word.explanation
+          }
+        });
+        await prisma.phraseWord.create({
+          data: {
+            phrase: {
+              connect: {
+                id: createdPhrase.id
+              }
+            },
+            word: {
+              connect: {
+                id: createdWord.id
+              }
+            }
+          }
+        });
+      }
+      console.log(`Created phrase with ID: ${createdPhrase.id}`);
+    }
+  } catch (error) {
+    console.error('Error in createPhrases function:', error);
+    throw error; // Re-throw the error to be caught by the main function
+  }
+}
+
 async function main() {
   console.log('Start seeding badges...');
 
   await createBadges();
   await createQuizes();
+  await createPhrases();
 }
 
 main()
