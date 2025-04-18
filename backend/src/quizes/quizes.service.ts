@@ -63,7 +63,7 @@ export class QuizesService {
                     pair: {
                       select: {
                         id: true,
-                        text: true,
+                        name: true,
                         signGif: true,
                       }
                     }
@@ -75,7 +75,6 @@ export class QuizesService {
         },
       },
     });
-    console.log(userQuizes);
     return {
       "quizes": {
         "bubblesQuizes": userQuizes?.quizzes.filter((quiz) => quiz.quiz.type === QuizType.Bubbles).map((quiz) => {
@@ -106,7 +105,7 @@ export class QuizesService {
             pairs: quiz.quiz.pairs.map((pair) => {
               return {
                 id: pair.pair.id,
-                text: pair.pair.text,
+                name: pair.pair.name,
                 signGif: pair.pair.signGif,
                 matchIndex: pair.matchIndex,
               }

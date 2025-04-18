@@ -27,7 +27,7 @@ struct StatisticsView: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
-                LevelStatCard(icon: "star.circle.fill", iconColor: AppColors.accent1, level: level, progress: levelProgress, totalPoints: totalPointsForLevel)
+                LevelStatCard(icon: "star.circle.fill", iconColor: .accent1, level: level, progress: levelProgress, totalPoints: totalPointsForLevel)
                 
                 StatCard(icon: "rosette", iconColor: .orange, value: String(questionsAnsweredTotal), label: "Total Questions Answered")
             }
@@ -99,7 +99,7 @@ struct LevelStatCard: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 ProgressView(value: progressPercentage)
-                    .progressViewStyle(LinearProgressViewStyle(tint: AppColors.accent1))
+                    .progressViewStyle(LinearProgressViewStyle(tint: .accent1))
                     .frame(height: 6)
                 
                 HStack {
@@ -119,7 +119,7 @@ struct LevelStatCard: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppColors.accent3)
+        .background(.accent3)
         .cornerRadius(10)
     }
 }
@@ -151,7 +151,7 @@ struct StatCard: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppColors.accent3)
+        .background(.accent3)
         .cornerRadius(10)
     }
 }

@@ -90,21 +90,6 @@ struct BubblesQuizData: Codable, QuizCardDisplayable {
     let signs: [Sign]?
 }
 
-struct Sign: Codable {
-    let id: Int
-    let difficulty: String
-    let s3Url: String?
-    let text: String
-    let options: String?
-}
-
-struct CompleteQuizData: Codable {
-    let quizID: Int
-    let score: String
-    let livesRemaining: Int
-    let status: QuizStatus
-}
-
 struct CompleteQuizResponse: Codable {
     let status: String
 }

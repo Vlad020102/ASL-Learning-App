@@ -20,9 +20,9 @@ struct GenericQuizCard: View {
             statusInfo
         }
         .padding()
-        .background(AppColors.card)
+        .background(.card)
         .cornerRadius(12)
-        .shadow(color: AppColors.textSecondary.opacity(0.1), radius: 5, x: 0, y: 2)
+        .shadow(color: .textSecondary.opacity(0.1), radius: 5, x: 0, y: 2)
         .frame(maxWidth: .infinity)
     }
     
@@ -51,29 +51,29 @@ struct GenericQuizCard: View {
             case .Completed:
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(AppColors.success)
+                        .foregroundColor(.success)
                     Text("Completed")
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(AppColors.success)
+                        .foregroundColor(.success)
                 }
             case .Failed:
                 HStack(spacing: 4) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(AppColors.error)
+                        .foregroundColor(.error)
                     Text("Failed")
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(AppColors.error)
+                        .foregroundColor(.error)
                 }
             case .Locked:
                 HStack(spacing: 4) {
                     Image(systemName: "lock.fill")
-                        .foregroundColor(AppColors.textSecondary)
+                        .foregroundColor(.textSecondary)
                     Text("Locked")
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(AppColors.textSecondary)
+                        .foregroundColor(.textSecondary)
                 }
             case .InProgress:
                 EmptyView()
@@ -84,7 +84,7 @@ struct GenericQuizCard: View {
     private var quizTitle: some View {
         Text(title)
             .font(.headline)
-            .foregroundColor(AppColors.text)
+            .foregroundColor(.text)
             .lineLimit(2)
     }
     
@@ -105,16 +105,16 @@ struct GenericQuizCard: View {
         HStack(spacing: 4) {
             Image(systemName: "star.fill")
                 .font(.caption2)
-                .foregroundColor(AppColors.accent1)
+                .foregroundColor(.accent1)
             
             if status == .Completed {
                 Text("Score: \(Int(score * 100))%")
                     .font(.caption)
-                    .foregroundColor(AppColors.text)
+                    .foregroundColor(.text)
             } else {
                 Text("Progress: \(score, specifier: "%.2f")%")
                     .font(.caption)
-                    .foregroundColor(AppColors.textSecondary)
+                    .foregroundColor(.textSecondary)
             }
         }
     }
@@ -123,23 +123,23 @@ struct GenericQuizCard: View {
         HStack(spacing: 4) {
             Image(systemName: "heart.fill")
                 .font(.caption2)
-                .foregroundColor(AppColors.primary)
+                .foregroundColor(.main)
             Text("Lives: \(livesRemaining)/5")
                 .font(.caption)
-                .foregroundColor(status == .Completed ? AppColors.text : AppColors.textSecondary)
+                .foregroundColor(status == .Completed ? .text : .textSecondary)
         }
     }
     
     private var typeColor: Color {
         switch (type, status) {
         case (.Bubbles, .InProgress):
-            return AppColors.secondary
+            return .secondary
         case (.Matching, .InProgress):
-            return AppColors.accent1
+            return .accent1
         case (.AlphabetStreak, .InProgress):
-            return AppColors.primary
+            return .main
         default:
-            return AppColors.text
+            return .text
         }
     }
 }

@@ -20,10 +20,10 @@ struct AllBadgesView: View {
             ToolbarItem(placement: .principal) {
                 Text("All Badges")
                     .font(.headline)
-                    .foregroundColor(AppColors.textSecondary)
+                    .foregroundColor(.textSecondary)
             }
         }
-        .background(AppColors.background)
+        .background(Color.background)
     }
 }
 

@@ -10,7 +10,7 @@ struct HomeView: View {
     var body: some View {
             NavigationStack {
                 ZStack (alignment: .top){
-                    AppColors.background
+                    Color.background
                         .ignoresSafeArea ()
             
                     Circle()
@@ -27,7 +27,7 @@ struct HomeView: View {
                         .foregroundColor(.white.opacity(0.1))
                     Circle()
                         .scale(0.65)
-                        .foregroundColor(AppColors.accent3.opacity(0.3))
+                        .foregroundColor(.accent3.opacity(0.3))
                     VStack{
                         
                         Spacer()
@@ -37,12 +37,12 @@ struct HomeView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 100, height: 100)
-                                .foregroundColor(AppColors.background)
+                                .foregroundColor(Color.background)
                             
                             Text("ASLearning")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundColor(AppColors.background)
+                                .foregroundColor(Color.background)
                         }.offset(y: 80)
                         Image("illustration")
                             .resizable()
@@ -55,20 +55,20 @@ struct HomeView: View {
                                 Text("GET STARTED")
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(AppColors.primary)
-                                    .foregroundColor(AppColors.textSecondary)
+                                    .background(.main)
+                                    .foregroundColor(.textSecondary)
                                     .cornerRadius(10)
                                     .bold(true)
                             }.navigationBarBackButtonHidden(true)
                             NavigationLink(destination: LoginView()) {
                                 Text("I ALREADY HAVE AN ACCOUNT")
-                                    .fontWeight(.bold)
-                                    .foregroundColor(AppColors.accent3)
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(AppColors.background)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.textSecondary)
+                                    .background(Color.background)
                                     .cornerRadius(10)
-                                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppColors.primary, lineWidth: 2)
+                                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(.main, lineWidth: 2)
                                     )
                             }
                             

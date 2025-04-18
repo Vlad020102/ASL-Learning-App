@@ -23,7 +23,7 @@ struct BadgesView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(title)
-                .foregroundColor(AppColors.secondary)
+                .foregroundColor(.secondary)
                 .font(.title3)
                 .fontWeight(.bold)
                 .padding(.vertical, 4)
@@ -41,7 +41,7 @@ struct BadgesView: View {
             }
         }
         .padding()
-        .background(AppColors.accent3)
+        .background(.accent3)
         .cornerRadius(10)
     }
 }
@@ -51,9 +51,9 @@ struct BadgeCard: View {
     
     var rarityColor: Color {
         switch badge.rarity {
-        case "Bronze": return Color(hex: "CD7F32")
-        case "Silver": return Color(hex: "C4C4C4")
-        case "Gold": return Color(hex: "EFBF04")
+        case "Bronze": return .bronze
+        case "Silver": return .silver
+        case "Gold": return .gold
         default: return .gray
         }
     }
@@ -90,7 +90,7 @@ struct BadgeCard: View {
             
             if badge.progress > 0 {
                 ProgressView(value: Float(badge.progress) / 100.0, total: 1.0)
-                    .progressViewStyle(LinearProgressViewStyle(tint: AppColors.accent1))
+                    .progressViewStyle(LinearProgressViewStyle(tint: .accent1))
                     .frame(height: 4)
             } else {
                 Spacer()
@@ -99,7 +99,7 @@ struct BadgeCard: View {
         }
         .frame(width: 120, height: 120)
         .padding()
-        .background(AppColors.background)
+        .background(Color.background)
         .cornerRadius(10)
     }
 }

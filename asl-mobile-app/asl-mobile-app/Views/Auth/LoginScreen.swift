@@ -14,7 +14,7 @@ struct LoginView: View {
     
     var body: some View {
         ZStack {
-            AppColors.background.opacity(0.9).ignoresSafeArea()
+            Color.background.opacity(0.9).ignoresSafeArea()
             
             VStack(spacing: 20) {
                 VStack {
@@ -22,7 +22,7 @@ struct LoginView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 60, height: 60)
-                        .foregroundColor(AppColors.primary)
+                        .foregroundColor(.main)
                     
                     Text("ASLearning")
                         .font(.title)
@@ -36,10 +36,10 @@ struct LoginView: View {
                     
                     TextField("Email / Username", text: $viewModel.emailOrUsername)
                         .padding()
-                        .background(AppColors.accent3)
+                        .background(.accent3)
                         .cornerRadius(10)
                         .autocapitalization(.none)
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppColors.primary, lineWidth: 2)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.main, lineWidth: 2)
                         )
                     HStack {
                         if isSecured {
@@ -54,14 +54,14 @@ struct LoginView: View {
                             isSecured.toggle()
                         }) {
                             Image(systemName: isSecured ? "eye.slash" : "eye")
-                                .foregroundColor(AppColors.background)
+                                .foregroundColor(Color.background)
                         }
                     }
                     
                     .padding()
-                    .background(AppColors.accent3)
+                    .background(.accent3)
                     .cornerRadius(10)
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppColors.primary, lineWidth: 2)
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(.main, lineWidth: 2)
                     )
                     
                     // Error message
@@ -84,15 +84,15 @@ struct LoginView: View {
                         ZStack {
                             Text("LOGIN")
                                 .fontWeight(.bold)
-                                .foregroundColor(AppColors.textSecondary)
+                                .foregroundColor(.textSecondary)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(AppColors.primary)
+                                .background(.main)
                                 .cornerRadius(10)
                             
                             if viewModel.isLoading {
                                 ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: AppColors.textSecondary))
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .textSecondary))
                             }
                         }
                     }
@@ -106,16 +106,16 @@ struct LoginView: View {
                     NavigationLink(destination: RegistrationView()) {
                         Text("CREATE NEW ACCOUNT")
                             .fontWeight(.bold)
-                            .foregroundColor(AppColors.accent3)
+                            .foregroundColor(.accent3)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(AppColors.selectedBackground)
+                            .background(.selectedBackground)
                             .cornerRadius(10)
                     }
                 }
                 .padding(.horizontal, 25)
                 .padding(.vertical, 35)
-                .background(AppColors.background)
+                .background(Color.background)
                 .cornerRadius(20)
             }
             .padding(.horizontal)
@@ -125,7 +125,7 @@ struct LoginView: View {
             presentationMode.wrappedValue.dismiss()
         }) {
             Image(systemName: "chevron.left")
-                .foregroundColor(AppColors.background)
+                .foregroundColor(Color.background)
                 .imageScale(.large)
         })
         .navigationViewStyle(StackNavigationViewStyle())

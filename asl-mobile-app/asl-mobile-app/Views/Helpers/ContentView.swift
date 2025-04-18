@@ -38,6 +38,11 @@ struct ContentView: View {
                     Text("Lessons")
                 }
                 .tag(2)
+//            WikiView()
+//                .tabItem{
+//                    Image(systemName: "book.pages")
+//                    Text("Wiki")
+//                }
         }
         // This ensures the tab bar is always visible
         .onAppear() {
