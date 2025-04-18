@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { PhrasesService } from './phrases.service';
 import { CreatePhraseDto } from './dto/create-phrase.dto';
 import { UpdatePhraseDto } from './dto/update-phrase.dto';
+import { ReqUser } from 'src/auth/guards/user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('phrases')
 export class PhrasesController {
@@ -12,9 +14,12 @@ export class PhrasesController {
         return this.phrasesService.create(createPhraseDto);
     }
 
+
     @Get()
-    findAll() {
-        return this.phrasesService.findAll();
+    @UseGuards(JwtAuthGuard)
+    findAll(@ReqUser() user) {
+        this.phrasesService.populatePhrases(user.user.id);
+        return this.phrasesService.findAll(user.user.id);
     }
 
     @Get(':id')

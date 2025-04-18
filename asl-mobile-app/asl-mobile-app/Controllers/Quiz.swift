@@ -36,6 +36,13 @@ extension NetworkService {
     }
 }
 
+struct CompleteQuizData: Codable {
+    let quizID: Int
+    let score: String
+    let livesRemaining: Int
+    let status: QuizStatus
+}
+
 enum QuizType: String, Codable {
     case Bubbles
     case Matching

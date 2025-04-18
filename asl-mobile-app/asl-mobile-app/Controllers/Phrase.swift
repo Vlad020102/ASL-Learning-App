@@ -5,26 +5,30 @@
 //  Created by v1ad_ach1m on 15.04.2025.
 //
 
-struct Sign: Codable {
+struct Sign: Codable, Identifiable {
     let id: Int
     let name: String
     let difficulty: String
     let s3Url: String
 
-    let meaning: String?
+    let meaning: String
     let options: String?
-    let explanations: [String]?
+    let description: String?
+    let explanation: [String]?
 }
 
 struct Phrase: Codable {
     let id: Int
     let name: String
-    let translation: String
-    let difficulty: Int // 1-5
-    
+    let description: String
+    let meaning: String
+    let explanation: [String]?
+    let difficulty: String
+    let s3Url: String
     let price: Int
-    var isPurchased: Bool
-    var signs: [Sign]
+    let status: String
+    
+    let signs: [Sign]
 }
 
 struct WikiResponse: Codable {
@@ -35,11 +39,12 @@ struct WikiResponse: Codable {
 extension NetworkService {
     func fetchPhrases(completion: @escaping (Result<WikiResponse, Error>) -> Void) {
         authenticatedRequest(
-            endpoint: "quizes",
+            endpoint: "phrases",
             method: .get)
         { (result: Result<WikiResponse, NetworkError>) in
             switch result {
             case .success(let response):
+                print(response)
                 completion(.success(response))
             case .failure(let error):
                 completion(.failure(error))

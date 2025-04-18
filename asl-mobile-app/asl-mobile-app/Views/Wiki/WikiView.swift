@@ -8,81 +8,26 @@
 import SwiftUI
 
 class WikiViewModel: ObservableObject {
-   @Published var currency = 100
-   @Published var signs: [Sign] = []
-       
-   
-   @Published var phrases: [Phrase] = [
-       Phrase(
-           text: "My name is...",
-           translation: "Introduction phrase",
-           difficulty: 1,
-           price: 0,
-           isPurchased: true,
-           signs: []
-       ),
-       Phrase(
-           text: "Nice to meet you",
-           translation: "Greeting when meeting someone new",
-           difficulty: 2,
-           price: 15,
-           isPurchased: false,
-           signs: []
-       ),
-       Phrase(
-           text: "How are you?",
-           translation: "Asking about someone's wellbeing",
-           difficulty: 2,
-           price: 15,
-           isPurchased: false,
-           signs: []
-       ),
-       Phrase(
-           text: "I am learning ASL",
-           translation: "Stating that you're studying ASL",
-           difficulty: 3,
-           price: 25,
-           isPurchased: false,
-           signs: []
-       ),
-       Phrase(
-           text: "Can you help me practice?",
-           translation: "Asking for assistance with practice",
-           difficulty: 4,
-           price: 40,
-           isPurchased: false,
-           signs: []
-       )
-   ]
-   
-   init() {
-       // Connect phrases with their signs
-       updatePhraseSignConnections()
-   }
-   
-   func updatePhraseSignConnections() {
-       // This is a simplified example - in a real app, you'd have a more sophisticated matching system
-       phrases[0].signs = [
-        signs[0],
-        signs[3]
-       ] // "My name is..."
-       phrases[1].signs = [
-        signs[0],
-        signs[4]
-       ] // "Nice to meet you"
-       phrases[2].signs = [
-        signs[0],
-        signs[6]
-       ] // "How are you?"
-       phrases[3].signs = [
-        signs[0],
-        signs[7]
-       ] // "I am learning ASL"
-       phrases[4].signs = [
-        signs[2],
-        signs[6]
-       ] // "Can you help me practice?"
-   }
+    @Published var currency = 100
+    @Published var signs: [Sign] = []
+    @Published var phrases: [Phrase] = []
+    
+    func loadWikiData() {
+        AuthManager.shared.setToken(with: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsInN1YiI6MSwiaWF0IjoxNzQ0OTg5NTYzLCJleHAiOjE3NDQ5OTMxNjN9.nlydVFqrCyf2acZOYzADjJoaF9OBo9eORI2DyOAVz-U")
+        NetworkService.shared.fetchPhrases { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let response):
+                        print("here")
+                        self?.phrases = response.phrases
+                        self?.signs = response.signs
+                    case .failure(let error):
+                        print("Error fetching phrases: \(error)")
+                        // You might want to add error handling here
+                    }
+                }
+            }
+        }
     
     func purchasePhrase(
         _ phrase: Phrase
@@ -96,14 +41,12 @@ class WikiViewModel: ObservableObject {
        
        if currency >= phrase.price {
            currency -= phrase.price
-           phrases[index].isPurchased = true
+//           phrases[index].status = "In Progress"
            return true
        }
        return false
    }
 }
-
-// MARK: - Views
 
 struct WikiView: View {
    @StateObject private var viewModel = WikiViewModel()
@@ -126,65 +69,68 @@ struct WikiView: View {
 }
 
 struct PhrasesView: View {
-   @EnvironmentObject private var viewModel: WikiViewModel
-   
-   var body: some View {
-       NavigationView {
-           List {
-               ForEach(viewModel.phrases) { phrase in
-                   NavigationLink(destination: PhraseDetailView(phrase: phrase)) {
-                       HStack {
-                           VStack(alignment: .leading) {
-                               Text(phrase.text)
-                                   .font(.headline)
-                               
-                               Text("Difficulty: \(String(repeating: "★", count: phrase.difficulty))")
-                                   .font(.caption)
-                                   .foregroundColor(.orange)
-                           }
-                           
-                           Spacer()
-                           
-                           if phrase.isPurchased {
-                               Image(systemName: "checkmark.circle.fill")
-                                   .foregroundColor(.green)
-                           } else {
-                               Button(action: {
-                                   _ = viewModel.purchasePhrase(phrase)
-                               }) {
-                                   HStack {
-                                       Text("\(phrase.price)")
-                                           .fontWeight(.bold)
-                                       
-                                       Image(systemName: "dollarsign.circle.fill")
-                                           .foregroundColor(.yellow)
-                                   }
-                                   .padding(8)
-                                   .background(Color.blue.opacity(0.2))
-                                   .cornerRadius(8)
-                               }
-                               .disabled(viewModel.currency < phrase.price)
-                           }
-                       }
-                       .padding(.vertical, 4)
-                   }
-                   .disabled(!phrase.isPurchased)
-               }
-           }
-           .navigationTitle("ASL Phrases")
-           .toolbar {
-               ToolbarItem(placement: .navigationBarTrailing) {
-                   HStack {
-                       Text("\(viewModel.currency)")
-                           .fontWeight(.bold)
-                       
-                       Image(systemName: "dollarsign.circle.fill")
-                           .foregroundColor(.yellow)
-                   }
-               }
-           }
-       }
-   }
+    @EnvironmentObject private var viewModel: WikiViewModel
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(viewModel.phrases, id: \.id) { (phrase: Phrase) in
+                    NavigationLink(destination: PhraseDetailView(phrase: phrase)) {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(phrase.name)
+                                    .font(.headline)
+                                
+                                Text("Difficulty: \(phrase.difficulty)")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                            }
+                            
+                            Spacer()
+                            
+                            if phrase.status == "In Progress" {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                            } else {
+                                Button(action: {
+                                    _ = viewModel.purchasePhrase(phrase)
+                                }) {
+                                    HStack {
+                                        Text("\(phrase.price)")
+                                            .fontWeight(.bold)
+                                        
+                                        Image(systemName: "dollarsign.circle.fill")
+                                            .foregroundColor(.yellow)
+                                    }
+                                    .padding(8)
+                                    .background(Color.blue.opacity(0.2))
+                                    .cornerRadius(8)
+                                }
+                                .disabled(viewModel.currency < phrase.price)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .disabled(phrase.status == "In Progress")
+                }
+            }
+            .navigationTitle("ASL Phrases")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack {
+                        Text("\(viewModel.currency)")
+                            .fontWeight(.bold)
+                        
+                        Image(systemName: "dollarsign.circle.fill")
+                            .foregroundColor(.yellow)
+                    }
+                }
+            }
+        }
+        .onAppear {
+            viewModel.loadWikiData()
+        }
+    }
 }
 
 struct PhraseDetailView: View {
@@ -195,15 +141,15 @@ struct PhraseDetailView: View {
            VStack(alignment: .leading, spacing: 20) {
                // Header section
                VStack(alignment: .leading, spacing: 8) {
-                   Text(phrase.text)
+                   Text(phrase.name)
                        .font(.largeTitle)
                        .fontWeight(.bold)
                    
-                   Text(phrase.translation)
+                   Text(phrase.meaning)
                        .font(.subheadline)
                        .foregroundColor(.secondary)
                    
-                   Text("Difficulty: \(String(repeating: "★", count: phrase.difficulty))")
+                   Text("Difficulty: \(phrase.difficulty)")
                        .font(.caption)
                        .foregroundColor(.orange)
                }
@@ -212,7 +158,6 @@ struct PhraseDetailView: View {
                .background(Color.blue.opacity(0.1))
                .cornerRadius(12)
                
-               // Signs used in this phrase
                Text("Signs in this phrase")
                    .font(.headline)
                    .padding(.horizontal)
@@ -222,26 +167,23 @@ struct PhraseDetailView: View {
                        .padding(.horizontal)
                }
                
-               // How to sign this phrase
                Text("How to sign this phrase")
                    .font(.headline)
                    .padding(.horizontal)
                    .padding(.top)
                
                VStack(alignment: .leading, spacing: 12) {
-                   Text("1. Start with your dominant hand in neutral position")
-                   Text("2. Sign each word in sequence, maintaining flow")
-                   Text("3. Use appropriate facial expressions to convey meaning")
-                   Text("4. Practice the transitions between signs for fluidity")
-               }
+                   ForEach(Array((phrase.explanation ?? []).enumerated()), id: \.element) { index,         explanation in
+                            Text("\(index + 1). \(explanation)")
+                        }
+                    }
                .padding()
                .background(Color.gray.opacity(0.1))
                .cornerRadius(12)
                .padding(.horizontal)
                
-               // Practice button
                Button(action: {
-                   // Future implementation for practice feature
+                   
                }) {
                    Text("Practice this phrase")
                        .fontWeight(.semibold)
@@ -260,50 +202,51 @@ struct PhraseDetailView: View {
 }
 
 struct SignCardView: View {
-   let sign: Sign
-   
-   var body: some View {
-       VStack(alignment: .leading) {
-           HStack(alignment: .top) {
-               // Placeholder for GIF - in a real app, you'd use a GIF player
-               ZStack {
-                   Rectangle()
-                       .fill(Color.gray.opacity(0.2))
-                       .aspectRatio(1, contentMode: .fit)
-                       .frame(width: 100, height: 100)
-                   
-                   Text("GIF")
-                       .font(.caption)
-                       .foregroundColor(.gray)
-               }
-               
-               VStack(alignment: .leading, spacing: 6) {
-                   Text(sign.name)
-                       .font(.headline)
-                   
-                   Text(sign.meaning)
-                       .font(.subheadline)
-                       .foregroundColor(.secondary)
-                   
-                   Text("Difficulty: \(String(repeating: "★", count: sign.difficulty))")
-                       .font(.caption)
-                       .foregroundColor(.orange)
-                   
-                   Text("Tap to see details")
-                       .font(.caption)
-                       .foregroundColor(.blue)
-                       .padding(.top, 4)
-               }
-               .padding(.leading, 8)
-               
-               Spacer()
-           }
-       }
-       .padding()
-       .background(Color.white)
-       .cornerRadius(12)
-       .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-   }
+    let sign: Sign
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack(alignment: .top) {
+                ZStack {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 100, height: 100)
+                    
+                    Text("GIF")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(sign.name)
+                        .font(.headline)
+                    
+                    
+                    Text(sign.meaning)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                
+                    
+                    Text("Difficulty: \(sign.difficulty)")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                    
+                    Text("Tap to see details")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                        .padding(.top, 4)
+                }
+                .padding(.leading, 8)
+                
+                Spacer()
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+    }
 }
 
 struct SignsView: View {
@@ -321,10 +264,9 @@ struct SignsView: View {
    var body: some View {
        NavigationView {
            List {
-               ForEach(filteredSigns) { sign in
+               ForEach(filteredSigns) { (sign: Sign) in
                    NavigationLink(destination: SignDetailView(sign: sign)) {
                        HStack {
-                           // Small thumbnail for the sign
                            ZStack {
                                Circle()
                                    .fill(Color.blue.opacity(0.1))
@@ -347,7 +289,7 @@ struct SignsView: View {
                            
                            Spacer()
                            
-                           Text("Difficulty: \(String(repeating: "★", count: sign.difficulty))")
+                           Text("Difficulty: \(sign.difficulty)")
                                .font(.caption)
                                .foregroundColor(.orange)
                        }
@@ -368,7 +310,6 @@ struct SignDetailView: View {
    var body: some View {
        ScrollView {
            VStack(spacing: 20) {
-               // GIF player (placeholder)
                ZStack {
                    Rectangle()
                        .fill(Color.gray.opacity(0.1))
@@ -390,24 +331,27 @@ struct SignDetailView: View {
                    
                    Text(sign.meaning)
                        .font(.title3)
-                       .foregroundColor(.secondary)
+                       .foregroundColor(.alternative)
+                                      
+                   Text("Difficulty: \(sign.difficulty)")
+                       .font(.caption)
+                       .foregroundColor(.orange)
                    
                    Divider()
-                   
-                   Text("Difficulty: \(String(repeating: "★", count: sign.difficulty))")
+
+                   Text("Description: \(sign.description ?? "A common sign")")
                        .font(.headline)
-                       .foregroundColor(.orange)
+                       .foregroundColor(.alternative)
                    
                    Text("How to perform this sign:")
                        .font(.headline)
                        .padding(.top, 8)
                    
-                   VStack(alignment: .leading, spacing: 8) {
-                       Text("1. Position your hand(s) as shown in the animation")
-                       Text("2. Pay attention to the orientation of your palm")
-                       Text("3. Understand the movement and the gesture made")
-                       Text("4. Try and say the word as you do the gesture")
-                   }
+                   VStack(alignment: .leading, spacing: 12) {
+                       ForEach(Array((sign.explanation ?? []).enumerated()), id: \.element) { index,         explanation in
+                                Text("\(index + 1). \(explanation)")
+                            }
+                        }
                    .padding(.leading)
                    
                    Divider()
@@ -455,5 +399,12 @@ struct SignDetailView: View {
        .navigationTitle("Sign Detail")
        .navigationBarTitleDisplayMode(.inline)
    }
+}
+
+
+struct WikiView_Preview: PreviewProvider {
+    static var previews: some View {
+        WikiView()
+    }
 }
 

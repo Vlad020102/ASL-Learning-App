@@ -36,7 +36,8 @@ enum QuizStatus {
 }
 
 enum PhraseStatus {
-  InProgress
+  Available
+  Purchased
   Finished
 }
 
@@ -109,7 +110,10 @@ model Sign {
 
   meaning     String?
   explanation String?
-  quizes      QuizSigns[]
+  description String?
+
+  quizes  QuizSigns[]
+  phrases PhraseSign[]
 
   @@map("signs")
 }
@@ -141,33 +145,21 @@ model Phrase {
   description String?
   meaning     String?
   explanation String?
+  price       Int
 
-  status     PhraseStatus @default(InProgress)
-  words      PhraseWord[]
-  UserPhrase UserPhrase[]
+  signs      PhraseSign[]
+  userPhrases UserPhrase[]
 
   @@map("phrases")
 }
 
-model Word {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
-  s3Url       String
-  difficulty  Difficulty
-  description String?
-  explanation String?
-  phrases     PhraseWord[]
-
-  @@map("words")
-}
-
-model PhraseWord {
+model PhraseSign {
   id       Int  @id @default(autoincrement())
   signID   Int? @map("sign_id")
   phraseID Int? @map("phrase_id")
 
   phrase Phrase? @relation(fields: [phraseID], references: [id])
-  word   Word?   @relation(fields: [signID], references: [id])
+  sign   Sign?   @relation(fields: [signID], references: [id])
 
   @@map("phrases_sign")
 }
@@ -200,13 +192,12 @@ model QuizSigns {
 }
 
 model UserPhrase {
-  id       Int        @id @default(autoincrement())
-  userID   Int        @map("user_id")
-  phraseID Int        @map("phrase_id")
-  status   QuizStatus @default(Locked)
-
-  user   User   @relation(fields: [userID], references: [id])
-  phrase Phrase @relation(fields: [phraseID], references: [id])
+  id       Int          @id @default(autoincrement())
+  userID   Int          @map("user_id")
+  phraseID Int          @map("phrase_id")
+  status   PhraseStatus @default(Available)
+  user     User         @relation(fields: [userID], references: [id])
+  phrase   Phrase       @relation(fields: [phraseID], references: [id])
 
   @@unique([userID, phraseID])
 }
