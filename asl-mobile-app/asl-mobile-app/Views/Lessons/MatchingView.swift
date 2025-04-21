@@ -169,7 +169,7 @@ struct MatchingView: View {
         return Button(action: {
             handleRightSelection(index)
         }) {
-            Text(exercise.pairs[index].text)
+            Text(exercise.pairs[index].name)
                 .font(.system(size: min(16, geometry.size.width / 25)))
                 .padding(8)
                 .frame(width: itemSize, height: itemSize)
@@ -326,11 +326,11 @@ struct GIFImageView: UIViewRepresentable {
 extension MatchingView{
     static var mockExercise: MatchingQuizData {
         let pairs = [
-            MatchingPair(signGif: "how-are-you", text: "hello", matchIndex: 1),
-            MatchingPair(signGif: "how-are-you", text: "thank you", matchIndex: 3),
-            MatchingPair(signGif: "how-are-you", text: "name", matchIndex: 2),
-            MatchingPair(signGif: "how-are-you", text: "nice to meet you", matchIndex: 4),
-            MatchingPair(signGif: "how-are-you", text: "how are you", matchIndex: 0)
+            MatchingPair(signGif: "how-are-you", name: "hello", matchIndex: 1),
+            MatchingPair(signGif: "how-are-you", name: "thank you", matchIndex: 3),
+            MatchingPair(signGif: "how-are-you", name: "name", matchIndex: 2),
+            MatchingPair(signGif: "how-are-you", name: "nice to meet you", matchIndex: 4),
+            MatchingPair(signGif: "how-are-you", name: "how are you", matchIndex: 0)
         ]
         
         return MatchingQuizData(id: 1, title: "Matching Exercise", type: .Matching, status: .InProgress, score: 0.0, livesRemaining: 5, pairs: pairs)

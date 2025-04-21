@@ -4,6 +4,7 @@
 //
 //  Created by v1ad_ach1m on 15.04.2025.
 //
+import SwiftUI
 
 struct Sign: Codable, Identifiable {
     let id: Int
@@ -11,11 +12,20 @@ struct Sign: Codable, Identifiable {
     let difficulty: String
     let s3Url: String
 
-    let meaning: String
+    let meaning: String?
     let options: String?
     let description: String?
     let explanation: [String]?
     let usedIn: [String]?
+    
+    var difficultyColor: Color {
+        switch difficulty {
+            case "Easy": return .purple
+            case "Moderate": return .text
+            case "Hard": return .main
+            default: return .gray
+        }
+    }
 }
 
 struct Phrase: Codable {
@@ -29,6 +39,15 @@ struct Phrase: Codable {
     let price: Int
     let status: PhraseStatus
     let signs: [Sign]
+    
+    var difficultyColor: Color {
+        switch difficulty {
+            case "Easy": return .purple
+            case "Moderate": return .text
+            case "Hard": return .main
+            default: return .gray
+        }
+    }
 }
 enum PhraseStatus: String, Codable {
     case Available

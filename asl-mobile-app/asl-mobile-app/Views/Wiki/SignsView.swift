@@ -28,7 +28,7 @@ struct SignsView: View {
                             Text(sign.name)
                                 .font(.headline)
                             
-                            Text(sign.meaning)
+                            Text(sign.meaning ?? "")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -38,7 +38,7 @@ struct SignsView: View {
                         
                         Text("Difficulty: \(sign.difficulty)")
                             .font(.caption)
-                            .foregroundColor(.main)
+                            .foregroundColor(sign.difficultyColor)
                     }
                     .padding(.vertical, 4)
                 }
@@ -65,15 +65,10 @@ struct SignDetailView: View {
         ScrollView {
             VStack(spacing: 20) {
                 ZStack {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.1))
+                    GIFView(gifName: sign.s3Url)
                         .aspectRatio(1.0, contentMode: .fit)
                         .frame(maxWidth: .infinity)
                         .cornerRadius(12)
-                    
-                    Text("GIF: \(sign.s3Url)")
-                        .font(.caption)
-                        .foregroundColor(.gray)
                 }
                 .padding(.horizontal)
                 
@@ -83,13 +78,13 @@ struct SignDetailView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                     
-                    Text(sign.meaning)
+                    Text(sign.meaning ?? "")
                         .font(.title3)
                         .foregroundColor(.alternative)
                     
                     Text("Difficulty: \(sign.difficulty)")
                         .font(.caption)
-                        .foregroundColor(.main)
+                        .foregroundColor(sign.difficultyColor)
                     
                     Divider()
                     

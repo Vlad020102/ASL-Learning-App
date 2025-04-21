@@ -81,7 +81,7 @@ struct WikiView: View {
             VStack(spacing: 0) {
                 TextField("Search...", text: $viewModel.searchText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+                    .padding(.horizontal)
                     .background(Color.background)
                 
                 Picker("View Selection", selection: $selectedView) {
@@ -110,6 +110,7 @@ struct WikiView: View {
                 }
             }
             .background(Color.background)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(selectedView == 0 ? "All Phrases" : "All Discovered Signs")

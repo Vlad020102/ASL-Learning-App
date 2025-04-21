@@ -37,7 +37,7 @@ struct QuizCatalogueView: View {
                         ProgressView()
                     } else if let errorMessage = viewModel.errorMessage {
                         ErrorView(message: errorMessage, retryAction: {
-                            AuthManager.shared.removeToken()
+                            viewModel.loadQuizes()
                         })
                     } else {
                         quizList
