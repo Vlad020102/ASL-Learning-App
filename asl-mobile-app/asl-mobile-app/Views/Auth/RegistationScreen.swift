@@ -31,7 +31,6 @@ class RegistrationViewModel: ObservableObject {
     }
     
     func register() {
-        print("registering")
         let data: RegisterData = .init(
             email: self.email,
             username: self.username,
@@ -47,7 +46,6 @@ class RegistrationViewModel: ObservableObject {
                 switch result {
                 case .success(let response):
                     AuthManager.shared.setToken(with: response.accessToken)
-                    print("Success: \(response)")
                 case .failure(let error):
                     print("Error: \(error)")
                 }

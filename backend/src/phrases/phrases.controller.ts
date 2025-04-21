@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { PhrasesService } from './phrases.service';
 import { CreatePhraseDto } from './dto/create-phrase.dto';
-import { UpdatePhraseDto } from './dto/update-phrase.dto';
+import { PurchasePhraseDto } from './dto/purchase-phrase.dto';
 import { ReqUser } from 'src/auth/guards/user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { error } from 'console';
 
 @Controller('phrases')
 export class PhrasesController {
@@ -27,13 +28,14 @@ export class PhrasesController {
         return this.phrasesService.findOne(+id);
     }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updatePhraseDto: UpdatePhraseDto) {
-        return this.phrasesService.update(+id, updatePhraseDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.phrasesService.remove(+id);
+    @Post('purchase/:id')
+    @UseGuards(JwtAuthGuard)
+    async purchase(
+        @Param('id') id: number,
+        @ReqUser() user,
+        @Body() purchasePhrase: PurchasePhraseDto
+    ) {
+        const result = await this.phrasesService.purchase(id, user.user.id, purchasePhrase.price);
+        return result
     }
 }

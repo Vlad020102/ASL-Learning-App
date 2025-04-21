@@ -55,8 +55,6 @@ struct QuizCompletionView: View {
         self.accuracy = accuracy
         self.livesRemaining = livesRemaining
         self.onRestart = onRestart
-        
-        print(accuracy)
     }
     
     var body: some View {

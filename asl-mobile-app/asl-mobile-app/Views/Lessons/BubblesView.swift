@@ -74,12 +74,10 @@ struct BubblesView: View {
                             livesRemaining: numberOfLifes,
                             status: numberOfLifes > 0 ? .Completed : .Failed
                         )
-                        print("Completing quiz with data: \(completeQuizData)")
                         NetworkService.shared.completeQuiz(data: completeQuizData) { result in
                             DispatchQueue.main.async {
                                 switch result {
                                 case .success(let response):
-                                    print("Quiz completed: \(response)")
                                     self.presentationMode.wrappedValue.dismiss()
                                     currentQuizIndex = 0
                                     numberOfLifes = 5

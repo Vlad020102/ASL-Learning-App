@@ -42,7 +42,7 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     override func viewDidLoad() {
         super.viewDidLoad()
         checkPermission()
-        print("Setup Hand Landmarker called")
+
         setupHandLandmarker()
         
         sessionQueue.async { [unowned self] in
@@ -125,7 +125,6 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     }
     
     func setupHandLandmarker() {
-        print("Setting up hand landmarker")
         // You'll need to provide a path to the hand landmarker model
         let modelPath = Bundle.main.path(forResource: "hand_landmarker", ofType: "task")
         // Create a delegate for the hand landmarker (you'll need to implement this)

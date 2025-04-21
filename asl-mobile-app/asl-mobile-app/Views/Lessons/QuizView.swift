@@ -8,11 +8,13 @@ class QuizViewModel: ObservableObject {
     
     func loadQuizes() {
         isLoading = true
+        errorMessage = nil
         NetworkService.shared.getQuiz() { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 switch result {
                 case .success(let response):
+                    print(response)
                     self?.quizes = response.quizes
                 case .failure(let error):
                     self?.errorMessage = "Failed to load quizzes: \(error.localizedDescription)"

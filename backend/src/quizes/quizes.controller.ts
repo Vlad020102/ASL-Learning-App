@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { QuizesService } from './quizes.service';
+import { Controller, Get, Body, Patch, Param, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { ReqUser } from 'src/auth/guards/user.decorator';
-import { CompleteQuizDTO } from './entities/completeQuiz';
+import { CompleteQuizDTO } from './dto/completeQuiz';
 import { BadgesService } from 'src/badges/badges.service';
 import { UsersService } from 'src/users/users.service';
 import { QuizStatus } from '@prisma/client';

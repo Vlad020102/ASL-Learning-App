@@ -8,55 +8,52 @@ import SwiftUI
 
 struct SignsView: View {
     @EnvironmentObject private var viewModel: WikiViewModel
-    @State private var searchText = ""
-    
-    var filteredSigns: [Sign] {
-        if searchText.isEmpty {
-            return viewModel.signs
-        } else {
-            return viewModel.signs.filter { $0.name.lowercased().contains(searchText.lowercased()) }
-        }
-    }
     
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(filteredSigns) { (sign: Sign) in
-                    NavigationLink(destination: SignDetailView(sign: sign)) {
-                        HStack {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.blue.opacity(0.1))
-                                    .frame(width: 50, height: 50)
-                                
-                                Text(String(sign.name.prefix(1)))
-                                    .font(.title2)
-                                    .foregroundColor(.blue)
-                            }
+        List {
+            ForEach(viewModel.filteredSigns) { (sign: Sign) in
+                NavigationLink(destination: SignDetailView(sign: sign)) {
+                    HStack {
+                        ZStack {
+                            Circle()
+                                .fill(Color.blue.opacity(0.1))
+                                .frame(width: 50, height: 50)
                             
-                            VStack(alignment: .leading) {
-                                Text(sign.name)
-                                    .font(.headline)
-                                
-                                Text(sign.meaning)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.leading, 8)
-                            
-                            Spacer()
-                            
-                            Text("Difficulty: \(sign.difficulty)")
-                                .font(.caption)
-                                .foregroundColor(.orange)
+                            Text(String(sign.name.prefix(1)))
+                                .font(.title2)
+                                .foregroundColor(.blue)
                         }
-                        .padding(.vertical, 4)
+                        
+                        VStack(alignment: .leading) {
+                            Text(sign.name)
+                                .font(.headline)
+                            
+                            Text(sign.meaning)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.leading, 8)
+                        
+                        Spacer()
+                        
+                        Text("Difficulty: \(sign.difficulty)")
+                            .font(.caption)
+                            .foregroundColor(.main)
                     }
+                    .padding(.vertical, 4)
                 }
+                .listRowBackground(Color.accent3)
+                .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.accent3)
+                )
+                .listRowBackground(Color.clear)
             }
-            .searchable(text: $searchText, prompt: "Search signs")
-            .navigationTitle("All Discovered Signs")
         }
+        .listStyle(PlainListStyle())
+        .scrollContentBackground(.hidden)
+        .background(Color.background)
     }
 }
 
@@ -92,7 +89,7 @@ struct SignDetailView: View {
                     
                     Text("Difficulty: \(sign.difficulty)")
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.main)
                     
                     Divider()
                     
@@ -105,7 +102,7 @@ struct SignDetailView: View {
                         .padding(.top, 8)
                     
                     VStack(alignment: .leading, spacing: 12) {
-                        ForEach(Array((sign.explanation ?? []).enumerated()), id: \.element) { index,         explanation in
+                        ForEach(Array((sign.explanation ?? []).enumerated()), id: \.element) { index, explanation in
                             Text("\(index + 1). \(explanation)")
                         }
                     }
@@ -116,12 +113,20 @@ struct SignDetailView: View {
                     Text("Used in these phrases:")
                         .font(.headline)
                         .padding(.top, 8)
-                    
-                    // Would be dynamically generated based on phrases using this sign
-                    Text("• My name is...")
-                    Text("• Nice to meet you")
+                    VStack(alignment: .leading, spacing: 12) {
+                        ForEach(Array((sign.usedIn ?? []).enumerated()), id: \.element) { index, phraseName in
+                            HStack(alignment: .top, spacing: 8) {
+                                Text("•")  // Bullet point character
+                                Text(phraseName)
+                            }
+                        }
+                    }
+                    .padding(.leading)
                 }
                 .padding()
+                .background(Color.accent3)
+                .cornerRadius(12)
+                .padding(.horizontal)
                 
                 // Practice button
                 Button(action: {
@@ -136,24 +141,16 @@ struct SignDetailView: View {
                         .cornerRadius(10)
                 }
                 .padding()
-                
-                // "Find more phrases" button
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("Find more signs")
-                        .fontWeight(.medium)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .foregroundColor(.main)
-                        .cornerRadius(10)
-                }
-                .padding(.horizontal)
-                .padding(.bottom)
             }
         }
-        .navigationTitle("Sign Detail")
+        .background(Color.background)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Sign Details")
+                    .font(.headline)
+                    .foregroundColor(.textSecondary)
+            }
+        }
         .navigationBarTitleDisplayMode(.inline)
     }
 }

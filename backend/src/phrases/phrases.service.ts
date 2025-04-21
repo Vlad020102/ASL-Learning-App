@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePhraseDto } from './dto/create-phrase.dto';
-import { UpdatePhraseDto } from './dto/update-phrase.dto';
+import { PurchasePhraseDto } from './dto/purchase-phrase.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
+import { Phrase, PhraseStatus, User } from '@prisma/client';
 import { PrismaClientUnknownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -41,7 +41,6 @@ export class PhrasesService {
         }
     }
     async findAll(userID: number) {
-        // Get phrases with their signs and user statuses in a single query
         const phrases = await this.prisma.phrase.findMany({
             include: {
                 signs: {
@@ -59,10 +58,12 @@ export class PhrasesService {
                 }
             }
         });
-    
-        // Transform the data structure
-        const formattedPhrases = phrases.map(phrase => {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userID }
+        });
 
+        // Transform phrases first as before
+        const formattedPhrases = phrases.map(phrase => {
             const status = phrase.userPhrases[0]?.status || null;
             const { userPhrases, ...phraseWithoutUserPhrases } = phrase;
             return {
@@ -72,14 +73,24 @@ export class PhrasesService {
                 signs: phrase.signs.map(signRelation => ({
                     ...signRelation.sign,
                     explanation: signRelation.sign?.explanation 
-                    ? signRelation.sign.explanation.split(', ') 
-                    : []
-                }
-                ))
+                        ? signRelation.sign.explanation.split(', ') 
+                        : []
+                }))
             };
         });
-    
-        // Extract unique signs
+
+        // Create a map of signs with their related phrases
+        const signPhrasesMap = new Map();
+        phrases.forEach(phrase => {
+            phrase.signs.forEach(({ sign }) => {
+                if (!sign) return;
+                
+                const existingPhrases = signPhrasesMap.get(sign.id) || [];
+                signPhrasesMap.set(sign.id, [...existingPhrases, phrase.name]);
+            });
+        });
+
+        // Create uniqueSigns with related phrases
         const uniqueSigns = Array.from(
             new Map(
                 phrases
@@ -88,14 +99,16 @@ export class PhrasesService {
                         ...sign,
                         explanation: sign?.explanation 
                             ? sign.explanation.split(', ') 
-                            : []
+                            : [],
+                        usedIn: signPhrasesMap.get(sign?.id) || []
                     }])
             ).values()
         );
-    
+
         return {
             phrases: formattedPhrases,
-            signs: uniqueSigns
+            signs: uniqueSigns,
+            money: user?.money || 0,
         };
     }
 
@@ -111,12 +124,105 @@ export class PhrasesService {
             }
         });
     }
+    
+    async purchase(phrase_id: number, user_id: number, price: number ) {
+        if (price <= 0) {
+            throw new HttpException({
+                status: HttpStatus.BAD_REQUEST,
+                error: 'Price must be greater than 0',
+            }, HttpStatus.BAD_REQUEST);
+        }
 
-    update(id: number, updatePhraseDto: UpdatePhraseDto) {
-        return `This action updates a #${id} phrase`;
-    }
+        const user = await this.prisma.user.findUnique({
+            where: { id: user_id }
+        });
+        
+        if (!user) {
+            throw new HttpException({
+                status: HttpStatus.NOT_FOUND,
+                error: 'User not found',
+            }, HttpStatus.NOT_FOUND);
+        }
 
-    remove(id: number) {
-        return `This action removes a #${id} phrase`;
+        if (user.money < price) {
+            throw new HttpException({
+                status: HttpStatus.BAD_REQUEST,
+                error: 'Not enough money',
+            }, HttpStatus.BAD_REQUEST);
+        }   
+
+        try {
+            let phrase = await this.prisma.phrase.findUnique({
+                where: { id: phrase_id },
+                include: {
+                    signs: {
+                        include: {
+                            sign: true
+                        }
+                    },
+                    userPhrases: {
+                        where: {
+                            userID: user_id
+                        },
+                        select: {
+                            status: true
+                        }
+                    }
+                }
+            });
+            if (!phrase) {
+                throw new HttpException({
+                    status: HttpStatus.NOT_FOUND,
+                    error: 'Phrase not found',
+                }, HttpStatus.NOT_FOUND);
+            }
+            const status = phrase.userPhrases[0]?.status || null;
+
+            if (status === PhraseStatus.Purchased) {
+                throw new HttpException({
+                    status: HttpStatus.BAD_REQUEST,
+                    error: 'Phrase already purchased',
+                }, HttpStatus.BAD_REQUEST);
+            }
+
+            await this.prisma.userPhrase.update({
+                where: {
+                    userID_phraseID: {
+                        userID: user_id,
+                        phraseID: phrase_id
+                    }
+                },
+                data: {
+                    status: PhraseStatus.Purchased
+                }
+            });
+
+            await this.prisma.user.update({
+                where: { id: user_id },
+                data: {
+                    money: user.money - price
+                }
+            });
+
+            return {
+    
+                ...phrase,
+                userPhrases: undefined,
+                status: PhraseStatus.Purchased,
+                explanation: phrase.explanation ? phrase.explanation.split(', ') : [],
+                signs: phrase.signs.map(signRelation => ({
+                    ...signRelation.sign,
+                    explanation: signRelation.sign?.explanation 
+                    ? signRelation.sign.explanation.split(', ') 
+                    : []
+                }))
+            }
+
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.NOT_FOUND,
+                error: error.response?.error || 'An error occurred while processing your request',
+            }, HttpStatus.NOT_FOUND);
+        }
     }
 }

@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QuizStatus, QuizType, User } from '@prisma/client';
-import { CompleteQuizDTO } from './entities/completeQuiz';
+import { CompleteQuizDTO } from './dto/completeQuiz';
 
 @Injectable()
 export class QuizesService {

@@ -23,7 +23,7 @@ struct BadgesView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(title)
-                .foregroundColor(.secondary)
+                .foregroundColor(.alternative)
                 .font(.title3)
                 .fontWeight(.bold)
                 .padding(.vertical, 4)
@@ -32,6 +32,12 @@ struct BadgesView: View {
                 GridItem(.flexible()),
                 GridItem(.flexible())
             ], spacing: 16) {
+                if badges.isEmpty {
+                    Text("No badges found")
+                        .foregroundColor(.alternative)
+                        .font(.headline)
+                        .bold(true)
+                }
                 ForEach(badges) { badge in
                     NavigationLink(destination: BadgeDetailView(badge: badge)) {
                         BadgeCard(badge: badge)

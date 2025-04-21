@@ -68,7 +68,7 @@ struct ProfileView: View {
                         VStack(alignment: .leading) {
                             HStack {
                                 Text("Badges")
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.alternative)
                                     .font(.title3)
                                     .fontWeight(.bold)
                                 

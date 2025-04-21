@@ -66,6 +66,7 @@ model User {
   questionsAnsweredTotal Int          @default(0) @map("questions_answered_total")
   questionsAnsweredToday Int          @default(0) @map("questions_correct_today")
   streak                 Int          @default(0)
+  money                  Int          @default(0)
   createdAt              DateTime     @default(now()) @map("created_at")
   updatedAt              DateTime     @default(now()) @map("updated_at")
   badges                 UserBadge[]
@@ -147,7 +148,7 @@ model Phrase {
   explanation String?
   price       Int
 
-  signs      PhraseSign[]
+  signs       PhraseSign[]
   userPhrases UserPhrase[]
 
   @@map("phrases")
