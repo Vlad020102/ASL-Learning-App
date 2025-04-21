@@ -21,7 +21,7 @@ import AVFoundation
  */
 protocol HandLandmarkerServiceLiveStreamDelegate: AnyObject {
   func handLandmarkerService(_ handLandmarkerService: HandLandmarkerService,
-                             didFinishDetection result: ResultBundle?,
+                             didFinishDetection result: HandResultBundle?,
                              error: Error?)
 }
 
@@ -157,7 +157,7 @@ delegate: HandLandmarkerDelegate) -> HandLandmarkerService? {
   /**
    This method return HandLandmarkerResult and infrenceTime when receive an image
    **/
-  func detect(image: UIImage) -> ResultBundle? {
+  func detect(image: UIImage) -> HandResultBundle? {
     guard let mpImage = try? MPImage(uiImage: image) else {
       return nil
     }
@@ -165,7 +165,7 @@ delegate: HandLandmarkerDelegate) -> HandLandmarkerService? {
       let startDate = Date()
       let result = try handLandmarker?.detect(image: mpImage)
       let inferenceTime = Date().timeIntervalSince(startDate) * 1000
-      return ResultBundle(inferenceTime: inferenceTime, handLandmarkerResults: [result])
+      return HandResultBundle(inferenceTime: inferenceTime, handLandmarkerResults: [result])
     } catch {
         print(error)
         return nil
@@ -189,7 +189,7 @@ delegate: HandLandmarkerDelegate) -> HandLandmarkerService? {
   func detect(
     videoAsset: AVAsset,
     durationInMilliseconds: Double,
-    inferenceIntervalInMilliseconds: Double) async -> ResultBundle? {
+    inferenceIntervalInMilliseconds: Double) async -> HandResultBundle? {
     let startDate = Date()
     let assetGenerator = imageGenerator(with: videoAsset)
 
@@ -203,7 +203,7 @@ delegate: HandLandmarkerDelegate) -> HandLandmarkerService? {
       totalFrameCount: frameCount,
       atIntervalsOf: inferenceIntervalInMilliseconds)
 
-    return ResultBundle(
+    return HandResultBundle(
       inferenceTime: Date().timeIntervalSince(startDate) / Double(frameCount) * 1000,
       handLandmarkerResults: handLandmarkerResultTuple.handLandmarkerResults,
       size: handLandmarkerResultTuple.videoSize)
@@ -265,7 +265,7 @@ extension HandLandmarkerService: HandLandmarkerLiveStreamDelegate {
     didFinishDetection result: HandLandmarkerResult?,
     timestampInMilliseconds: Int,
     error: Error?) {
-      let resultBundle = ResultBundle(
+      let resultBundle = HandResultBundle(
         inferenceTime: Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds),
         handLandmarkerResults: [result])
       liveStreamDelegate?.handLandmarkerService(
@@ -276,7 +276,7 @@ extension HandLandmarkerService: HandLandmarkerLiveStreamDelegate {
 }
 
 /// A result from the `HandLandmarkerService`.
-struct ResultBundle {
+struct HandResultBundle {
   let inferenceTime: Double
   let handLandmarkerResults: [HandLandmarkerResult?]
   var size: CGSize = .zero
