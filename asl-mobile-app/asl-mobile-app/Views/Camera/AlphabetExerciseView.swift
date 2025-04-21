@@ -38,8 +38,6 @@ struct AlphabetExerciseView: View {
                     if isCorrectSign {
                         let elapsedTime = Date().timeIntervalSince(startTime)
                         signTimes.append(elapsedTime)
-                        print("Correct! Elapsed time: \(elapsedTime) seconds")
-                        print("Move to next string")
                         moveToNextString()
                     }
                 }
@@ -86,12 +84,10 @@ struct AlphabetExerciseView: View {
                             status: .Completed
                         )
                         
-                        print("Completing quiz with data: \(completeQuizData)")
                         NetworkService.shared.completeQuiz(data: completeQuizData) { result in
                             DispatchQueue.main.async {
                                 switch result {
                                 case .success(let response):
-                                    print("Quiz completed: \(response)")
                                     self.presentationMode.wrappedValue.dismiss()
                                     currentIndex = 0
                                     showCompletionView = false
@@ -113,8 +109,6 @@ struct AlphabetExerciseView: View {
                startSign = testStrings[currentIndex]
                isCorrectSign = false // Reset the correctness for the next string
            } else {
-               // Exercise complete - show completion view
-               print("Completed!!!!")
                showCompletionView = true
            }
        }
@@ -163,9 +157,6 @@ struct AlphabetExerciseView: View {
            
            // Calculate average score across all signs
            let averageScore = totalScore / Float(signTimes.count)
-           
-           // Debug output
-           print("Average accuracy score: \(averageScore)")
            
            return averageScore
        }

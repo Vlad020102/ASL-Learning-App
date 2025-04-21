@@ -16,28 +16,28 @@ struct ErrorView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 100, height: 100)
-                .foregroundColor(AppColors.accent1)
+                .foregroundColor(.accent1)
             
             Text("Oops! Something went wrong")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(AppColors.accent1)
+                .foregroundColor(.accent1)
             
             Text(message)
                 .font(.body)
-                .foregroundColor(AppColors.accent2)
+                .foregroundColor(.accent2)
                 .multilineTextAlignment(.center)
             
             Button(action: retryAction) {
                 Text("Try Again")
                     .foregroundColor(.white)
                     .padding()
-                    .background(AppColors.primary)
+                    .background(.main)
                     .cornerRadius(10)
             }
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.background)
+        .background(Color.background)
     }
 }

@@ -24,7 +24,7 @@ struct MatchingView: View {
                     
                     Text("Tap the matching pairs")
                         .font(.subheadline)
-                        .foregroundColor(AppColors.textSecondary)
+                        .foregroundColor(.textSecondary)
                         .padding(.vertical, 5)
                     
                     // Matching exercise content with ScrollView for flexibility
@@ -43,12 +43,10 @@ struct MatchingView: View {
                                 livesRemaining: numberOfLives,
                                 status: numberOfLives > 0 ? .Completed : .Failed
                         )
-                            print("Completing quiz with data: \(completeQuizData)")
                             NetworkService.shared.completeQuiz(data: completeQuizData) { result in
                                 DispatchQueue.main.async {
                                     switch result {
                                     case .success(let response):
-                                        print("Quiz completed: \(response)")
                                         self.presentationMode.wrappedValue.dismiss()
                                         showCompletionView = false
                                     case .failure(let error):
@@ -61,7 +59,7 @@ struct MatchingView: View {
                     )
                 }
             }
-            .background(AppColors.background)
+            .background(Color.background)
         }
         .sheet(isPresented: $showFeedback) {
             FeedbackView(
@@ -90,16 +88,16 @@ struct MatchingView: View {
     private var topProgressBar: some View {
         HStack {
             ProgressView(value: Float(correctMatches) / Float(exercise.pairs.count))
-                .progressViewStyle(LinearProgressViewStyle(tint: AppColors.primary))
+                .progressViewStyle(LinearProgressViewStyle(tint: .main))
                 .frame(height: 8)
                 .padding(.horizontal)
             
             HStack(spacing: 2) {
                 Image(systemName: "heart.fill")
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
                     .font(.system(size: 14))
                 Text("\(numberOfLives)")
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
                     .font(.system(size: 14))
             }
             .padding(.horizontal, 5)
@@ -144,7 +142,7 @@ struct MatchingView: View {
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(selectedLeftItem == index ? AppColors.primary : AppColors.border, lineWidth: 2)
+                    .stroke(selectedLeftItem == index ? .main : Color.border, lineWidth: 2)
             )
             .opacity(isCompleted ? 0.6 : 1.0)
             .overlay(leftItemCheckmark(index: index))
@@ -156,7 +154,7 @@ struct MatchingView: View {
         Group {
             if correctPairs.contains(where: { $0.key == index }) {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
                     .font(.system(size: 30))
             }
         }
@@ -165,13 +163,13 @@ struct MatchingView: View {
     private func rightItemButton(index: Int, geometry: GeometryProxy) -> some View {
         let isCompleted = correctPairs.contains(where: { $0.value == index })
         let itemSize = (geometry.size.width - 50) / 3
-        let backgroundColor = isCompleted ? AppColors.disabledBackground.opacity(0.7) : AppColors.disabledBackground
-        let textColor = isCompleted ? AppColors.text.opacity(0.6) : AppColors.text
+        let backgroundColor = isCompleted ? Color.disabledBackground.opacity(0.7) : Color.disabledBackground
+        let textColor = isCompleted ? Color.text.opacity(0.6) : .text
         
         return Button(action: {
             handleRightSelection(index)
         }) {
-            Text(exercise.pairs[index].text)
+            Text(exercise.pairs[index].name)
                 .font(.system(size: min(16, geometry.size.width / 25)))
                 .padding(8)
                 .frame(width: itemSize, height: itemSize)
@@ -180,7 +178,7 @@ struct MatchingView: View {
                 .cornerRadius(8)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(selectedRightItem == index ? AppColors.primary : AppColors.border, lineWidth: 2)
+                        .stroke(selectedRightItem == index ? Color.main : Color.border, lineWidth: 2)
                 )
                 .overlay(rightItemCheckmark(index: index))
         }
@@ -191,7 +189,7 @@ struct MatchingView: View {
         Group {
             if correctPairs.contains(where: { $0.value == index }) {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(AppColors.primary)
+                    .foregroundColor(.main)
                     .font(.system(size: 30))
             }
         }
@@ -209,12 +207,10 @@ struct MatchingView: View {
                     livesRemaining: numberOfLives,
                     status: numberOfLives > 0 ? .Completed : .Failed
                 )
-                print("Completing quiz with data: \(completeQuizData)")
                 NetworkService.shared.completeQuiz(data: completeQuizData) { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let response):
-                            print("Quiz completed: \(response)")
                             self.presentationMode.wrappedValue.dismiss()
                             showCompletionView = false
                         case .failure(let error):
@@ -330,11 +326,11 @@ struct GIFImageView: UIViewRepresentable {
 extension MatchingView{
     static var mockExercise: MatchingQuizData {
         let pairs = [
-            MatchingPair(signGif: "how-are-you", text: "hello", matchIndex: 1),
-            MatchingPair(signGif: "how-are-you", text: "thank you", matchIndex: 3),
-            MatchingPair(signGif: "how-are-you", text: "name", matchIndex: 2),
-            MatchingPair(signGif: "how-are-you", text: "nice to meet you", matchIndex: 4),
-            MatchingPair(signGif: "how-are-you", text: "how are you", matchIndex: 0)
+            MatchingPair(signGif: "how-are-you", name: "hello", matchIndex: 1),
+            MatchingPair(signGif: "how-are-you", name: "thank you", matchIndex: 3),
+            MatchingPair(signGif: "how-are-you", name: "name", matchIndex: 2),
+            MatchingPair(signGif: "how-are-you", name: "nice to meet you", matchIndex: 4),
+            MatchingPair(signGif: "how-are-you", name: "how are you", matchIndex: 0)
         ]
         
         return MatchingQuizData(id: 1, title: "Matching Exercise", type: .Matching, status: .InProgress, score: 0.0, livesRemaining: 5, pairs: pairs)

@@ -38,13 +38,18 @@ struct ContentView: View {
                     Text("Lessons")
                 }
                 .tag(2)
+            WikiView()
+                .tabItem{
+                    Image(systemName: "book.pages")
+                    Text("Wiki")
+                }
+                .tag(3)
         }
-        // This ensures the tab bar is always visible
         .onAppear() {
-            // Set the default tab bar appearance to make it persistent
             let appearance = UITabBarAppearance()
             appearance.configureWithDefaultBackground()
             UITabBar.appearance().scrollEdgeAppearance = appearance
+            UITabBar.appearance().backgroundColor = UIColor(named: "accent3")
         }
     }
 }

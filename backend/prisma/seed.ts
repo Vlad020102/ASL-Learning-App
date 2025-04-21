@@ -96,25 +96,25 @@ const quizData = [
     signs: [
       {
         difficulty: Difficulty.Easy,
-        text: "Hello",
+        name: "Hello",
         s3Url: "url",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
-        text: "Goodbye",
+        name: "Goodbye",
         s3Url: "url",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
-        text: "Thank you",
+        name: "Thank you",
         s3Url: "url",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
-        text: "Please",
+        name: "Please",
         s3Url: "url",
         options: "Hello, Goodbye, Thank you, Please"
       },
@@ -126,25 +126,25 @@ const quizData = [
     signs: [
       {
         difficulty: Difficulty.Moderate,
-        text: "Good morning",
+        name: "Good morning",
         s3Url: "url",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
-        text: "Good night",
+        name: "Good night",
         s3Url: "url",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
-        text: "Good afternoon",
+        name: "Good afternoon",
         s3Url: "url",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
-        text: "Good evening",
+        name: "Good evening",
         s3Url: "url",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
@@ -156,25 +156,25 @@ const quizData = [
     signs: [
       {
         difficulty: Difficulty.Hard,
-        text: "How are you?",
+        name: "How are you?",
         s3Url: "url",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
-        text: "What is your name?",
+        name: "What is your name?",
         s3Url: "url",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
-        text: "Where are you from?",
+        name: "Where are you from?",
         s3Url: "url",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
-        text: "What do you do?",
+        name: "What do you do?",
         s3Url: "url",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
@@ -185,17 +185,17 @@ const quizData = [
     title: 'Basic Signs Matching',
     pairs: [
       {
-        text: "Hello",
+        name: "Hello",
         signGif: "how-are-you",
         matchIndex: 0,
       },
       {
-        text: "Goodbye",
+        name: "Goodbye",
         signGif: "how-are-you",
         matchIndex: 1,
       },
       {
-        text: "Thank you",
+        name: "Thank you",
         signGif: "how-are-you",
         matchIndex: 2,
       }
@@ -212,6 +212,55 @@ const alphabet = [
   "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
   "U", "V", "W", "X", "Y", "Z"
 ]
+
+const phraseData = [
+  {
+    id: 1,
+    name: "I can't sleep. I've been tossing and turning all night",
+    s3Url: 'url',
+    description: 'A common greeting',
+    difficulty: Difficulty.Easy,
+    meaning: "ME CAN'T SLEEP ME TOSS-AND-TURN ALL-NIGHT",
+    explanation: "Move your fuck, Then move your other fuck, And now get them together",
+    price: 10,
+    signs: [
+      {
+        name: "Me",
+        s3Url: 'url',
+        description: 'I ME',
+        difficulty: Difficulty.Easy,
+        explanation: "Move your fuck",
+        meaning: "Fuck those kids up in the pit"
+      },
+      {
+        name: "Can't",
+        s3Url: 'url',
+        description: 'Cannot',
+        difficulty: Difficulty.Easy,
+        explanation: "Just do it, nothing is impossible",
+        meaning: "I am unable to make execute this "
+      },
+      {
+        id: 2,
+        name: 'Sleep',
+        s3Url: 'url',
+        description: 'Sleep',
+        difficulty: Difficulty.Easy,
+        explanation: "wiwiwi, then wawa",
+        meaning: "I am gods eepiest soldier"
+      },
+      {
+        name: "All Night",
+        s3Url: 'url',
+        description: 'All night',
+        difficulty: Difficulty.Easy,
+        explanation: "Get your index finger and fuck off, Then move your fuck",
+        meaning: "5 seconds basically"
+      },
+    ]
+  }
+]
+
 
 async function createBadges() {
   for (let i = 0; i < badgeData.length; i++) {
@@ -257,7 +306,7 @@ async function createQuizes() {
             for (const letter of letters) {
               const sign = await prisma.sign.create({
                 data: {
-                  text: letter,
+                  name: letter,
                   s3Url: `alphabet/${letter.toLowerCase()}`,
                   difficulty: Difficulty.Easy
                 }
@@ -286,7 +335,6 @@ async function createQuizes() {
       try {
         const createdQuiz = await prisma.quiz.create({
           data: {
-            id: i,
             type: quiz.type,
             title: quiz.title,
           },
@@ -298,7 +346,7 @@ async function createQuizes() {
             const sign = quiz.signs[j];
             const createdSign = await prisma.sign.create({
               data: {
-                text: sign.text,
+                name: sign.name,
                 s3Url: sign.s3Url,
                 difficulty: sign.difficulty,
               }
@@ -332,7 +380,7 @@ async function createQuizes() {
               const createdPair = await prisma.pair.create({
                 data: {
                   id: k,
-                  text: pair.text,
+                  name: pair.name,
                   signGif: pair.signGif,
                 }
               });
@@ -368,11 +416,62 @@ async function createQuizes() {
   }
 }
 
+async function createPhrases() {
+  try {
+    for (const phrase of phraseData) {
+      const createdPhrase = await prisma.phrase.create({
+        data: {
+          id: phrase.id,
+          name: phrase.name,
+          s3Url: phrase.s3Url,
+          description: phrase.description,
+          explanation: phrase.explanation,
+          meaning: phrase.meaning,
+          difficulty: phrase.difficulty,
+          price: phrase.price,
+        }
+      });
+
+      for (const sign of phrase.signs) {
+        const createdSign = await prisma.sign.create({
+          data: {
+            name: sign.name,
+            s3Url: sign.s3Url,
+            description: sign.description,
+            difficulty: sign.difficulty,
+            meaning: sign.meaning,
+            explanation: sign.explanation
+          }
+        });
+        await prisma.phraseSign.create({
+          data: {
+            phrase: {
+              connect: {
+                id: createdPhrase.id
+              }
+            },
+            sign: {
+              connect: {
+                id: createdSign.id
+              }
+            }
+          }
+        });
+      }
+      console.log(`Created phrase with ID: ${createdPhrase.id}`);
+    }
+  } catch (error) {
+    console.error('Error in createPhrases function:', error);
+    throw error; // Re-throw the error to be caught by the main function
+  }
+}
+
 async function main() {
   console.log('Start seeding badges...');
 
   await createBadges();
   await createQuizes();
+  await createPhrases();
 }
 
 main()

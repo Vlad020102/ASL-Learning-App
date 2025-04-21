@@ -11,7 +11,10 @@ extension NetworkService {
             endpoint: "quizes",
             method: .get)
         { (result: Result<QuizResponse, NetworkError>) in
+            print(result)
             switch result {
+            
+
             case .success(let response):
                 completion(.success(response))
             case .failure(let error):
@@ -26,6 +29,7 @@ extension NetworkService {
             method: .patch,
             body: data)
         { (result: Result<CompleteQuizResponse, NetworkError>) in
+
             switch result {
             case .success(let response):
                 completion(.success(response))
@@ -34,6 +38,13 @@ extension NetworkService {
             }
         }
     }
+}
+
+struct CompleteQuizData: Codable {
+    let quizID: Int
+    let score: String
+    let livesRemaining: Int
+    let status: QuizStatus
 }
 
 enum QuizType: String, Codable {
@@ -90,21 +101,6 @@ struct BubblesQuizData: Codable, QuizCardDisplayable {
     let signs: [Sign]?
 }
 
-struct Sign: Codable {
-    let id: Int
-    let difficulty: String
-    let s3Url: String?
-    let text: String
-    let options: String?
-}
-
-struct CompleteQuizData: Codable {
-    let quizID: Int
-    let score: String
-    let livesRemaining: Int
-    let status: QuizStatus
-}
-
 struct CompleteQuizResponse: Codable {
     let status: String
 }
@@ -131,7 +127,7 @@ struct AlphabetQuizData: Codable, QuizCardDisplayable {
 
 struct MatchingPair: Codable {
     let signGif: String
-    let text: String
+    let name: String
     let matchIndex: Int
 }
 

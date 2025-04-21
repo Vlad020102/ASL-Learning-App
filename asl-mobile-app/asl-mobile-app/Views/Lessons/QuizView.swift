@@ -8,11 +8,13 @@ class QuizViewModel: ObservableObject {
     
     func loadQuizes() {
         isLoading = true
+        errorMessage = nil
         NetworkService.shared.getQuiz() { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 switch result {
                 case .success(let response):
+                    print(response)
                     self?.quizes = response.quizes
                 case .failure(let error):
                     self?.errorMessage = "Failed to load quizzes: \(error.localizedDescription)"
@@ -28,33 +30,33 @@ struct QuizCatalogueView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                AppColors.background.edgesIgnoringSafeArea(.all)
+                Color.background.edgesIgnoringSafeArea(.all)
                 
                 VStack {
                     if viewModel.isLoading {
                         ProgressView()
                     } else if let errorMessage = viewModel.errorMessage {
                         ErrorView(message: errorMessage, retryAction: {
-                            AuthManager.shared.removeToken()
+                            viewModel.loadQuizes()
                         })
                     } else {
                         quizList
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(AppColors.background, for: .navigationBar)
+                .toolbarBackground(Color.background, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
-                .foregroundStyle(AppColors.textSecondary)
+                .foregroundStyle(.textSecondary)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         Text("Quizzes")
                             .font(.headline)
                     
-                            .foregroundColor(AppColors.textSecondary)
+                            .foregroundColor(.textSecondary)
                     }
                 }
             }
-            .accentColor(AppColors.card) // Sets navigation link and button colors
+            .accentColor(.card) // Sets navigation link and button colors
             .onAppear {
                 viewModel.loadQuizes()
             }
@@ -66,21 +68,21 @@ struct QuizCatalogueView: View {
             ForEach(viewModel.quizes.bubblesQuizes, id: \.id) { quiz in
                 quizCardView(for: .bubbles(quiz))
             }
-            .listRowBackground(AppColors.background)
+            .listRowBackground(Color.background)
             
             ForEach(viewModel.quizes.matchingQuizes, id: \.id) { quiz in
                 quizCardView(for: .matching(quiz))
             }
-            .listRowBackground(AppColors.background)
+            .listRowBackground(Color.background)
             
             ForEach(viewModel.quizes.alphabetQuizes, id: \.id) { quiz in
                 quizCardView(for: .alphabet(quiz))
             }
-            .listRowBackground(AppColors.background)
+            .listRowBackground(Color.background)
         }
 
         .listStyle(PlainListStyle())
-        .background(AppColors.background)
+        .background(Color.background)
     }
     
     @ViewBuilder
@@ -114,9 +116,9 @@ struct QuizCatalogueView: View {
                 
             case .alphabet(let quiz):
                 NavigationLink(destination: AlphabetExerciseView(
-                    testStrings: quiz.signs?.map { $0.text } ?? ["A", "B", "C", "D", "E"],
+                    testStrings: quiz.signs?.map { $0.name } ?? ["A", "B", "C", "D", "E"],
                     quizID: quiz.id,
-                    startSign: quiz.signs?.first?.text ?? "A"
+                    startSign: quiz.signs?.first?.name ?? "A"
                 )) {
                     GenericQuizCard(
                         title: quiz.title,

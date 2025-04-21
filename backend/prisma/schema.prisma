@@ -35,6 +35,12 @@ enum QuizStatus {
   Locked
 }
 
+enum PhraseStatus {
+  Available
+  Purchased
+  Finished
+}
+
 enum Difficulty {
   Hard
   Easy
@@ -48,22 +54,24 @@ enum BadgeStatus {
 }
 
 model User {
-  id                     Int         @id @default(autoincrement())
-  username               String      @unique
+  id                     Int          @id @default(autoincrement())
+  username               String       @unique
   password               String
-  email                  String      @unique
-  source                 String      @default("Google Search")
-  dailyGoal              Int         @default(5) @map("daily_goal")
-  learningReason         String      @default("For work or school") @map("learning_reason")
-  level                  Int         @default(1)
-  level_progress         Float       @default(0) @map("level_progress")
-  questionsAnsweredTotal Int         @default(0) @map("questions_answered_total")
-  questionsAnsweredToday Int         @default(0) @map("questions_correct_today")
-  streak                 Int         @default(0)
-  createdAt              DateTime    @default(now()) @map("created_at")
-  updatedAt              DateTime    @default(now()) @map("updated_at")
+  email                  String       @unique
+  source                 String       @default("Google Search")
+  dailyGoal              Int          @default(5) @map("daily_goal")
+  learningReason         String       @default("For work or school") @map("learning_reason")
+  level                  Int          @default(1)
+  level_progress         Float        @default(0) @map("level_progress")
+  questionsAnsweredTotal Int          @default(0) @map("questions_answered_total")
+  questionsAnsweredToday Int          @default(0) @map("questions_correct_today")
+  streak                 Int          @default(0)
+  money                  Int          @default(0)
+  createdAt              DateTime     @default(now()) @map("created_at")
+  updatedAt              DateTime     @default(now()) @map("updated_at")
   badges                 UserBadge[]
   quizzes                QuizUser[]
+  phrases                UserPhrase[]
 
   @@map("users")
 }
@@ -75,7 +83,7 @@ model Badge {
   type        BadgeType
   icon        String
   description String
-  target      Int        @default(0)
+  target      Int         @default(0)
 
   users UserBadge[]
 
@@ -95,17 +103,15 @@ model UserBadge {
   @@map("user_badges")
 }
 
-model Lesson {
-  id Int @id @default(autoincrement())
-
-  @@map("lessons")
-}
-
 model Sign {
   id         Int        @id @default(autoincrement())
   difficulty Difficulty
   s3Url      String
-  text       String     @unique
+  name       String     @unique
+
+  meaning     String?
+  explanation String?
+  description String?
 
   quizes  QuizSigns[]
   phrases PhraseSign[]
@@ -126,20 +132,37 @@ model Quiz {
 
 model Pair {
   id      Int    @id @default(autoincrement())
-  text    String @unique
+  name    String @unique
   signGif String
 
   quizes QuizPair[]
 }
 
 model Phrase {
-  id         Int        @id @default(autoincrement())
-  difficulty Difficulty
-  text       String     @unique
+  id          Int        @id @default(autoincrement())
+  difficulty  Difficulty
+  name        String     @unique
+  s3Url       String
+  description String?
+  meaning     String?
+  explanation String?
+  price       Int
 
-  signs PhraseSign[]
+  signs       PhraseSign[]
+  userPhrases UserPhrase[]
 
   @@map("phrases")
+}
+
+model PhraseSign {
+  id       Int  @id @default(autoincrement())
+  signID   Int? @map("sign_id")
+  phraseID Int? @map("phrase_id")
+
+  phrase Phrase? @relation(fields: [phraseID], references: [id])
+  sign   Sign?   @relation(fields: [signID], references: [id])
+
+  @@map("phrases_sign")
 }
 
 model QuizUser {
@@ -169,16 +192,15 @@ model QuizSigns {
   @@map("quiz_signs")
 }
 
-model PhraseSign {
-  id       Int  @id @default(autoincrement())
-  signID   Int? @map("sign_id")
-  phraseID Int? @map("phrase_id")
-  order    Int?
+model UserPhrase {
+  id       Int          @id @default(autoincrement())
+  userID   Int          @map("user_id")
+  phraseID Int          @map("phrase_id")
+  status   PhraseStatus @default(Available)
+  user     User         @relation(fields: [userID], references: [id])
+  phrase   Phrase       @relation(fields: [phraseID], references: [id])
 
-  sign   Sign?   @relation(fields: [signID], references: [id])
-  phrase Phrase? @relation(fields: [phraseID], references: [id])
-
-  @@map("phrases_sign")
+  @@unique([userID, phraseID])
 }
 
 model QuizPair {

@@ -24,15 +24,15 @@ struct BubblesView: View {
                 // Progress bar and hearts
                 HStack {
                     ProgressView(value: Float(currentQuizIndex) / Float(quiz.signs?.count ?? 0))
-                        .progressViewStyle(LinearProgressViewStyle(tint: AppColors.primary))
+                        .progressViewStyle(LinearProgressViewStyle(tint: .main))
                         .frame(height: 10)
                         .padding(.horizontal)
                     
                     HStack(spacing: 2) {
                         Image(systemName: "heart.fill")
-                            .foregroundColor(AppColors.primary)
+                            .foregroundColor(.main)
                         Text("\(numberOfLifes)")
-                            .foregroundColor(AppColors.primary)
+                            .foregroundColor(.main)
                     }
                     .padding(.horizontal, 5)
                 }.padding(.top, 10)
@@ -74,12 +74,10 @@ struct BubblesView: View {
                             livesRemaining: numberOfLifes,
                             status: numberOfLifes > 0 ? .Completed : .Failed
                         )
-                        print("Completing quiz with data: \(completeQuizData)")
                         NetworkService.shared.completeQuiz(data: completeQuizData) { result in
                             DispatchQueue.main.async {
                                 switch result {
                                 case .success(let response):
-                                    print("Quiz completed: \(response)")
                                     self.presentationMode.wrappedValue.dismiss()
                                     currentQuizIndex = 0
                                     numberOfLifes = 5
@@ -94,7 +92,7 @@ struct BubblesView: View {
                 )
             }
         }
-        .background(AppColors.background)
+        .background(Color.background)
     }
 }
 //
@@ -122,7 +120,7 @@ struct SignView: View {
             // Quiz title
             Text("What sign is this?")
                 .font(.headline)
-                .foregroundColor(AppColors.textSecondary)
+                .foregroundColor(.textSecondary)
                 .padding(.bottom, 10)
             
             // Content based on Quiz type
@@ -132,7 +130,7 @@ struct SignView: View {
                     .cornerRadius(10)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(AppColors.border, lineWidth: 1)
+                            .stroke(.border, lineWidth: 1)
                     )
                     .padding(.horizontal)
                 
@@ -162,16 +160,16 @@ struct SignView: View {
             // User's answer field
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(AppColors.border, lineWidth: 1)
+                    .stroke(.border, lineWidth: 1)
                     .frame(height: 60)
                     .padding(.horizontal)
                 
                 if selectedWords.isEmpty {
                     Text("Tap the words to form your answer")
-                        .foregroundColor(AppColors.textSecondary.opacity(0.7))
+                        .foregroundColor(.textSecondary.opacity(0.7))
                 } else {
                     Text(selectedWords.joined(separator: " "))
-                        .foregroundColor(AppColors.textSecondary)
+                        .foregroundColor(.textSecondary)
                         .padding()
                 }
             }
@@ -192,8 +190,8 @@ struct SignView: View {
                                     Text(word)
                                         .padding(.vertical, 10)
                                         .padding(.horizontal, 15)
-                                        .background(AppColors.card)
-                                        .foregroundColor(selectedWords.contains(word) ? AppColors.textSecondary: AppColors.text)
+                                        .background(.card)
+                                        .foregroundColor(selectedWords.contains(word) ? .textSecondary: .text)
                                         .cornerRadius(20)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 20)
@@ -210,7 +208,7 @@ struct SignView: View {
             
             Button(action: {
                 // Check if the answer is correct
-                isCorrect = selectedWords.joined(separator: " ") == sign?.text
+                isCorrect = selectedWords.joined(separator: " ") == sign?.name
                 feedbackType = isCorrect ? .correct : .incorrect
                 showFeedback = true
                 
@@ -220,10 +218,10 @@ struct SignView: View {
             }) {
                 Text("CHECK")
                     .fontWeight(.medium)
-                    .foregroundColor(selectedWords.isEmpty ? AppColors.text : AppColors.textSecondary)
+                    .foregroundColor(selectedWords.isEmpty ? .text : .textSecondary)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(selectedWords.isEmpty ? AppColors.disabledBackground : AppColors.primary)
+                    .background(selectedWords.isEmpty ? .disabledBackground : .main)
                     .cornerRadius(10)
                     .padding(.horizontal)
                     .padding(.vertical, 10)
@@ -237,7 +235,7 @@ struct SignView: View {
             // Feedback popup
             FeedbackView(
                     feedbackType: $feedbackType,
-                    correctAnswer: sign?.text,
+                    correctAnswer: sign?.name,
                     onContinue: {
                         // Only complete Quiz if correct
                         if feedbackType == .correct {
@@ -249,7 +247,7 @@ struct SignView: View {
                 )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(AppColors.background)
+            .background(Color.background)
         }
     
     private func setupPlayer() {

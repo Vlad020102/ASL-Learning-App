@@ -68,7 +68,7 @@ struct ProfileView: View {
                         VStack(alignment: .leading) {
                             HStack {
                                 Text("Badges")
-                                    .foregroundColor(AppColors.secondary)
+                                    .foregroundColor(.alternative)
                                     .font(.title3)
                                     .fontWeight(.bold)
                                 
@@ -76,7 +76,7 @@ struct ProfileView: View {
                                 
                                 NavigationLink(destination: AllBadgesView(badges: viewModel.user?.badges ?? [])) {
                                     Text("View all")
-                                        .foregroundColor(AppColors.primary)
+                                        .foregroundColor(.main)
                                         .font(.subheadline)
                                 }
                             }
@@ -92,7 +92,7 @@ struct ProfileView: View {
                         }) {
                             Text("LOGOUT")
                                 .font(.headline)
-                                .foregroundColor(AppColors.accent1)
+                                .foregroundColor(.accent1)
                                 .padding()
                                 .frame(maxWidth: .infinity)
                                 .background(Color.red.opacity(0.1))
@@ -107,7 +107,7 @@ struct ProfileView: View {
                 }
                 .padding(.horizontal)
             }
-            .background(AppColors.background)
+            .background(Color.background)
             .onAppear {
                 viewModel.loadProfile()
             }
@@ -173,7 +173,7 @@ struct ProfileHeaderView: View {
             }
             .padding(.bottom, 16)
         }
-        .background(AppColors.accent3)
+        .background(.accent3)
         .cornerRadius(10)
         .padding(.bottom, 16)
     }
