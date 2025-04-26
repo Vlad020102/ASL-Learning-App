@@ -45,8 +45,8 @@ def create_dataset():
 
                 data.append(flattened_data_aux)
                 labels.append(dir_names)
-            plt.figure()
-            plt.imshow(img_rgb)
+            # plt.figure()
+            # plt.imshow(img_rgb)
     f = open('../data.pickle', 'wb')
     pickle.dump({'data': data, 'labels': labels}, f)
     f.close()

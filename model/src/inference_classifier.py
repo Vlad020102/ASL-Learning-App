@@ -8,7 +8,7 @@ import time
 model_dict = pickle.load(open('../model.p', 'rb'))
 model = model_dict['model']
 
-threshold = 0.5
+threshold = 0.001
 
 previous_prediction = None
 prediction_start_time = None
