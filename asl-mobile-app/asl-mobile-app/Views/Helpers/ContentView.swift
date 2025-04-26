@@ -24,7 +24,7 @@ struct ContentView: View {
                 .tag(0)
             
             // Camera Tab
-            CameraView(targetSign: $targetSign, isCorrectSign: $isCorrectSign)
+            SimpleCameraView(targetSign: $targetSign, isCorrectSign: $isCorrectSign)
                 .tabItem {
                     Image(systemName: "camera.fill")
                     Text("Camera")

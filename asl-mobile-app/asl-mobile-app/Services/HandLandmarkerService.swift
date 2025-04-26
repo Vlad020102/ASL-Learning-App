@@ -22,6 +22,7 @@ import AVFoundation
 protocol HandLandmarkerServiceLiveStreamDelegate: AnyObject {
   func handLandmarkerService(_ handLandmarkerService: HandLandmarkerService,
                              didFinishDetection result: HandResultBundle?,
+                             timestampInMilliseconds: Int, // Add timestamp here
                              error: Error?)
 }
 
@@ -263,14 +264,17 @@ extension HandLandmarkerService: HandLandmarkerLiveStreamDelegate {
   func handLandmarker(
     _ handLandmarker: HandLandmarker,
     didFinishDetection result: HandLandmarkerResult?,
-    timestampInMilliseconds: Int,
+    timestampInMilliseconds: Int, // Timestamp is available here
     error: Error?) {
+      // Calculate inference time if needed, but pass the original timestamp
+      let inferenceTime = Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds)
       let resultBundle = HandResultBundle(
-        inferenceTime: Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds),
+        inferenceTime: inferenceTime,
         handLandmarkerResults: [result])
       liveStreamDelegate?.handLandmarkerService(
         self,
         didFinishDetection: resultBundle,
+        timestampInMilliseconds: timestampInMilliseconds, // Pass timestamp here
         error: error)
   }
 }

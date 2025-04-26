@@ -30,6 +30,7 @@ import AVFoundation
 protocol FaceLandmarkerServiceLiveStreamDelegate: AnyObject {
   func faceLandmarkerService(_ faceLandmarkerService: FaceLandmarkerService,
                              didFinishDetection result: FaceResultBundle?,
+                             timestampInMilliseconds: Int, // Add timestamp here
                              error: Error?)
 }
 
@@ -273,14 +274,17 @@ extension FaceLandmarkerService: FaceLandmarkerLiveStreamDelegate {
   func faceLandmarker(
     _ faceLandmarker: FaceLandmarker,
     didFinishDetection result: FaceLandmarkerResult?,
-    timestampInMilliseconds: Int,
+    timestampInMilliseconds: Int, // Timestamp is available here
     error: Error?) {
+      // Calculate inference time if needed, but pass the original timestamp
+      let inferenceTime = Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds)
       let resultBundle = FaceResultBundle(
-        inferenceTime: Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds),
+        inferenceTime: inferenceTime,
         faceLandmarkerResults: [result])
       liveStreamDelegate?.faceLandmarkerService(
         self,
         didFinishDetection: resultBundle,
+        timestampInMilliseconds: timestampInMilliseconds, // Pass timestamp here
         error: error)
   }
 }

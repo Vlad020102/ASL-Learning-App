@@ -22,6 +22,7 @@ import AVFoundation
 protocol PoseLandmarkerServiceLiveStreamDelegate: AnyObject {
   func poseLandmarkerService(_ poseLandmarkerService: PoseLandmarkerService,
                              didFinishDetection result: PoseResultBundle?,
+                             timestampInMilliseconds: Int, // Add timestamp here
                              error: Error?)
 }
 
@@ -259,13 +260,16 @@ class PoseLandmarkerService: NSObject {
 
 // MARK: - PoseLandmarkerLiveStreamDelegate Methods
 extension PoseLandmarkerService: PoseLandmarkerLiveStreamDelegate {
-    func poseLandmarker(_ poseLandmarker: PoseLandmarker, didFinishDetection result: PoseLandmarkerResult?, timestampInMilliseconds: Int, error: (any Error)?) {
+    func poseLandmarker(_ poseLandmarker: PoseLandmarker, didFinishDetection result: PoseLandmarkerResult?, timestampInMilliseconds: Int, error: (any Error)?) { // Timestamp is available here
+        // Calculate inference time if needed, but pass the original timestamp
+        let inferenceTime = Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds)
         let resultBundle = PoseResultBundle(
-          inferenceTime: Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds),
+          inferenceTime: inferenceTime,
           poseLandmarkerResults: [result])
         liveStreamDelegate?.poseLandmarkerService(
           self,
           didFinishDetection: resultBundle,
+          timestampInMilliseconds: timestampInMilliseconds, // Pass timestamp here
           error: error)
     }
 }
