@@ -42,6 +42,7 @@ class ProfileViewModel: ObservableObject {
 struct ProfileView: View {
     @StateObject private var viewModel: ProfileViewModel = ProfileViewModel()
     @State private var showEditProfileView: Bool = false
+    @State private var showNotificationSettings: Bool = false
     
     var completedBadges: [Badge] {
         return (viewModel.user?.badges ?? []).filter { $0.status == "Completed" }
@@ -86,6 +87,40 @@ struct ProfileView: View {
                             BadgesView(badges: completedBadges, title: "")
                         }
                         
+                        // Add settings section
+                        VStack(alignment: .leading) {
+                            Text("Settings")
+                                .foregroundColor(AppColors.secondary)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .padding(.horizontal)
+                                .padding(.top)
+                            
+                            // Notifications settings
+                            Button(action: {
+                                showNotificationSettings = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "bell.fill")
+                                        .foregroundColor(AppColors.accent1)
+                                        .frame(width: 30)
+                                    
+                                    Text("Notifications")
+                                        .foregroundColor(AppColors.text)
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                                .padding()
+                                .background(AppColors.accent3)
+                                .cornerRadius(10)
+                                .padding(.horizontal)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        
                         Spacer(minLength: 20)
                         Button(action: {
                             AuthManager.shared.removeToken()
@@ -110,6 +145,9 @@ struct ProfileView: View {
             .background(Color.background)
             .onAppear {
                 viewModel.loadProfile()
+            }
+            .sheet(isPresented: $showNotificationSettings) {
+                NotificationSettingsView()
             }
         }
     }

@@ -67,3 +67,71 @@ enum HandLandmarkerDelegate: CaseIterable {
     }
   }
 }
+
+enum FaceLandmarkerDelegate: CaseIterable {
+  case GPU
+  case CPU
+
+  var name: String {
+    switch self {
+    case .GPU:
+      return "GPU"
+    case .CPU:
+      return "CPU"
+    }
+  }
+
+  var delegate: Delegate {
+    switch self {
+    case .GPU:
+      return .GPU
+    case .CPU:
+      return .CPU
+    }
+  }
+
+  init?(name: String) {
+    switch name {
+    case FaceLandmarkerDelegate.CPU.name:
+      self = FaceLandmarkerDelegate.CPU
+    case FaceLandmarkerDelegate.GPU.name:
+      self = FaceLandmarkerDelegate.GPU
+    default:
+      return nil
+    }
+  }
+}
+
+enum PoseLandmarkerDelegate: CaseIterable {
+  case GPU
+  case CPU
+
+  var name: String {
+    switch self {
+    case .GPU:
+      return "GPU"
+    case .CPU:
+      return "CPU"
+    }
+  }
+
+  var delegate: Delegate {
+    switch self {
+    case .GPU:
+      return .GPU
+    case .CPU:
+      return .CPU
+    }
+  }
+
+  init?(name: String) {
+    switch name {
+    case PoseLandmarkerDelegate.CPU.name:
+      self = PoseLandmarkerDelegate.CPU
+    case PoseLandmarkerDelegate.GPU.name:
+      self = PoseLandmarkerDelegate.GPU
+    default:
+      return nil
+    }
+  }
+}

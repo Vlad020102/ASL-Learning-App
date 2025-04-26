@@ -2,3 +2,9 @@ data
 .idea
 .venv
 src/*__pycache__/*
+src/holistic/MP_Data
+src/holistic/Logs
+src/holistic/holistic_savedmodel
+src/holistic/*.h5
+src/holistic/*.pkl
+src/holistic/*bit.mlmodel

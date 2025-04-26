@@ -14,7 +14,6 @@ struct AlphabetExerciseView: View {
     // Track timing for each sign separately
     @State private var signTimes: [TimeInterval] = []
     @State private var startTime: Date = Date()
-    
 
     // Time thresholds for performance calculation (in seconds)
     let excellentThreshold: TimeInterval = 1.5  // Excellent performance
@@ -25,7 +24,7 @@ struct AlphabetExerciseView: View {
     var body: some View {
         ZStack {
             // Camera view
-            HostedViewController(targetSign: startSign, isCorrectSign: isCorrectSign)
+            SimpleHostedViewController(targetSign: startSign, isCorrectSign: isCorrectSign)
                 .ignoresSafeArea()
                 .onChange(of: startSign) { newValue in
                             // Update the shared view model when target changes in UI
