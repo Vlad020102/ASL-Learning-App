@@ -20,7 +20,7 @@ def main():
         elif user_input == '2':
             create_dataset()
         elif user_input == '3':
-            train_4model()
+            train_model()
         elif user_input == '4':
             run_model()
         elif user_input == '5':
