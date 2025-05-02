@@ -330,6 +330,13 @@ async function createQuizes() {
             console.error(`Error creating alphabet streak signs for quiz ${quiz.title}:`, error);
           }
         }
+
+        await prisma.quiz.create({
+          data: {
+            type: quiz.type,
+            title: "Fingerspell your name",
+          }
+        })
         continue; 
       }
       try {

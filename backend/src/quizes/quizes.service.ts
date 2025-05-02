@@ -20,6 +20,35 @@ export class QuizesService {
       return !userQuizes.some((userQuiz) => userQuiz.quizID === quiz.id);
     });
     for (const quiz of filteredQuizes) {
+      if (quiz.title === "Fingerspell your name") {
+        let lettersInName = user.username.split('').map((letter) => {
+          return letter.toUpperCase();
+        });
+        console.log(lettersInName);
+        const signPromises = lettersInName.map(async (letter) => {
+          return await this.prisma.sign.findFirst({
+            where: {
+              name: letter
+            }
+          });
+        });
+
+        console.log(signPromises);
+        
+        const signs = await Promise.all(signPromises);
+        console.log(signs);
+        const validSigns = signs.filter(sign => sign !== null);
+        
+        await this.prisma.quizSigns.createMany({
+          data: validSigns.map((sign) => {
+            return {
+              quizID: quiz.id,
+              signID: sign.id
+            }
+          })
+        });
+      }
+            
       await this.prisma.quizUser.create({
         data: {
           quiz: {
@@ -34,7 +63,7 @@ export class QuizesService {
           },
         }
       })
-    }
+  }
 }
 
   async findAllQuizesForUser(user: User) {
