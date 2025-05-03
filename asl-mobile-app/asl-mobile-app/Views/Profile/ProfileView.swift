@@ -16,7 +16,6 @@ class ProfileViewModel: ObservableObject {
         errorMessage = nil
         NetworkService.shared.fetchProfile { [weak self] result in
             DispatchQueue.main.async {
-                AuthManager.shared.setToken(with: " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsInN1YiI6MSwiaWF0IjoxNzQ2MTg4NTE0LCJleHAiOjE3NDYxOTIxMTR9.Iincsc9qAIZGBW4t3eWLd7HjVgCw_i-n7ls91JCMIOg")
                 self?.isLoading = false
                 switch result {
                 case .success(let userData):
