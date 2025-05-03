@@ -13,7 +13,7 @@ class ProfileViewModel: ObservableObject {
 
     func loadProfile() {
         isLoading = true
-        errorMessage = nil      
+        errorMessage = nil
         NetworkService.shared.fetchProfile { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
@@ -90,7 +90,7 @@ struct ProfileView: View {
                         // Add settings section
                         VStack(alignment: .leading) {
                             Text("Settings")
-                                .foregroundColor(AppColors.secondary)
+                                .foregroundColor(.alternative)
                                 .font(.title3)
                                 .fontWeight(.bold)
                                 .padding(.horizontal)
@@ -102,19 +102,19 @@ struct ProfileView: View {
                             }) {
                                 HStack {
                                     Image(systemName: "bell.fill")
-                                        .foregroundColor(AppColors.accent1)
+                                        .foregroundColor(.accent1)
                                         .frame(width: 30)
                                     
                                     Text("Notifications")
-                                        .foregroundColor(AppColors.text)
+                                        .foregroundColor(.text)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.right")
-                                        .foregroundColor(AppColors.textSecondary)
+                                        .foregroundColor(.textSecondary)
                                 }
                                 .padding()
-                                .background(AppColors.accent3)
+                                .background(.accent3)
                                 .cornerRadius(10)
                                 .padding(.horizontal)
                             }
@@ -149,6 +149,14 @@ struct ProfileView: View {
             .sheet(isPresented: $showNotificationSettings) {
                 NotificationSettingsView()
             }
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Profile")
+                        .font(.headline)
+                
+                        .foregroundColor(.textSecondary)
+                }
+            }
         }
     }
 }
@@ -159,15 +167,11 @@ struct ProfileHeaderView: View {
     var createdAt: Date
     var body: some View {
         VStack {
-            HStack {
-                Spacer()
-                Text("Profile")
-                    .font(.headline)
-                Spacer()
-            }
-            .padding()
-            
-            Divider()
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 50, height: 1)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity, alignment: .center) // Centers the line
 
             VStack(spacing: 10) {
                 ZStack {

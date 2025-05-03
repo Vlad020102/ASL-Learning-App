@@ -35,7 +35,7 @@ struct ContentView: View {
             QuizCatalogueView()
                 .tabItem {
                     Image(systemName: "book.fill")
-                    Text("Lessons")
+                    Text("quizzes")
                 }
                 .tag(2)
             WikiView()

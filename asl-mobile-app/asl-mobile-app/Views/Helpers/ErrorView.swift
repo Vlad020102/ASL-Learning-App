@@ -35,6 +35,21 @@ struct ErrorView: View {
                     .background(.main)
                     .cornerRadius(10)
             }
+            Button(action: {
+                AuthManager.shared.removeToken()
+            }) {
+                Text("LOGOUT")
+                    .font(.headline)
+                    .foregroundColor(.accent1)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.red.opacity(0.1))
+                    .cornerRadius(30)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 30)
+                            .stroke(Color.red, lineWidth: 1)
+                    )
+            }
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
