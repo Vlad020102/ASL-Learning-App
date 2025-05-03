@@ -10,6 +10,8 @@
 		020DDF5E2D8359D20004CE0E /* what-is-your-name.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */; };
 		0260D1282DBBC94A00F2AF82 /* holistic_test_data.csv in Resources */ = {isa = PBXBuildFile; fileRef = 0260D1272DBBC94A00F2AF82 /* holistic_test_data.csv */; };
 		02B5F25D2D9D927000B61D9F /* how-are-you.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02B5F25C2D9D927000B61D9F /* how-are-you.gif */; };
+		02C21CA92DC1480600E045CB /* Flwr in Frameworks */ = {isa = PBXBuildFile; productRef = 02C21CA82DC1480600E045CB /* Flwr */; };
+		02C21D322DC14F7A00E045CB /* Flwr in Frameworks */ = {isa = PBXBuildFile; productRef = 02C21D312DC14F7A00E045CB /* Flwr */; };
 		4E4FAA3D025248B47529C4F7 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D507315076B2C97D17F8F15 /* Pods_asl_mobile_app_asl_mobile_appUITests.framework */; };
 		DBE15E56609D40810E4778C1 /* Pods_asl_mobile_appTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DA165319D8EF7938EA61255 /* Pods_asl_mobile_appTests.framework */; };
 		F08683CC32080908750815F7 /* Pods_asl_mobile_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7FB5C01C732F6D0B3E6A5F2 /* Pods_asl_mobile_app.framework */; };
@@ -73,7 +75,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02C21D322DC14F7A00E045CB /* Flwr in Frameworks */,
 				F08683CC32080908750815F7 /* Pods_asl_mobile_app.framework in Frameworks */,
+				02C21CA92DC1480600E045CB /* Flwr in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +258,9 @@
 			);
 			mainGroup = 3578E3012D62406D003660F8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				02C21CA72DC1480600E045CB /* XCRemoteSwiftPackageReference "flower" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3578E30B2D62406D003660F8 /* Products */;
 			projectDirPath = "";
@@ -563,7 +570,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"asl-mobile-app/Preview Content\"";
-				DEVELOPMENT_TEAM = SW8PV68P39;
+				DEVELOPMENT_TEAM = 3F74QMWA5M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ASLearning;
@@ -598,7 +605,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"asl-mobile-app/Preview Content\"";
-				DEVELOPMENT_TEAM = SW8PV68P39;
+				DEVELOPMENT_TEAM = 3F74QMWA5M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ASLearning;
@@ -739,6 +746,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		02C21CA72DC1480600E045CB /* XCRemoteSwiftPackageReference "flower" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adap/flower.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		02C21CA82DC1480600E045CB /* Flwr */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C21CA72DC1480600E045CB /* XCRemoteSwiftPackageReference "flower" */;
+			productName = Flwr;
+		};
+		02C21D312DC14F7A00E045CB /* Flwr */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C21CA72DC1480600E045CB /* XCRemoteSwiftPackageReference "flower" */;
+			productName = Flwr;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3578E3022D62406D003660F8 /* Project object */;
 }
