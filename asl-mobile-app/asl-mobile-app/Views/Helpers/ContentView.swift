@@ -16,12 +16,12 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             // Profile Tab
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person.fill")
-                    Text("Profile")
-                }
-                .tag(0)
+//            ProfileView()
+//                .tabItem {
+//                    Image(systemName: "person.fill")
+//                    Text("Profile")
+//                }
+//                .tag(0)
             
             // Camera Tab
             SimpleCameraView(targetSign: $targetSign, isCorrectSign: $isCorrectSign)

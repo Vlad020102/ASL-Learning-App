@@ -14,7 +14,7 @@
             buildForArchiving = "YES"
             buildForAnalyzing = "YES">
             <BuildableReference
-               BuildableIdentifier = "main"
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "3578E3092D62406D003660F8"
                BuildableName = "asl-mobile-app.app"
                BlueprintName = "asl-mobile-app"
@@ -29,30 +29,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "main"
-               BlueprintIdentifier = "3578E3192D62406E003660F8"
-               BuildableName = "asl-mobile-appTests.xctest"
-               BlueprintName = "asl-mobile-appTests"
-               ReferencedContainer = "container:asl-mobile-app.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "main"
-               BlueprintIdentifier = "3578E3232D62406E003660F8"
-               BuildableName = "asl-mobile-appUITests.xctest"
-               BlueprintName = "asl-mobile-appUITests"
-               ReferencedContainer = "container:asl-mobile-app.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -67,7 +43,7 @@
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
-            BuildableIdentifier = "main"
+            BuildableIdentifier = "primary"
             BlueprintIdentifier = "3578E3092D62406D003660F8"
             BuildableName = "asl-mobile-app.app"
             BlueprintName = "asl-mobile-app"
@@ -84,7 +60,7 @@
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
-            BuildableIdentifier = "main"
+            BuildableIdentifier = "primary"
             BlueprintIdentifier = "3578E3092D62406D003660F8"
             BuildableName = "asl-mobile-app.app"
             BlueprintName = "asl-mobile-app"
