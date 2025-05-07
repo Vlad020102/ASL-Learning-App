@@ -24,6 +24,7 @@ class RegistrationViewModel: ObservableObject {
     @Published var showPassword: Bool = false
     @Published var showConfirmPassword: Bool = false
     @Published var errorMessage = ""
+    @Published var referralCode: String = ""
     
     
     var progressPercentage: Double {
@@ -229,6 +230,21 @@ struct CredentialsView: View {
                         }
                     }
                     
+                    // Referral Code Field
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Refferal Code (Optional")
+                            .font(.headline)
+                            .foregroundColor(.accent3)
+                        
+                        TextField("Enter the referral code from a friend", text: $registrationViewModel.referralCode)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                            .autocapitalization(.none)
+                    }
+                    
                     // Password Field
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Password")
@@ -397,6 +413,7 @@ struct DailyGoalView: View {
                 .multilineTextAlignment(.center)
                 .padding(.top, 50)
                 .padding(.horizontal)
+                .foregroundColor(.main)
             
             VStack(spacing: 0) {
                 ForEach(goals, id: \.0) { name, minutes in
@@ -411,15 +428,15 @@ struct DailyGoalView: View {
                             Spacer()
                             
                             Text("\(minutes) min / day")
-                                .foregroundColor(.gray)
+                                .foregroundColor(registrationViewModel.dailyGoal == minutes ? .accent1 : .secondary)
                         }
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(registrationViewModel.dailyGoal == minutes ? Color.blue : Color.gray.opacity(0.3), lineWidth: 1)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                 .background(
                                     registrationViewModel.dailyGoal == minutes ?
-                                    Color.blue.opacity(0.1) : Color.white
+                                        .secondary : Color.background
                                 )
                         )
                         .cornerRadius(10)
@@ -454,6 +471,7 @@ struct ReasonView: View {
                 .multilineTextAlignment(.center)
                 .padding(.top, 50)
                 .padding(.horizontal)
+                .foregroundStyle(.main)
             
             ScrollView {
                 VStack(spacing: 0) {
@@ -464,13 +482,13 @@ struct ReasonView: View {
                             HStack {
                                 Text(reason)
                                     .font(.headline)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.accent3)
                                 
                                 Spacer()
                                 
                                 if registrationViewModel.learningReason == reason {
                                     Image(systemName: "checkmark")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.accent1)
                                 }
                             }
                             .padding()
@@ -479,7 +497,7 @@ struct ReasonView: View {
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                     .background(
                                         registrationViewModel.learningReason == reason ?
-                                        Color.blue.opacity(0.1) : Color.white
+                                            .secondary : Color.background
                                     )
                             )
                             .cornerRadius(10)

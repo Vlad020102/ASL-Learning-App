@@ -26,13 +26,32 @@ export class UsersService {
     }
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const referralCode = `${userData.username}-${Math.floor(Math.random() * 10000)}`;
 
-    return await this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         ...userData,
         password: hashedPassword,
+        referralCode: referralCode,
       },
     });
+
+    if (userData.referralCode) {
+      const refferedUser = await this.prisma.user.findUnique({
+        where: {
+          referralCode: userData.referralCode,
+        },
+      });
+
+      if (!refferedUser) {
+        throw new NotFoundException('Referral code not found');
+      }
+      await this.createReferralCode(refferedUser.id, user.id, userData.referralCode);
+      await this.addMoney(refferedUser.id, 100);
+      await this.addMoney(user.id, 100);
+      user.money += 100;
+    }
+    return user;
   }
 
   async findAll() {
@@ -241,8 +260,47 @@ export class UsersService {
       amount = Math.floor(score * (livesRemaining + 1) * quizDifficulty);
     } else if (quizType === QuizType.Matching) {
       amount = Math.floor(score * (livesRemaining + 1) * quizDifficulty)
-    }    
+    }
     return amount;
+  }
+
+  async createReferralCode(userId: number, receiverID: number, referralCode: string) {
+    const existingReferral = await this.prisma.referral.findUnique({
+      where: {
+        receiverID: receiverID,
+      },
+    });
+
+    if (existingReferral) {
+      throw new ConflictException('Referral code already exists');
+    }
+
+    return this.prisma.referral.create({
+      data: {
+        referralCode: referralCode,
+        owner: {
+          connect: {
+            id: userId,
+          },
+        },
+        receiver: {
+          connect: {
+            id: receiverID,
+          }
+        }
+      },
+    });
+  }
+
+  async addMoney(userId: number, amount: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        money: {
+          increment: amount,
+        },
+      },
+    });
   }
 }
 
