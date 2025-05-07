@@ -72,7 +72,9 @@ model User {
   badges                 UserBadge[]
   quizzes                QuizUser[]
   phrases                UserPhrase[]
-
+  referralCode           String          @unique @map("referral_code")
+  referrals              Referral[]   @relation("ReferralSender")
+  receivedReferrals      Referral[]   @relation("ReferralReceiver")
   @@map("users")
 }
 
@@ -214,4 +216,18 @@ model QuizPair {
   pair Pair @relation(fields: [pair_id], references: [id])
 
   @@map("quiz_pairs")
+}
+
+model Referral {
+  id           Int      @id @default(autoincrement())
+  ownerID       Int      @map("user_id")
+  referralCode String   @map("referral_code")
+  receiverID   Int      @unique @map("receiver_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @map("updated_at")
+
+  owner     User  @relation("ReferralSender", fields: [ownerID], references: [id])
+  receiver  User? @relation("ReferralReceiver", fields: [receiverID], references: [id])
+
+  @@map("referrals")
 }
