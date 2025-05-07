@@ -20,7 +20,7 @@ struct ContentView: View {
                .tabItem {
                    Image(systemName: "person.fill")
                    Text("Profile")
-               }
+               }w
                .tag(0)
             
             // Camera Tab
