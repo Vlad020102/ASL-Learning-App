@@ -22,7 +22,6 @@ struct ContentView: View {
                }
                .tag(0)
             
-            // Camera Tab
             SimpleCameraView(targetSign: $targetSign, isCorrectSign: $isCorrectSign)
                 .tabItem {
                     Image(systemName: "camera.fill")
@@ -30,7 +29,6 @@ struct ContentView: View {
                 }
                 .tag(1)
             
-            // Lessons Tab
             QuizCatalogueView()
                 .tabItem {
                     Image(systemName: "book.fill")
@@ -43,6 +41,12 @@ struct ContentView: View {
                     Text("Wiki")
                 }
                 .tag(3)
+            ExploreView()
+                .tabItem{
+                    Image(systemName: "globe")
+                    Text("Explore")
+                }
+                .tag(4)
         }
         .onAppear() {
             let appearance = UITabBarAppearance()

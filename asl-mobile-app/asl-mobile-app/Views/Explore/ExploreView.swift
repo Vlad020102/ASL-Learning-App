@@ -77,8 +77,6 @@ class ExploreViewModel: ObservableObject {
         if let index = communityResources.firstIndex(where: { $0.id == post.id }) {
             communityResources[index].isLiked.toggle()
         }
-        
-        // Here you would make an API call to update likes on the server
     }
     
     func copyReferralCode() {
@@ -87,7 +85,6 @@ class ExploreViewModel: ObservableObject {
             showCopiedToast = true
         }
         
-        // Hide toast after 2 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             withAnimation {
                 self.showCopiedToast = false
@@ -96,20 +93,15 @@ class ExploreViewModel: ObservableObject {
     }
     
     func shareReferralCode() {
-        // Create items to share
-        let shareText = "Join me on ASL Learning! Use my referral code \(referralCode) and we'll both get 100 units. Download the app now!"
-        let items = [shareText]
-        
-        // Present share sheet (would need UIViewControllerRepresentable)
-        // This is a placeholder - in a real app you'd implement the share sheet
-        print("Share referral: \(shareText)")
+        let shareText = "Join me on ASLearning! Use my referral code \(referralCode) and we'll both get 100 units. Download the app now!"
+        let av = UIActivityViewController(activityItems: [shareText], applicationActivities: nil)
+        UIApplication.shared.windows.first?.rootViewController?.present(av, animated: true, completion: nil)
     }
     
     func filteredContent() -> [ContentPost] {
         return latestContent.filter { $0.type == selectedTab }
     }
     
-    // Mock data generators
     private static func mockFeaturedContent() -> [ContentPost] {
         return [
             ContentPost(id: "f1", title: "ASL in Media", description: "How American Sign Language is transforming media representation", imageURL: nil, type: .article, link: "https://example.com/asl-media", postDate: Date().addingTimeInterval(-86400*2), likes: 145, isLiked: false),

@@ -13,6 +13,7 @@ struct RegisterData: Codable {
     let dailyGoal: Int?
     let learningReason: String?
     let experience: String?
+    let referralCode: String?
 }
 
 extension NetworkService {

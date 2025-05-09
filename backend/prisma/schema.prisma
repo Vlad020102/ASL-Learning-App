@@ -231,3 +231,15 @@ model Referral {
 
   @@map("referrals")
 }
+
+model Extras {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  url         String
+  type        String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+
+  @@map("extras")
+}

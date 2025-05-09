@@ -40,12 +40,16 @@ class RegistrationViewModel: ObservableObject {
             source: self.source,
             dailyGoal: self.dailyGoal,
             learningReason: self.learningReason,
-            experience: self.experience
+            experience: self.experience,
+            referralCode: self.referralCode
         )
         
         NetworkService.shared.register(data:data){[weak self] result in DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
+                    if data.referralCode?.count ?? 0 > 0 {
+                        AuthManager.shared.isReferred = true
+                    }
                     AuthManager.shared.setToken(with: response.accessToken)
                 case .failure(let error):
                     print("Error: \(error)")
@@ -121,7 +125,6 @@ struct RegistrationView: View {
                     
                     Spacer()
                     
-                    // Continue button
                     Button(action: {
                         if registrationViewModel.currentStep < registrationViewModel.maxSteps {
                             withAnimation {
@@ -232,7 +235,7 @@ struct CredentialsView: View {
                     
                     // Referral Code Field
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Refferal Code (Optional")
+                        Text("Refferal Code (Optional)")
                             .font(.headline)
                             .foregroundColor(.accent3)
                         
