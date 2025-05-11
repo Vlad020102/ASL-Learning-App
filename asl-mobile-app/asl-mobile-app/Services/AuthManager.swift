@@ -13,6 +13,7 @@ class AuthManager: ObservableObject {
     private let keychain = Keychain(service: "com.bachelor.asl-mobile-app")
     private let tokenKey = "authToken"
     @Published var isAuthenticated = false
+    @Published var isReferred: Bool = false
     
     init() {
         checkForExistingToken()
@@ -55,6 +56,7 @@ class AuthManager: ObservableObject {
         do {
             try keychain.remove(tokenKey)
             isAuthenticated = false
+            isReferred = false
         } catch {
             print("Error removing token: \(error)")
         }

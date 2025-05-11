@@ -39,36 +39,52 @@ struct RootView: View {
     @State private var targetSign: String = "Hello"
     @State private var isCorrectSign: Bool = false
     
-    // Track tab changes
     @State private var previousView: String = ""
     @State private var currentView: String = ""
     
+    @State private var showReferralAnimation: Bool = false
+    @State private var referralAnimationCompleted: Bool = false
+    
     var body: some View {
-        Group {
-            if authManager.isAuthenticated {
-                ContentView()
-                    .onAppear {
-                        // When view changes, notify camera to clean up
-                        if previousView == "CameraView" && currentView != "CameraView" {
-                            cleanupCamera()
+        ZStack {
+            Group {
+                if authManager.isAuthenticated {
+                    ContentView()
+                        .onAppear {
+                            if previousView == "CameraView" && currentView != "CameraView" {
+                                cleanupCamera()
+                            }
+                            previousView = currentView
+                            currentView = "ContentView"
+                            print(referralAnimationCompleted)
+                            if AuthManager.shared.isReferred && !referralAnimationCompleted {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    showReferralAnimation = true
+                                }
+                            }
                         }
-                        previousView = currentView
-                        currentView = "ContentView"
-                    }
-            } else {
-                HomeView()
-                    .transition(.opacity)
-                    .onAppear {
-                        previousView = currentView
-                        currentView = "HomeView"
-                    }
+                } else {
+                    HomeView()
+                        .transition(.opacity)
+                        .onAppear {
+                            previousView = currentView
+                            currentView = "HomeView"
+                        }
+                }
             }
-        }
-        .animation(.easeInOut, value: authManager.isAuthenticated)
-        .onAppear {
-            // If user logs in, update notification content
-            if authManager.isAuthenticated {
-                NotificationService.shared.scheduleReminderIfNeeded()
+            .animation(.easeInOut, value: authManager.isAuthenticated)
+            .onAppear {
+                if authManager.isAuthenticated {
+                    NotificationService.shared.scheduleReminderIfNeeded()
+                }
+            }
+            
+            if showReferralAnimation {
+                ReferralSuccessView(showAnimation: $showReferralAnimation) {
+                    referralAnimationCompleted = true
+                }
+                .transition(.opacity)
+                .zIndex(10)
             }
         }
     }

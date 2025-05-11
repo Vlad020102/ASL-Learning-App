@@ -14,6 +14,7 @@ struct User: Codable {
     let streak: Int
     let createdAt: Date
     let updatedAt: Date
+    let referralCode: String
     let badges: [Badge]
 
     init(from decoder: Decoder) throws {
@@ -28,6 +29,7 @@ struct User: Codable {
         questionsAnsweredTotal = try container.decode(Int.self, forKey: .questionsAnsweredTotal)
         questionsAnsweredToday = try container.decode(Int.self, forKey: .questionsAnsweredToday)
         streak = try container.decode(Int.self, forKey: .streak)
+        referralCode = try container.decode(String.self, forKey: .referralCode)
         badges = try container.decode([Badge].self, forKey: .badges)
         
         let dateFormatter = ISO8601DateFormatter()
@@ -48,6 +50,19 @@ struct User: Codable {
         }
     }
 }
+
+struct Badge: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let description: String
+    let icon: String
+    let type: String
+    let rarity: String
+    let progress: Int
+    let status: String
+    let target: Int
+}
+
 
 extension NetworkService {
     func getUser(id: String, completion: @escaping (Result<User, Error>) -> Void) {

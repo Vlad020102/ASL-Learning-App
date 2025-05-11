@@ -102,6 +102,7 @@ struct WikiView: View {
                         PhrasesView()
                             .environmentObject(viewModel)
                     } else {
+                        
                         SignsView()
                             .environmentObject(viewModel)
                     }
