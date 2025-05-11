@@ -1,5 +1,5 @@
 import { targetModulesByContainer } from '@nestjs/core/router/router-module';
-import { Difficulty, PrismaClient, QuizType } from '@prisma/client';
+import { Difficulty, ExtrasType, PrismaClient, QuizType } from '@prisma/client';
 import { BadgeRarity, BadgeType } from '@prisma/client';
 import { title } from 'process';
 import { start } from 'repl';
@@ -261,6 +261,148 @@ const phraseData = [
   }
 ]
 
+const extrasData = [
+  // Article
+  {
+    title: "Advancements in ASL Recognition Technology",
+    description: "New AI models are making ASL more accessible",
+    link: "https://example.com/asl-tech",
+    type: ExtrasType.Article,
+    imageUrl: "https://via.placeholder.com/300x200?text=ASL+Tech"
+  },
+  {
+    title: "ASL Connect",
+    description: "Free ASL learning resources from Gallaudet University",
+    link: "https://aslconnect.gallaudet.edu",
+    type: ExtrasType.Article,
+    imageUrl: "https://via.placeholder.com/300x200?text=ASL+Connect"
+  },
+  {
+    title: "ASL in Media",
+    description: "How American Sign Language is transforming media representation",
+    link: "https://example.com/asl-media",
+    type: ExtrasType.Article,
+    imageUrl: "https://via.placeholder.com/300x200?text=ASL+in+Media"
+  },
+  {
+    title: "National Association of the Deaf",
+    description: "Civil rights organization serving deaf and hard-of-hearing individuals",
+    link: "https://nad.org",
+    type: ExtrasType.Article,
+    imageUrl: "https://via.placeholder.com/300x200?text=NAD"
+  },
+  {
+    title: "The Rise of ASL in Online Education",
+    description: "A deep dive into how American Sign Language is becoming a staple in virtual classrooms.",
+    link: "https://example.com/asl-online-education",
+    type: ExtrasType.Article,
+    imageUrl: "https://via.placeholder.com/300x200?text=ASL+Education"
+  },
+
+  // Book
+  {
+    title: "The Gallaudet Dictionary of American Sign Language",
+    description: "A comprehensive reference book on ASL vocabulary and usage.",
+    link: "https://example.com/gallaudet-dictionary",
+    type: ExtrasType.Book,
+    imageUrl: "https://via.placeholder.com/300x200?text=Book"
+  },
+
+  // Event
+  {
+    title: "ASL Immersion Weekend 2025",
+    description: "A two-day intensive event for ASL learners and enthusiasts.",
+    link: "https://example.com/asl-immersion-2025",
+    type: ExtrasType.Event,
+    imageUrl: "https://via.placeholder.com/300x200?text=Event"
+  },
+  {
+    title: "ASL Poetry Night",
+    description: "Virtual gathering of ASL poets and storytellers",
+    link: "https://example.com/asl-poetry",
+    type: ExtrasType.Event,
+    imageUrl: "https://via.placeholder.com/300x200?text=Poetry+Night"
+  },
+  {
+    title: "Deaf Culture Events Calendar",
+    description: "Nationwide events celebrating Deaf culture and ASL",
+    link: "https://example.com/deaf-events",
+    type: ExtrasType.Event,
+    imageUrl: "https://via.placeholder.com/300x200?text=Deaf+Events"
+  },
+
+  // Game
+  {
+    title: "SignQuest: Learn ASL Through Play",
+    description: "An interactive mobile game that teaches ASL signs through fun quests and challenges.",
+    link: "https://example.com/signquest-game",
+    type: ExtrasType.Game,
+    imageUrl: "https://via.placeholder.com/300x200?text=Game"
+  },
+
+  // Movie
+  {
+    title: "CODA: A Breakthrough Film",
+    description: "The Oscar-winning film that brought Deaf culture to mainstream audiences",
+    link: "https://example.com/coda",
+    type: ExtrasType.Movie,
+    imageUrl: "https://via.placeholder.com/300x200?text=CODA"
+  },
+  {
+    title: "Silent Voices",
+    description: "Documentary exploring the rich history of ASL",
+    link: "https://example.com/silent-voices",
+    type: ExtrasType.Movie,
+    imageUrl: "https://via.placeholder.com/300x200?text=Silent+Voices"
+  },
+  {
+    title: "Through Deaf Eyes",
+    description: "A powerful documentary exploring the history and culture of the Deaf community.",
+    link: "https://example.com/through-deaf-eyes",
+    type: ExtrasType.Movie,
+    imageUrl: "https://via.placeholder.com/300x200?text=Movie"
+  },
+
+  // News
+  {
+    title: "Deaf Awareness Week Events",
+    description: "National celebrations and educational opportunities",
+    link: "https://example.com/deaf-awareness",
+    type: ExtrasType.News,
+    imageUrl: "https://via.placeholder.com/300x200?text=Deaf+Awareness"
+  },
+  {
+    title: "Deaf Community Celebrates New Accessibility Law",
+    description: "Landmark legislation improves communication access for the deaf and hard-of-hearing.",
+    link: "https://example.com/accessibility-law",
+    type: ExtrasType.News,
+    imageUrl: "https://via.placeholder.com/300x200?text=Accessibility+News"
+  },
+
+  // Podcast
+  {
+    title: "Hands & Voices: Stories from the Deaf World",
+    description: "Conversations with leaders and learners shaping the ASL movement.",
+    link: "https://example.com/hands-voices-podcast",
+    type: ExtrasType.Podcast,
+    imageUrl: "https://via.placeholder.com/300x200?text=Podcast"
+  },
+  {
+    title: "Sign Language Today Podcast",
+    description: "Weekly discussions on ASL learning and Deaf culture",
+    link: "https://example.com/podcast1",
+    type: ExtrasType.Podcast,
+    imageUrl: "https://via.placeholder.com/300x200?text=Podcast+1"
+  },
+  {
+    title: "Signs of Change Podcast",
+    description: "Interviews with Deaf activists and educators",
+    link: "https://example.com/signs-change",
+    type: ExtrasType.Podcast,
+    imageUrl: "https://via.placeholder.com/300x200?text=Signs+of+Change"
+  }
+];
+
 
 async function createBadges() {
   for (let i = 0; i < badgeData.length; i++) {
@@ -473,12 +615,33 @@ async function createPhrases() {
   }
 }
 
+async function createExtras() {
+  try {
+    for (const extra of extrasData) {
+      await prisma.extras.create({
+        data: {
+          title: extra.title,
+          description: extra.description,
+          link: extra.link,
+          type: extra.type,
+          imageUrl: extra.imageUrl
+        }
+      });
+    }
+    console.log("Extras created successfully!");
+  } catch (error) {
+    console.error('Error in createExtras function:', error);
+    throw error;
+  }
+}
+
 async function main() {
   console.log('Start seeding badges...');
 
   await createBadges();
   await createQuizes();
   await createPhrases();
+  await createExtras();
 }
 
 main()

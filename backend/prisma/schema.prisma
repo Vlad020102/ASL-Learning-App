@@ -53,6 +53,16 @@ enum BadgeStatus {
   Completed
 }
 
+enum ExtrasType {
+  Article
+  News
+  Podcast
+  Movie
+  Event
+  Book
+  Game
+}
+
 model User {
   id                     Int          @id @default(autoincrement())
   username               String       @unique
@@ -72,9 +82,10 @@ model User {
   badges                 UserBadge[]
   quizzes                QuizUser[]
   phrases                UserPhrase[]
-  referralCode           String          @unique @map("referral_code")
+  referralCode           String       @unique @map("referral_code")
   referrals              Referral[]   @relation("ReferralSender")
   receivedReferrals      Referral[]   @relation("ReferralReceiver")
+
   @@map("users")
 }
 
@@ -220,14 +231,14 @@ model QuizPair {
 
 model Referral {
   id           Int      @id @default(autoincrement())
-  ownerID       Int      @map("user_id")
+  ownerID      Int      @map("user_id")
   referralCode String   @map("referral_code")
   receiverID   Int      @unique @map("receiver_id")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @map("updated_at")
 
-  owner     User  @relation("ReferralSender", fields: [ownerID], references: [id])
-  receiver  User? @relation("ReferralReceiver", fields: [receiverID], references: [id])
+  owner    User  @relation("ReferralSender", fields: [ownerID], references: [id])
+  receiver User? @relation("ReferralReceiver", fields: [receiverID], references: [id])
 
   @@map("referrals")
 }
@@ -236,8 +247,9 @@ model Extras {
   id          Int      @id @default(autoincrement())
   title       String
   description String
-  url         String
-  type        String
+  imageUrl    String
+  link        String
+  type        ExtrasType
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @default(now()) @map("updated_at")
 
