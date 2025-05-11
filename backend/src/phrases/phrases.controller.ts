@@ -4,7 +4,8 @@ import { CreatePhraseDto } from './dto/create-phrase.dto';
 import { PurchasePhraseDto } from './dto/purchase-phrase.dto';
 import { ReqUser } from 'src/auth/guards/user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { error } from 'console';
+import { UseInterceptors } from '@nestjs/common';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('phrases')
 export class PhrasesController {
@@ -18,6 +19,7 @@ export class PhrasesController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
+    @UseInterceptors(CacheInterceptor)
     findAll(@ReqUser() user) {
         this.phrasesService.populatePhrases(user.user.id);
         return this.phrasesService.findAll(user.user.id);

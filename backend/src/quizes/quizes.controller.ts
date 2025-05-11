@@ -6,6 +6,9 @@ import { CompleteQuizDTO } from './dto/completeQuiz';
 import { BadgesService } from 'src/badges/badges.service';
 import { UsersService } from 'src/users/users.service';
 import { QuizStatus } from '@prisma/client';
+import { UseInterceptors } from '@nestjs/common';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+
 
 @Controller('quizes')
 export class QuizController {
@@ -16,6 +19,7 @@ export class QuizController {
   ) {}
   @Get()
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(CacheInterceptor)
   findAll(@ReqUser() user) { 
     this.quizesService.populateQuiz(user);
     return this.quizesService.findAllQuizesForUser(user);

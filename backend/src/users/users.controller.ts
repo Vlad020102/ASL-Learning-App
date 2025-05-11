@@ -45,4 +45,13 @@ export class UsersController {
   ) {
     return this.usersService.getStreaks(user);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('buy-streak-freeze')
+  buyStreakFreeze(
+    @ReqUser() user: User,
+    @Body('price') price: number
+  ) {
+    return this.usersService.buyStreakFreeze(user, price);
+  }
 }

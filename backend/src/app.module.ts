@@ -6,11 +6,6 @@ import { UsersModule } from './users/users.module';
 import { BadgesModule } from './badges/badges.module';
 import { QuizesModule } from './quizes/quizes.module';
 import { PhrasesModule } from './phrases/phrases.module';
-import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { createKeyv } from '@keyv/redis';
-import { CacheableMemory } from 'cacheable';
-import Keyv from 'keyv';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SharedCacheModule } from './cache/cache.module';
 
 

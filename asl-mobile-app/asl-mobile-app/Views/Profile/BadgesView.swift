@@ -49,6 +49,8 @@ struct BadgesView: View {
         .padding()
         .background(.accent3)
         .cornerRadius(10)
+        .toolbarBackground(Color.background, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
     }
 }
 

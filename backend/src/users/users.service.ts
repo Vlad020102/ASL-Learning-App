@@ -8,10 +8,15 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QuizStatus, QuizType, User } from '@prisma/client';
+import { Cache } from 'cache-manager';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+  private readonly prisma: PrismaService,
+  @Inject('CACHE_MANAGER') private cacheManager: Cache
+) { }
 
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
@@ -54,7 +59,7 @@ export class UsersService {
   }
 
   async findProfile(user: User) {
-    const userWithBadges = await this.prisma.user.findUnique({
+    const userWithBadgesAndFreezes = await this.prisma.user.findUnique({
       where: { username: user.username },
       include: {
         badges: {
@@ -74,12 +79,18 @@ export class UsersService {
             },
           }
         },
+        streakFreezes: { // Add this include
+          select: {
+            id: true,
+            date: true,
+          },
+        },
       },
     });
 
-    const userProfile = userWithBadges ? {
-      ...userWithBadges,
-      badges: userWithBadges.badges.map(badge => ({
+    const userProfile = userWithBadgesAndFreezes ? {
+      ...userWithBadgesAndFreezes, // money is already part of user model, streakFreezes is now included
+      badges: userWithBadgesAndFreezes.badges.map(badge => ({
         id: badge.id,
         progress: badge.progress,
         status: badge.status,
@@ -179,6 +190,78 @@ export class UsersService {
       "currentStreak": quizUserAnsweredDates[0]?.user.streak ?? 0,
       "calendar": calendar,
     }
+  }
+
+  async buyStreakFreeze(user: User, price: number) {
+    
+    const userWithStreak = await this.prisma.user.findUnique({
+      where: {
+        username: user.username,
+      },
+      select: {
+        id: true,
+        money: true,
+        streak: true,
+        streakFreezes: {
+          select: {
+            id: true,
+            date: true,
+          }
+        }
+      }
+    });
+    
+    if (!userWithStreak) {
+      throw new NotFoundException('User not found');
+    }
+    
+    this.cacheManager.mdel(['/users/profile', 'users/streaks']); // Corrected mdel to del
+
+    if(userWithStreak.money < price) {
+      throw new HttpException('Not enough money', 400);
+    }
+
+    // Check if the user already has a streak freeze for today
+    const today = new Date();
+    const streakFreezeExists = userWithStreak.streakFreezes.some(streakFreeze => {
+      const streakFreezeDate = new Date(streakFreeze.date);
+      return (
+        streakFreezeDate.getFullYear() === today.getFullYear() &&
+        streakFreezeDate.getMonth() === today.getMonth() &&
+        streakFreezeDate.getDate() === today.getDate()
+      );
+    });
+
+    if (streakFreezeExists) {
+      throw new HttpException('You already have a streak freeze for today', 400);
+    }
+    
+    // Deduct the price from the user's money
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        username: user.username,
+      },
+      data: {
+        money: {
+          decrement: price,
+        },
+        streakFreezes: {
+          create: {
+            date: new Date(),
+          }
+        }
+      },
+      include: { // Include streakFreezes to return the updated list
+        streakFreezes: {
+          select: {
+            id: true,
+            date: true,
+          }
+        }
+      }
+    });
+    
+    return updatedUser.streakFreezes;
   }
 
   async updateUserLevel(user: User, score: number, livesRemaining: number, quizId: number) {

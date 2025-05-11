@@ -7,12 +7,10 @@ import Keyv from 'keyv';
 @Module({
   imports: [
     CacheModule.registerAsync({
+        isGlobal: true,
         useFactory: async () => {
           return {
             stores: [
-              new Keyv({
-                store: new CacheableMemory({ ttl: 60000, lruSize: 5000 }),
-              }),
               createKeyv('redis://localhost:6379')
             ],
           };

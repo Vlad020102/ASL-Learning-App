@@ -15,6 +15,7 @@ struct StatisticsView: View {
     var questionsAnsweredToday: Int
     var streak: Int
     var dailyGoal: Int
+//    var streakFreezeCount: Int // New property
     
     private var totalPointsForLevel: Int {
         return 10 * (level + 1) // Level 3 needs 40 points, Level 4 needs 50 points
@@ -52,6 +53,8 @@ struct StatisticsView: View {
                         .onTapGesture {
                             showingStreakCalendar = true
                         }
+                
+//                StatCard(icon: "shield.lefthalf.filled", iconColor: .blue, value: String(streakFreezeCount), label: "Streak Freezes") // New StatCard
                 }
         }
         .sheet(isPresented: $showingStreakCalendar) {

@@ -15,12 +15,11 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            Profile Tab
            ProfileView()
                .tabItem {
                    Image(systemName: "person.fill")
                    Text("Profile")
-               }w
+               }
                .tag(0)
             
             // Camera Tab
@@ -45,12 +44,24 @@ struct ContentView: View {
                 }
                 .tag(3)
         }
-        .onAppear() {
+        .onAppear {
             let appearance = UITabBarAppearance()
             appearance.configureWithDefaultBackground()
+            appearance.backgroundColor = UIColor(named: "accent3")
+
+            // Unselected: gray
+            appearance.stackedLayoutAppearance.normal.iconColor = .gray
+            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
+
+            // Selected: accent1
+            let accent1Color = UIColor(named: "accent1") ?? .systemYellow
+            appearance.stackedLayoutAppearance.selected.iconColor = accent1Color
+            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: accent1Color]
+
+            UITabBar.appearance().standardAppearance = appearance
             UITabBar.appearance().scrollEdgeAppearance = appearance
-            UITabBar.appearance().backgroundColor = UIColor(named: "accent3")
         }
+
     }
 }
 
