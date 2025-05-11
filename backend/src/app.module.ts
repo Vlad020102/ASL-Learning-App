@@ -6,7 +6,9 @@ import { UsersModule } from './users/users.module';
 import { BadgesModule } from './badges/badges.module';
 import { QuizesModule } from './quizes/quizes.module';
 import { PhrasesModule } from './phrases/phrases.module';
+
 import { SharedCacheModule } from './cache/cache.module';
+import { ExploreModule } from './explore/explore.module';
 
 
 @Module({
@@ -19,6 +21,7 @@ import { SharedCacheModule } from './cache/cache.module';
     QuizesModule,
     PhrasesModule,
     SharedCacheModule
+    ExploreModule,
   ],
   controllers: [],
   providers: [

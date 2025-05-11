@@ -32,4 +32,9 @@ export class RegisterUserDto {
     @IsOptional()
     @IsString()
     learningReason: string;
+
+    @IsOptional()
+    @IsString()
+    @ValidateIf((o) => o.referralCode !== '')
+    referralCode: string;
 }
