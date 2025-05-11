@@ -1,13 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePhraseDto } from './dto/create-phrase.dto';
-import { PurchasePhraseDto } from './dto/purchase-phrase.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Phrase, PhraseStatus, User } from '@prisma/client';
-import { PrismaClientUnknownRequestError } from '@prisma/client/runtime/library';
+import { PhraseStatus, User } from '@prisma/client';
+import { Cache } from '@nestjs/cache-manager';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class PhrasesService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        @Inject('CACHE_MANAGER') private cacheManager: Cache
+    ) {}
     create(createPhraseDto: CreatePhraseDto) {
         return 'This action adds a new phrase';
     }
@@ -126,6 +129,7 @@ export class PhrasesService {
     }
     
     async purchase(phrase_id: number, user_id: number, price: number ) {
+        await this.cacheManager.mdel(['/phrases', '/users/profile']);
         if (price <= 0) {
             throw new HttpException({
                 status: HttpStatus.BAD_REQUEST,

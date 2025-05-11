@@ -1,11 +1,14 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Inject } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QuizStatus, QuizType, User } from '@prisma/client';
 import { CompleteQuizDTO } from './dto/completeQuiz';
-
+import {Cache} from '@nestjs/cache-manager';
 @Injectable()
 export class QuizesService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache
+  ) { }
   async populateQuiz(user: User) {
     const userQuizes = await this.prisma.quizUser.findMany({
       where: {
@@ -163,14 +166,29 @@ export class QuizesService {
   }
 
   async completeQuiz(completeQuizDTO: CompleteQuizDTO, user: User) {
+    await this.cacheManager.mdel(['/quizes', '/users/profile', '/users/streaks']);
     const userData = await this.prisma.user.findUnique({
       where: {
         username: user.username,
+      },
+      include: {
+        streakFreezes: true,
       }
     });
     if (!userData) {
       throw new Error('User not found');
     }
+  
+    const today = new Date();
+    const streakFreezeExists = userData.streakFreezes.some(streakFreeze => {
+      const streakFreezeDate = new Date(streakFreeze.date);
+      return (
+        streakFreezeDate.getFullYear() === today.getFullYear() &&
+        streakFreezeDate.getMonth() === today.getMonth() &&
+        streakFreezeDate.getDate() === today.getDate()
+      );
+    });
+    
     try {
       if (completeQuizDTO.status === QuizStatus.Completed) {
         const latestCompletedQuiz = await this.prisma.quizUser.findFirst({
@@ -209,7 +227,7 @@ export class QuizesService {
             });
           }
           
-          else if (!completedYesterday && !completedToday) {
+          else if (!completedYesterday && !completedToday && !streakFreezeExists) {
             await this.prisma.user.update({
               where: {
                 id: userData.id,
@@ -219,7 +237,7 @@ export class QuizesService {
               },
             });
           }
-        } else {
+        } else if (!streakFreezeExists) {
           await this.prisma.user.update({
             where: {
               id: userData.id,

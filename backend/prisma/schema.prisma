@@ -82,6 +82,7 @@ model User {
   badges                 UserBadge[]
   quizzes                QuizUser[]
   phrases                UserPhrase[]
+  streakFreezes          StreakFreeze[]
   referralCode           String       @unique @map("referral_code")
   referrals              Referral[]   @relation("ReferralSender")
   receivedReferrals      Referral[]   @relation("ReferralReceiver")
@@ -228,6 +229,14 @@ model QuizPair {
 
   @@map("quiz_pairs")
 }
+
+model StreakFreeze {
+  id     Int      @id @default(autoincrement()) @unique
+  userID Int      @map("user_id")
+  date   DateTime @default(now())
+
+  user   User     @relation(fields: [userID], references: [id])
+  @@map("streak_freezes")
 
 model Referral {
   id           Int      @id @default(autoincrement())

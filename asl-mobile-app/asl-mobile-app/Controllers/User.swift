@@ -12,10 +12,12 @@ struct User: Codable {
     let questionsAnsweredTotal: Int
     let questionsAnsweredToday: Int
     let streak: Int
+    let streakFreezes: [StreakFreezes]?
     let createdAt: Date
     let updatedAt: Date
     let referralCode: String
     let badges: [Badge]
+    let money: Int?
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -31,6 +33,9 @@ struct User: Codable {
         streak = try container.decode(Int.self, forKey: .streak)
         referralCode = try container.decode(String.self, forKey: .referralCode)
         badges = try container.decode([Badge].self, forKey: .badges)
+        streakFreezes = try? container.decode([StreakFreezes].self, forKey: .streakFreezes)
+        money = try? container.decode(Int.self, forKey: .money)
+        
         
         let dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -88,9 +93,34 @@ extension NetworkService {
         authenticatedRequest(endpoint: "users/streaks", method: .get, completion: completion)
     }
     
+    func buyStreakFreeze(data: BuyStreakFreezeData, completion: @escaping (Result<[StreakFreezes], NetworkError>) -> Void) {
+        print(data)
+        authenticatedRequest(
+            endpoint: "users/buy-streak-freeze",
+            method: .post,
+            body: data)
+        { (result: Result<[StreakFreezes], NetworkError>) in
+            switch result {
+            case .success(let response):
+                completion(.success(response))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
 }
 
 struct StreakData: Codable {
     let calendar: [String: [Int]]
     let currentStreak: Int
+}
+
+struct StreakFreezes: Codable {
+    let id: Int
+    let date: Date
+}
+
+struct BuyStreakFreezeData: Codable {
+    let price: Int
 }

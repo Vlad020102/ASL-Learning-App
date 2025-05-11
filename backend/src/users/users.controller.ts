@@ -3,13 +3,15 @@ import {
   Get,
   Post,
   Body,
-  UseGuards
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { ReqUser } from 'src/auth/guards/user.decorator';
 import { User } from '@prisma/client';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('users')
 export class UsersController {
@@ -26,6 +28,7 @@ export class UsersController {
   }
   
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(CacheInterceptor)
   @Get('profile')
   findProfile(
     @ReqUser() user: User
@@ -35,10 +38,20 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(CacheInterceptor)
   @Get('streaks')
   getStreaks(
     @ReqUser() user: User
   ) {
     return this.usersService.getStreaks(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('buy-streak-freeze')
+  buyStreakFreeze(
+    @ReqUser() user: User,
+    @Body('price') price: number
+  ) {
+    return this.usersService.buyStreakFreeze(user, price);
   }
 }

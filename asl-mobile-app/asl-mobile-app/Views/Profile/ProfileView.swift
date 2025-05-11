@@ -1,15 +1,23 @@
-//
-//  ProfileView.swift
-//  asl-mobile-app
-//
-//  Created by "Vlad Achim, Vodafone" on 19.03.2025.
-//
 import SwiftUI
 
 class ProfileViewModel: ObservableObject {
     @Published var user: User?
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var showStreakFreezeAnimation = false
+    @Published var streakFreezePurchased = false
+    
+    var hasActiveStreakFreezeForToday: Bool {
+        guard let freezes = user?.streakFreezes else { return false }
+        let calendar = Calendar.current
+        let todayStart = calendar.startOfDay(for: Date())
+        return freezes.contains { freeze in
+            calendar.startOfDay(for: freeze.date) == todayStart
+        }
+    }
+    
+    let streakFreezePrice: Int = 10
+
 
     func loadProfile() {
         isLoading = true
@@ -36,8 +44,26 @@ class ProfileViewModel: ObservableObject {
             }
             return dateString
         }
+    
+    func buyStreakFreeze() {
+        isLoading = true
+        errorMessage = nil
+        let data = BuyStreakFreezeData(price: streakFreezePrice)
+        NetworkService.shared.buyStreakFreeze(data: data) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                switch result {
+                case .success(_):
+                    self?.loadProfile() // Reload profile to get updated money and streak freezes
+                    self?.streakFreezePurchased = true
+                    self?.showStreakFreezeAnimation = true
+                case .failure(let error):
+                    self?.errorMessage = "Purchase failed: \(error.localizedDescription)"
+                }
+            }
+        }
+    }
 }
-
 
 struct ProfileView: View {
     @StateObject private var viewModel: ProfileViewModel = ProfileViewModel()
@@ -50,31 +76,33 @@ struct ProfileView: View {
     
     var body: some View {
         NavigationStack{
-            ScrollView {
-                VStack(spacing: 0) {
-                    if viewModel.isLoading{
-                        ProgressView()
-                    } else if let errorMessage = viewModel.errorMessage{
-                        ErrorView(message: errorMessage, retryAction: {
-                            viewModel.loadProfile()
-                        })
-                    } else {
-                        ProfileHeaderView(username: viewModel.user?.username ?? "", email: viewModel.user?.email ?? "", createdAt: viewModel.user?.createdAt ?? Date())
-                        StatisticsView(
-                            level: viewModel.user?.level ?? 0,
-                            levelProgress: viewModel.user?.level_progress ?? 0,
-                            questionsAnsweredTotal: viewModel.user?.questionsAnsweredTotal ?? 0, questionsAnsweredToday: viewModel.user?.questionsAnsweredToday ?? 0, streak: viewModel.user?.streak ?? 0,
-                            dailyGoal: viewModel.user?.dailyGoal ?? 5)
-                        
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Text("Badges")
-                                    .foregroundColor(.alternative)
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                
-                                Spacer()
-                                
+            ZStack {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        if viewModel.isLoading{
+                            ProgressView()
+                        } else if let errorMessage = viewModel.errorMessage{
+                            ErrorView(message: errorMessage, retryAction: {
+                                viewModel.loadProfile()
+                            })
+                        } else {
+                            ProfileHeaderView(username: viewModel.user?.username ?? "", email: viewModel.user?.email ?? "", createdAt: viewModel.user?.createdAt ?? Date())
+                                .padding(.horizontal)
+                            
+                            // Wrap StatisticsView to constrain its width
+                            VStack {
+                                StatisticsView(
+                                    level: viewModel.user?.level ?? 0,
+                                    levelProgress: viewModel.user?.level_progress ?? 0,
+                                    questionsAnsweredTotal: viewModel.user?.questionsAnsweredTotal ?? 0,
+                                    questionsAnsweredToday: viewModel.user?.questionsAnsweredToday ?? 0,
+                                    streak: viewModel.user?.streak ?? 0,
+                                    dailyGoal: viewModel.user?.dailyGoal ?? 5)
+                            }
+                            .padding(.horizontal)
+                            
+                            // Badges Section
+                            SectionHeaderView(title: "Badges") {
                                 NavigationLink(destination: AllBadgesView(badges: viewModel.user?.badges ?? [])) {
                                     Text("View all")
                                         .foregroundColor(.main)
@@ -82,21 +110,22 @@ struct ProfileView: View {
                                 }
                             }
                             .padding(.horizontal)
-                            .padding(.top)
                             
                             BadgesView(badges: completedBadges, title: "")
-                        }
-                        
-                        // Add settings section
-                        VStack(alignment: .leading) {
-                            Text("Settings")
-                                .foregroundColor(.alternative)
-                                .font(.title3)
-                                .fontWeight(.bold)
                                 .padding(.horizontal)
-                                .padding(.top)
                             
-                            // Notifications settings
+                            // Store Section
+                            SectionHeaderView(title: "Store")
+                                .padding(.horizontal)
+                            
+                            StoreSectionView(viewModel: viewModel)
+                                .padding(.horizontal)
+                            
+                            // Settings Section
+                            SectionHeaderView(title: "Settings")
+                                .padding(.horizontal)
+                            
+                            // Notifications button
                             Button(action: {
                                 showNotificationSettings = true
                             }) {
@@ -106,7 +135,9 @@ struct ProfileView: View {
                                         .frame(width: 30)
                                     
                                     Text("Notifications")
-                                        .foregroundColor(.text)
+                                        .foregroundColor(.alternative)
+                                        .font(.headline)
+                                        .bold(true)
                                     
                                     Spacer()
                                     
@@ -118,46 +149,99 @@ struct ProfileView: View {
                                 .cornerRadius(10)
                                 .padding(.horizontal)
                             }
-                            .padding(.vertical, 4)
+                            
+                            Spacer(minLength: 20)
+                            Button(action: {
+                                AuthManager.shared.removeToken()
+                            }) {
+                                Text("LOGOUT")
+                                    .font(.headline)
+                                    .foregroundColor(.accent1)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.red.opacity(0.1))
+                                    .cornerRadius(30)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 30)
+                                            .stroke(Color.red, lineWidth: 1)
+                                    )
+                                    .padding(.horizontal)
+                            }
+                            Spacer(minLength: 20)
                         }
-                        
-                        Spacer(minLength: 20)
-                        Button(action: {
-                            AuthManager.shared.removeToken()
-                        }) {
-                            Text("LOGOUT")
-                                .font(.headline)
-                                .foregroundColor(.accent1)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.red.opacity(0.1))
-                                .cornerRadius(30)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 30)
-                                        .stroke(Color.red, lineWidth: 1)
-                                )
-                        }
-                        Spacer(minLength: 20)
                     }
                 }
-                .padding(.horizontal)
-            }
-            .background(Color.background)
-            .onAppear {
-                viewModel.loadProfile()
-            }
-            .sheet(isPresented: $showNotificationSettings) {
-                NotificationSettingsView()
-            }
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Profile")
-                        .font(.headline)
+                .background(Color.background)
+                .onAppear {
+                    viewModel.loadProfile()
+                }
+                .sheet(isPresented: $showNotificationSettings) {
+                    NotificationSettingsView()
+                }
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Profile")
+                            .font(.headline)
+                            .foregroundColor(.textSecondary)
+                    }
+                        
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack{
+                            Text("\(viewModel.user?.money ?? 0)")
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            Image(systemName: "dollarsign.circle.fill")
+                                .foregroundColor(.yellow)
+                        }
+                    }
+                }
+                .toolbarBackground(Color.background, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
                 
-                        .foregroundColor(.textSecondary)
+                // Show streak freeze animation when purchase is successful
+                if viewModel.showStreakFreezeAnimation {
+                    StreakFreezeSuccessView(showAnimation: $viewModel.showStreakFreezeAnimation) {
+                        // This is called when the animation is dismissed
+                        viewModel.streakFreezePurchased = true
+                    }
+                    .transition(.opacity)
+                    .zIndex(10)
                 }
             }
         }
+    }
+}
+
+// New reusable section header view
+struct SectionHeaderView: View {
+    var title: String
+    var trailingContent: (() -> AnyView)? = nil
+    
+    init(title: String) {
+        self.title = title
+        self.trailingContent = nil
+    }
+    
+    init<T: View>(title: String, @ViewBuilder trailingContent: @escaping () -> T) {
+        self.title = title
+        self.trailingContent = { AnyView(trailingContent()) }
+    }
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .foregroundColor(.alternative)
+                .font(.title3)
+                .fontWeight(.bold)
+            
+            Spacer()
+            
+            if let trailingContent = trailingContent {
+                trailingContent()
+            }
+        }
+        .padding(.top)
+        .padding(.bottom, 8)
     }
 }
 
@@ -218,6 +302,60 @@ struct ProfileHeaderView: View {
         .background(.accent3)
         .cornerRadius(10)
         .padding(.bottom, 16)
+    }
+}
+
+// Updated Store Section View
+struct StoreSectionView: View {
+    @ObservedObject var viewModel: ProfileViewModel
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            HStack(alignment: .center) {
+                Image(systemName: "snowflake")
+                    .foregroundColor(.accent1)
+                Text("Streak Freeze")
+                    .foregroundColor(.alternative)
+                    .font(.headline)
+                    .bold(true)
+                Spacer()
+                Text("10")
+                    .foregroundColor(.alternative)
+                    .font(.headline)
+                    .bold(true)
+                Image(systemName: "dollarsign.circle.fill")
+                    .foregroundColor(.yellow)
+            }
+            
+            if viewModel.hasActiveStreakFreezeForToday {
+                HStack(alignment: .center) {
+                    Image(systemName: "shield.lefthalf.filled")
+                        .foregroundColor(.blue)
+                        .frame(width: 30)
+                    Text("Streak Freeze active for today!")
+                        .foregroundColor(.text)
+                    Spacer()
+                }
+            } else {
+                Button(action: {
+                    viewModel.buyStreakFreeze()
+                }) {
+                    HStack {
+                        Text("Buy")
+                            .foregroundColor(.white)
+                            .fontWeight(.semibold)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background((viewModel.user?.money ?? 0) < viewModel.streakFreezePrice ? Color.gray : Color.blue)
+                    .cornerRadius(10)
+                }
+                .disabled((viewModel.user?.money ?? 0) < viewModel.streakFreezePrice || viewModel.isLoading)
+            }
+        }
+        .padding()
+        .background(.accent3)
+        .cornerRadius(10)
     }
 }
 
