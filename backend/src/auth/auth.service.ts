@@ -1,9 +1,11 @@
 // 3. Create auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Cache } from 'cache-manager';
+
 
 @Injectable()
 export class AuthService {
@@ -11,6 +13,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache
   ) {}
 
   async validateUser(emailOrUsername: string, password: string) {
@@ -32,6 +35,7 @@ export class AuthService {
   }
 
   async login(user: any) {
+    await this.cacheManager.clear();
     const payload = { username: user.username, sub: user.id };
     return {
       accessToken: this.jwtService.sign(payload),

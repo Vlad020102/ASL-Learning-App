@@ -214,48 +214,101 @@ const alphabet = [
 ]
 
 const phraseData = [
+  // {
+  //   id: 1,
+  //   name: "I can't sleep. I've been tossing and turning all night",
+  //   s3Url: 'how-are-you',
+  //   description: 'A common greeting',
+  //   difficulty: Difficulty.Easy,
+  //   meaning: "ME CAN'T SLEEP ME TOSS-AND-TURN ALL-NIGHT",
+  //   explanation: "Move your index finger in a circular motion, then move your hand in a tossing motion, and finally make a sleeping gesture.",
+  //   price: 10,
+  //   signs: [
+  //     {
+  //       name: "Me",
+  //       s3Url: 'how-are-you',
+  //       description: 'I ME',
+  //       difficulty: Difficulty.Easy,
+  //       explanation: "Move your index finger in a circular motion",
+  //       meaning: "I am the one who is doing this action"
+  //     },
+  //     {
+  //       name: "Can't",
+  //       s3Url: 'how-are-you',
+  //       description: 'Cannot',
+  //       difficulty: Difficulty.Easy,
+  //       explanation: "Move your hand in a tossing motion",
+  //       meaning: "I am unable to do this action"
+  //     },
+  //     {
+  //       id: 2,
+  //       name: 'Sleep',
+  //       s3Url: 'how-are-you',
+  //       description: 'Sleep',
+  //       difficulty: Difficulty.Easy,  
+  //       explanation: "Make a sleeping gesture",
+  //       meaning: "I am in a state of rest"
+  //     },
+  //     {
+  //       name: "All Night",
+  //       s3Url: 'how-are-you',
+  //       description: 'All night',
+  //       difficulty: Difficulty.Easy,
+  //       explanation: "Move your hand in a tossing motion",
+  //       meaning: "I have been awake for the entire night"
+  //     },
+  //   ]
+  // },
   {
-    id: 1,
-    name: "I can't sleep. I've been tossing and turning all night",
-    s3Url: 'url',
+    id: 2,
+    name: "Hello, my favourite holiday is Halloween",
+    s3Url: 'how-are-you',
     description: 'A common greeting',
     difficulty: Difficulty.Easy,
-    meaning: "ME CAN'T SLEEP ME TOSS-AND-TURN ALL-NIGHT",
-    explanation: "Move your fuck, Then move your other fuck, And now get them together",
+    meaning: "HELLO MY FAVOURITE HOLIDAY HALLOWEEN",
+    explanation: "Move your hand as if waving hello, then point to yourself, and finally make a gesture for Halloween.",
     price: 10,
     signs: [
       {
-        name: "Me",
-        s3Url: 'url',
-        description: 'I ME',
+        name: "Hello",
+        s3Url: 'how-are-you',
+        description: 'Hello sign',
         difficulty: Difficulty.Easy,
-        explanation: "Move your fuck",
-        meaning: "Fuck those kids up in the pit"
+        explanation: "Make a waving gesture",
+        meaning: "Greeting the other person"
       },
       {
-        name: "Can't",
-        s3Url: 'url',
-        description: 'Cannot',
+        name: "My",
+        s3Url: 'how-are-you',
+        description: 'Me, myself',
         difficulty: Difficulty.Easy,
-        explanation: "Just do it, nothing is impossible",
-        meaning: "I am unable to make execute this "
+        explanation: "Point to yourself",
+        meaning: "I am the one who is doing this action"
       },
       {
         id: 2,
-        name: 'Sleep',
-        s3Url: 'url',
-        description: 'Sleep',
-        difficulty: Difficulty.Easy,
-        explanation: "wiwiwi, then wawa",
-        meaning: "I am gods eepiest soldier"
+        name: 'Favourite',
+        s3Url: 'how-are-you',
+        description: 'Describing something as favourite',
+        difficulty: Difficulty.Easy,  
+        explanation: "Make a gesture indicating preference",
+        meaning: "This is my preferred choice"
       },
       {
-        name: "All Night",
+        name: "Holiday",
         s3Url: 'url',
-        description: 'All night',
+        description: 'Holiday as a special day',
         difficulty: Difficulty.Easy,
-        explanation: "Get your index finger and fuck off, Then move your fuck",
-        meaning: "5 seconds basically"
+        explanation: "Make a gesture indicating a special day",
+        meaning: "This is a day of significance" 
+      },
+      {
+        name: "Halloween",
+        s3Url: 'url',
+        description: 'The Halloween holiday',
+        difficulty: Difficulty.Easy,
+        explanation: "Make a gesture indicating Halloween indicatin face paint",
+        meaning: "The holiday is Halloween"
       },
     ]
   }
@@ -638,10 +691,10 @@ async function createExtras() {
 async function main() {
   console.log('Start seeding badges...');
 
-  await createBadges();
-  await createQuizes();
+  // await createBadges();
+  // await createQuizes();
   await createPhrases();
-  await createExtras();
+  // await createExtras();
 }
 
 main()

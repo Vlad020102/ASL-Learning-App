@@ -35,6 +35,7 @@ struct SimpleCameraView: View {
                 .ignoresSafeArea()
                 .onChange(of: targetSign) { newValue in
                     // Update the shared view model when target changes in UI
+                    print(targetSign)
                     PredictionViewModel.shared.targetSign = newValue
                     PredictionViewModel.shared.updateMatchStatus()
                 }

@@ -111,7 +111,7 @@ model UserBadge {
   badge    Badge       @relation(fields: [badgeID], references: [id])
   badgeID  Int         @map("badge_id")
   progress Int         @default(0)
-  status   BadgeStatus @default(Locked)
+  status   BadgeStatus @default(InProgress)
 
   @@unique([userID, badgeID])
   @@map("user_badges")
@@ -121,7 +121,7 @@ model Sign {
   id         Int        @id @default(autoincrement())
   difficulty Difficulty
   s3Url      String
-  name       String     @unique
+  name       String
 
   meaning     String?
   explanation String?
@@ -237,7 +237,7 @@ model StreakFreeze {
 
   user   User     @relation(fields: [userID], references: [id])
   @@map("streak_freezes")
-
+}
 model Referral {
   id           Int      @id @default(autoincrement())
   ownerID      Int      @map("user_id")

@@ -169,10 +169,10 @@ class SimpleCameraViewController: UIViewController, AVCaptureVideoDataOutputSamp
         processHandLandmarks(handLandmarkerResult, in: self)
         do{
             let config = MLModelConfiguration()
-            let model = try Alphabet(configuration: config)
+            let model = try ASLClassifier(configuration: config)
             
-            let input: AlphabetInput = try AlphabetInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
-            let prediction: AlphabetOutput = try model.prediction(input: input)
+            let input: ASLClassifierInput = try ASLClassifierInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
+            let prediction: ASLClassifierOutput = try model.prediction(input: input)
                 
             DispatchQueue.main.async {
                 PredictionViewModel.shared.setPrediction(prediction.classLabel)
