@@ -20,7 +20,7 @@ import { ExploreModule } from './explore/explore.module';
     PrismaModule,
     QuizesModule,
     PhrasesModule,
-    SharedCacheModule
+    SharedCacheModule,
     ExploreModule,
   ],
   controllers: [],

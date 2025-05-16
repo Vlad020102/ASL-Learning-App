@@ -61,6 +61,7 @@ export class PhrasesService {
                 }
             }
         });
+
         const user = await this.prisma.user.findUnique({
             where: { id: userID }
         });

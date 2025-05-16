@@ -27,7 +27,6 @@ export class QuizesService {
         let lettersInName = user.username.split('').map((letter) => {
           return letter.toUpperCase();
         });
-        console.log(lettersInName);
         const signPromises = lettersInName.map(async (letter) => {
           return await this.prisma.sign.findFirst({
             where: {
@@ -36,10 +35,9 @@ export class QuizesService {
           });
         });
 
-        console.log(signPromises);
+        (signPromises);
         
         const signs = await Promise.all(signPromises);
-        console.log(signs);
         const validSigns = signs.filter(sign => sign !== null);
         
         await this.prisma.quizSigns.createMany({

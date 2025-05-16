@@ -7,6 +7,7 @@ import { UsersService } from '../users/users.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { SharedCacheModule } from 'src/cache/cache.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { PrismaModule } from 'src/prisma/prisma.module';
       inject: [ConfigService],
     }),
     ConfigModule,
-    PrismaModule
+    PrismaModule,
+    SharedCacheModule
   ],
   providers: [AuthService, UsersService, JwtStrategy],
   controllers: [AuthController],

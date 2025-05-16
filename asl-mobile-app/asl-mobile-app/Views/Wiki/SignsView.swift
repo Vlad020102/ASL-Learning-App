@@ -57,9 +57,99 @@ struct SignsView: View {
     }
 }
 
+struct PracticeCameraView: View {
+    let signName: String
+    @Binding var showPracticeView: Bool
+    
+    @State private var modelRespondedCorrectly: Bool = false
+    @State private var showSuccessMessage: Bool = false // New state for success message visibility
+    @State private var successMessageText: String = "Correct!" // New state for the message text
+
+    var body: some View {
+        ZStack {
+            SimpleHostedViewController(modelType: "Simple", targetSign: signName, isCorrectSign: modelRespondedCorrectly)
+                .ignoresSafeArea()
+                .onAppear {
+                    PredictionViewModel.shared.setTargetSign(signName)
+                    PredictionViewModel.shared.isCorrectSign = false
+                    modelRespondedCorrectly = false
+                    showSuccessMessage = false // Ensure message is hidden on appear
+                }
+                .onReceive(PredictionViewModel.shared.$isCorrectSign) { isCorrectNow in
+                    print(isCorrectNow)
+                    if isCorrectNow && !modelRespondedCorrectly { // Process only new correct predictions
+                        modelRespondedCorrectly = true
+                        successMessageText = "Correct: \(signName)!"
+                        showSuccessMessage = true
+                        
+                        // Hide the message after a delay
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            showSuccessMessage = false
+                            // Optionally reset modelRespondedCorrectly if you want the user to be able to get "Correct" feedback multiple times for the same sign without closing and reopening
+                             modelRespondedCorrectly = false 
+                             PredictionViewModel.shared.isCorrectSign = false 
+                        }
+                    }
+                }
+
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        showPracticeView = false
+                        // Optional: Clear the target sign when practice view is dismissed
+                        // PredictionViewModel.shared.setTargetSign("") // or some default
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.largeTitle)
+                            .padding()
+                            .foregroundColor(.white)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                }
+                .padding(.top)
+                .padding(.trailing)
+                
+                Spacer()
+                
+                Text("Practice the sign: \(signName)")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding(.bottom, 20)
+            }
+            
+            // Success message overlay
+            if showSuccessMessage {
+                ZStack {
+                    Color.black.opacity(0.4) // Semi-transparent background
+                        .ignoresSafeArea()
+                    
+                    VStack {
+                        Text(successMessageText)
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(20)
+                            .background(Color.green.opacity(0.8))
+                            .cornerRadius(15)
+                            .shadow(radius: 10)
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                .animation(.easeInOut(duration: 0.3), value: showSuccessMessage)
+            }
+        }
+    }
+}
+
 struct SignDetailView: View {
     let sign: Sign
     @Environment(\.presentationMode) var presentationMode
+    @State private var showPracticeView: Bool = false
     
     var body: some View {
         ScrollView {
@@ -125,7 +215,7 @@ struct SignDetailView: View {
                 
                 // Practice button
                 Button(action: {
-                    // Future implementation for practice feature
+                    showPracticeView = true
                 }) {
                     Text("Practice this sign")
                         .fontWeight(.semibold)
@@ -149,5 +239,8 @@ struct SignDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(Color.background, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+        .fullScreenCover(isPresented: $showPracticeView) {
+            PracticeCameraView(signName: sign.name, showPracticeView: $showPracticeView)
+        }
     }
 }

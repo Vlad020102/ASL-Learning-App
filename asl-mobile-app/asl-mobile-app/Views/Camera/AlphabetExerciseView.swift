@@ -29,7 +29,7 @@ struct AlphabetExerciseView: View {
     var body: some View {
         ZStack {
             // Camera view
-            SimpleHostedViewController(targetSign: startSign, isCorrectSign: isCorrectSign)
+            SimpleHostedViewController(modelType: "Alphabet", targetSign: startSign, isCorrectSign: isCorrectSign)
                 .ignoresSafeArea()
                 .onChange(of: startSign) { newValue in
                     // Update the shared view model when target changes in UI

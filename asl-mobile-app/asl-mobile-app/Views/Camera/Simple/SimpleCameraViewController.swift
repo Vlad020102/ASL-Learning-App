@@ -18,6 +18,7 @@ class SimpleCameraViewController: UIViewController, AVCaptureVideoDataOutputSamp
     private let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
+    private var modelType = "Simple"
     var screenRect: CGRect! = nil // For view dimensions
     
     // Detector
@@ -33,6 +34,10 @@ class SimpleCameraViewController: UIViewController, AVCaptureVideoDataOutputSamp
             // Pass the target sign to the prediction viewModel
             PredictionViewModel.shared.targetSign = sign
         }
+    
+    func setModelType(_ type: String) {
+        modelType = type
+    }
     
     
     override func viewDidLoad() {
@@ -169,13 +174,34 @@ class SimpleCameraViewController: UIViewController, AVCaptureVideoDataOutputSamp
         processHandLandmarks(handLandmarkerResult, in: self)
         do{
             let config = MLModelConfiguration()
-            let model = try Alphabet(configuration: config)
-            
-            let input: AlphabetInput = try AlphabetInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
-            let prediction: AlphabetOutput = try model.prediction(input: input)
+            switch modelType {
+            case "Simple":
+                let model = try ASLClassifier(configuration: config)
                 
-            DispatchQueue.main.async {
-                PredictionViewModel.shared.setPrediction(prediction.classLabel)
+                let input: ASLClassifierInput = try ASLClassifierInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
+                let prediction: ASLClassifierOutput = try model.prediction(input: input)
+                
+                DispatchQueue.main.async {
+                    PredictionViewModel.shared.setPrediction(prediction.classLabel)
+                }
+            case "Alphabet":
+                let model = try Alphabet(configuration: config)
+                
+                let input: AlphabetInput = try AlphabetInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
+                let prediction: AlphabetOutput = try model.prediction(input: input)
+                
+                DispatchQueue.main.async {
+                    PredictionViewModel.shared.setPrediction(prediction.classLabel)
+                }
+            default:
+                let model = try ASLClassifier(configuration: config)
+                
+                let input: ASLClassifierInput = try ASLClassifierInput(input: convertLandmarksToMLMultiArray(results: handLandmarkerResult))
+                let prediction: ASLClassifierOutput = try model.prediction(input: input)
+                
+                DispatchQueue.main.async {
+                    PredictionViewModel.shared.setPrediction(prediction.classLabel)
+                }
             }
         }
         catch(let error){

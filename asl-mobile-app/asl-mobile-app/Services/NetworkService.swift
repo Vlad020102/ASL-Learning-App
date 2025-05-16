@@ -14,6 +14,7 @@ class NetworkService {
     static let shared = NetworkService()
     private let baseURL: String
     init(baseURL: String = ProcessInfo.processInfo.environment["API_URL"] ?? "http://localhost:3001") {
+        print(baseURL)
         self.baseURL = baseURL
     }
     
