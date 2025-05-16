@@ -6,6 +6,7 @@ class ProfileViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var showStreakFreezeAnimation = false
     @Published var streakFreezePurchased = false
+    @Published var showCopiedToast = false
     
     var hasActiveStreakFreezeForToday: Bool {
         guard let freezes = user?.streakFreezes else { return false }
@@ -44,7 +45,26 @@ class ProfileViewModel: ObservableObject {
             }
             return dateString
         }
+
+    func copyReferralCode() {
+        UIPasteboard.general.string = user?.referralCode
+        withAnimation {
+            showCopiedToast = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation {
+                self.showCopiedToast = false
+            }
+        }
+    }
     
+    func shareReferralCode() {
+        let shareText = "Join me on ASLearning! Use my referral code \(user?.referralCode ?? "") and we'll both get 100 units. Download the app now!"
+        let av = UIActivityViewController(activityItems: [shareText], applicationActivities: nil)
+        UIApplication.shared.windows.first?.rootViewController?.present(av, animated: true, completion: nil)
+    }
+
     func buyStreakFreeze() {
         isLoading = true
         errorMessage = nil
@@ -150,6 +170,17 @@ struct ProfileView: View {
                                 .padding(.horizontal)
                             }
                             
+                            ReferralView(
+                                referralCode: viewModel.user?.referralCode ?? "",
+                                showCopiedToast: $viewModel.showCopiedToast,
+                                copyAction: {
+                                    viewModel.copyReferralCode()
+                                },
+                                shareAction: {
+                                    viewModel.shareReferralCode()
+                                }
+                            )
+                            
                             Spacer(minLength: 20)
                             Button(action: {
                                 AuthManager.shared.removeToken()
@@ -197,8 +228,15 @@ struct ProfileView: View {
                 }
                 .toolbarBackground(Color.background, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
-                
-                // Show streak freeze animation when purchase is successful
+                .overlay(
+                    Group {
+                        if viewModel.showCopiedToast {
+                            ToastView(message: "Referral code copied!")
+                                .transition(.move(edge: .bottom))
+                                .animation(.easeInOut, value: viewModel.showCopiedToast)
+                        }
+                    }
+                )
                 if viewModel.showStreakFreezeAnimation {
                     StreakFreezeSuccessView(showAnimation: $viewModel.showStreakFreezeAnimation) {
                         // This is called when the animation is dismissed
@@ -358,6 +396,77 @@ struct StoreSectionView: View {
         .cornerRadius(10)
     }
 }
+
+ struct ReferralView: View {
+     let referralCode: String
+     @Binding var showCopiedToast: Bool
+     let copyAction: () -> Void
+     let shareAction: () -> Void
+    
+     var body: some View {
+         VStack(alignment: .leading, spacing: 12) {
+             Text("Invite Friends")
+                 .foregroundColor(.alternative)
+                 .font(.title3)
+                 .fontWeight(.bold)
+            
+             VStack(alignment: .leading, spacing: 12) {
+                 HStack {
+                     Image(systemName: "gift.fill")
+                         .foregroundColor(.accent1)
+                         .font(.title2)
+                    
+                     VStack(alignment: .leading) {
+                         Text("Get 100 units for each friend who joins")
+                             .font(.subheadline)
+                             .fontWeight(.semibold)
+                        
+                         Text("Share your referral code below")
+                             .font(.caption)
+                             .foregroundColor(.gray)
+                     }
+                 }
+                
+                 HStack {
+                     Text(referralCode)
+                         .font(.system(.body, design: .monospaced))
+                         .fontWeight(.medium)
+                         .padding(8)
+                         .background(Color.gray.opacity(0.2))
+                         .cornerRadius(6)
+                    
+                     Spacer()
+                    
+                     Button(action: copyAction) {
+                         Label("Copy", systemImage: "doc.on.doc")
+                             .font(.subheadline)
+                             .padding(.horizontal, 12)
+                             .padding(.vertical, 8)
+                             .background(Color.accent1.opacity(0.2))
+                             .foregroundColor(.accent1)
+                             .cornerRadius(8)
+                     }
+                    
+                     Button(action: shareAction) {
+                         Label("Share", systemImage: "square.and.arrow.up")
+                             .font(.subheadline)
+                             .padding(.horizontal, 12)
+                             .padding(.vertical, 8)
+                             .background(Color.accent1)
+                             .foregroundColor(.white)
+                             .cornerRadius(8)
+                     }
+                 }
+             }
+             .padding()
+             .background(.accent3)
+             .cornerRadius(10)
+         }
+         .padding(.horizontal)
+         .padding(.vertical, 8)
+     }
+ }
+
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {

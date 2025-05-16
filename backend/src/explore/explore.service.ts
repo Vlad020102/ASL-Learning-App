@@ -29,7 +29,6 @@ export class ExploreService {
 
         return {
             "extras": groupedByType,
-            "referralCode": referralCode
         }
     }
 
