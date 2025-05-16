@@ -67,7 +67,7 @@ struct PracticeCameraView: View {
 
     var body: some View {
         ZStack {
-            SimpleHostedViewController(targetSign: signName, isCorrectSign: modelRespondedCorrectly)
+            SimpleHostedViewController(modelType: "Simple", targetSign: signName, isCorrectSign: modelRespondedCorrectly)
                 .ignoresSafeArea()
                 .onAppear {
                     PredictionViewModel.shared.setTargetSign(signName)

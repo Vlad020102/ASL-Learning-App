@@ -71,8 +71,103 @@ struct PhrasesView: View {
     }
 }
 
+struct PracticePhraseCameraView: View {
+    // Use @State for targetSign as HolisticCameraView takes a Binding
+    @State var phraseName: String 
+    @Binding var showPracticeView: Bool
+    
+    @State private var modelRespondedCorrectly: Bool = false
+    @State private var showSuccessMessage: Bool = false
+    @State private var successMessageText: String = "Correct!"
+
+    var body: some View {
+        ZStack {
+            // Embed HolisticCameraView
+            HolisticCameraView(targetSign: $phraseName, isCorrectSign: $modelRespondedCorrectly)
+                .ignoresSafeArea()
+                .onAppear {
+                    // HolisticCameraView itself handles setting the targetSign in PredictionViewModel
+                    // and updating its isCorrectSign binding from PredictionViewModel.
+                    // We just need to ensure our local states are reset.
+                    modelRespondedCorrectly = false
+                    showSuccessMessage = false
+                }
+                .onChange(of: modelRespondedCorrectly) { newValue in
+                    // This will be triggered when HolisticCameraView updates its isCorrectSign binding,
+                    // which in turn is updated from PredictionViewModel.shared.$isCorrectSign.
+                    if newValue && !showSuccessMessage { // Check !showSuccessMessage to prevent re-triggering while message is shown
+                        successMessageText = "Great! \"\(phraseName)\" performed correctly!"
+                        showSuccessMessage = true
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            showSuccessMessage = false
+                            // Important: Reset modelRespondedCorrectly to allow for re-detection
+                            // if the user continues to hold the sign or performs it again.
+                            // HolisticCameraView will also see this change.
+                            modelRespondedCorrectly = false
+                            // Also reset the global prediction state if needed, though HolisticCameraView might do this.
+                            PredictionViewModel.shared.isCorrectSign = false
+                        }
+                    }
+                }
+
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        showPracticeView = false
+                        // PredictionViewModel.shared.setTargetSign("") // Optional: Clear target
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.largeTitle)
+                            .padding()
+                            .foregroundColor(.white)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                }
+                .padding(.top)
+                .padding(.trailing)
+                
+                Spacer()
+                
+                Text("Practice the phrase: \(phraseName)")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding(.bottom, 20)
+            }
+            
+            if showSuccessMessage {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    
+                    VStack {
+                        Text(successMessageText)
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(20)
+                            .background(Color.green.opacity(0.85))
+                            .cornerRadius(15)
+                            .shadow(radius: 10)
+                            .multilineTextAlignment(.center)
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                    .padding(.horizontal, 40) // Ensure text fits
+                }
+                .animation(.easeInOut(duration: 0.3), value: showSuccessMessage)
+            }
+        }
+    }
+}
+
 struct PhraseDetailView: View {
     let phrase: Phrase
+    @State private var showPracticePhraseView: Bool = false // New state variable
     
     var body: some View {
         ScrollView {
@@ -135,7 +230,7 @@ struct PhraseDetailView: View {
                 .padding(.horizontal)
                 
                 Button(action: {
-                    
+                    showPracticePhraseView = true // Update action
                 }) {
                     Text("Practice this phrase")
                         .fontWeight(.semibold)
@@ -159,6 +254,9 @@ struct PhraseDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(Color.background, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+        .fullScreenCover(isPresented: $showPracticePhraseView) { // Add fullScreenCover
+            PracticePhraseCameraView(phraseName: phrase.name, showPracticeView: $showPracticePhraseView)
+        }
     }
 }
 

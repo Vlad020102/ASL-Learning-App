@@ -8,6 +8,7 @@ import SwiftUI
 import AVFoundation
 
 struct SimpleHostedViewController: UIViewControllerRepresentable {
+    var modelType: String
     var targetSign: String
     var isCorrectSign: Bool
     
@@ -15,6 +16,7 @@ struct SimpleHostedViewController: UIViewControllerRepresentable {
         let cameraViewController = SimpleCameraViewController()
         if let cameraVC = cameraViewController as? SimpleCameraViewController {
                     cameraVC.setTargetSign(targetSign)
+                    cameraVC.setModelType(modelType)
                 }
         return cameraViewController
     }
@@ -31,7 +33,7 @@ struct SimpleCameraView: View {
     var body: some View {
         ZStack {
             // Camera view controller
-            SimpleHostedViewController(targetSign: targetSign, isCorrectSign: isCorrectSign)
+            SimpleHostedViewController(modelType: "Simple", targetSign: targetSign, isCorrectSign: isCorrectSign)
                 .ignoresSafeArea()
                 .onChange(of: targetSign) { newValue in
                     // Update the shared view model when target changes in UI

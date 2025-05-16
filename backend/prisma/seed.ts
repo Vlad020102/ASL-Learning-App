@@ -97,25 +97,25 @@ const quizData = [
       {
         difficulty: Difficulty.Easy,
         name: "Hello",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
         name: "Goodbye",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
         name: "Thank you",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
         name: "Please",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "Hello, Goodbye, Thank you, Please"
       },
     ],
@@ -127,25 +127,25 @@ const quizData = [
       {
         difficulty: Difficulty.Moderate,
         name: "Good morning",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
         name: "Good night",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
         name: "Good afternoon",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
         name: "Good evening",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
     ],
@@ -157,25 +157,25 @@ const quizData = [
       {
         difficulty: Difficulty.Hard,
         name: "How are you?",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
         name: "What is your name?",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
         name: "Where are you from?",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
       {
         difficulty: Difficulty.Hard,
         name: "What do you do?",
-        s3Url: "url",
+        s3Url: "how-are-you",
         options: "How are you?, What is your name?, Where are you from?, What do you do?"
       },
     ],
@@ -214,51 +214,51 @@ const alphabet = [
 ]
 
 const phraseData = [
-  // {
-  //   id: 1,
-  //   name: "I can't sleep. I've been tossing and turning all night",
-  //   s3Url: 'how-are-you',
-  //   description: 'A common greeting',
-  //   difficulty: Difficulty.Easy,
-  //   meaning: "ME CAN'T SLEEP ME TOSS-AND-TURN ALL-NIGHT",
-  //   explanation: "Move your index finger in a circular motion, then move your hand in a tossing motion, and finally make a sleeping gesture.",
-  //   price: 10,
-  //   signs: [
-  //     {
-  //       name: "Me",
-  //       s3Url: 'how-are-you',
-  //       description: 'I ME',
-  //       difficulty: Difficulty.Easy,
-  //       explanation: "Move your index finger in a circular motion",
-  //       meaning: "I am the one who is doing this action"
-  //     },
-  //     {
-  //       name: "Can't",
-  //       s3Url: 'how-are-you',
-  //       description: 'Cannot',
-  //       difficulty: Difficulty.Easy,
-  //       explanation: "Move your hand in a tossing motion",
-  //       meaning: "I am unable to do this action"
-  //     },
-  //     {
-  //       id: 2,
-  //       name: 'Sleep',
-  //       s3Url: 'how-are-you',
-  //       description: 'Sleep',
-  //       difficulty: Difficulty.Easy,  
-  //       explanation: "Make a sleeping gesture",
-  //       meaning: "I am in a state of rest"
-  //     },
-  //     {
-  //       name: "All Night",
-  //       s3Url: 'how-are-you',
-  //       description: 'All night',
-  //       difficulty: Difficulty.Easy,
-  //       explanation: "Move your hand in a tossing motion",
-  //       meaning: "I have been awake for the entire night"
-  //     },
-  //   ]
-  // },
+  {
+    id: 1,
+    name: "I can't sleep. I've been tossing and turning all night",
+    s3Url: 'how-are-you',
+    description: 'A common greeting',
+    difficulty: Difficulty.Easy,
+    meaning: "ME CAN'T SLEEP ME TOSS-AND-TURN ALL-NIGHT",
+    explanation: "Move your index finger in a circular motion, then move your hand in a tossing motion, and finally make a sleeping gesture.",
+    price: 10,
+    signs: [
+      {
+        name: "Me",
+        s3Url: 'how-are-you',
+        description: 'I ME',
+        difficulty: Difficulty.Easy,
+        explanation: "Move your index finger in a circular motion",
+        meaning: "I am the one who is doing this action"
+      },
+      {
+        name: "Can't",
+        s3Url: 'how-are-you',
+        description: 'Cannot',
+        difficulty: Difficulty.Easy,
+        explanation: "Move your hand in a tossing motion",
+        meaning: "I am unable to do this action"
+      },
+      {
+        id: 2,
+        name: 'Sleep',
+        s3Url: 'how-are-you',
+        description: 'Sleep',
+        difficulty: Difficulty.Easy,  
+        explanation: "Make a sleeping gesture",
+        meaning: "I am in a state of rest"
+      },
+      {
+        name: "All Night",
+        s3Url: 'how-are-you',
+        description: 'All night',
+        difficulty: Difficulty.Easy,
+        explanation: "Move your hand in a tossing motion",
+        meaning: "I have been awake for the entire night"
+      },
+    ]
+  },
   {
     id: 2,
     name: "Hello, my favourite holiday is Halloween",
@@ -296,7 +296,7 @@ const phraseData = [
       },
       {
         name: "Holiday",
-        s3Url: 'url',
+        s3Url: 'how-are-you',
         description: 'Holiday as a special day',
         difficulty: Difficulty.Easy,
         explanation: "Make a gesture indicating a special day",
@@ -304,7 +304,7 @@ const phraseData = [
       },
       {
         name: "Halloween",
-        s3Url: 'url',
+        s3Url: 'how-are-you',
         description: 'The Halloween holiday',
         difficulty: Difficulty.Easy,
         explanation: "Make a gesture indicating Halloween indicatin face paint",

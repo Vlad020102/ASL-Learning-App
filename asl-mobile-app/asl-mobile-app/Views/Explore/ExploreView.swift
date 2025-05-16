@@ -164,6 +164,8 @@ struct ExploreView: View {
                         .foregroundColor(.textSecondary)
                 }
             }
+            .toolbarBackground(Color.background, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .overlay(
                 Group {
                     if viewModel.showCopiedToast {
