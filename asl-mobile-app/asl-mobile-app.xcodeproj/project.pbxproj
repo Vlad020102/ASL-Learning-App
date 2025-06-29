@@ -7,9 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		020DDF5E2D8359D20004CE0E /* what-is-your-name.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */; };
 		0260D1282DBBC94A00F2AF82 /* holistic_test_data.csv in Resources */ = {isa = PBXBuildFile; fileRef = 0260D1272DBBC94A00F2AF82 /* holistic_test_data.csv */; };
-		026E445D2E112ABF00C917D0 /* goodbye.gif in Resources */ = {isa = PBXBuildFile; fileRef = 026E445C2E112ABF00C917D0 /* goodbye.gif */; };
+		02AEFD502E11464400F9DD75 /* sit.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD4A2E11464400F9DD75 /* sit.gif */; };
+		02AEFD512E11464400F9DD75 /* stop.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD4D2E11464400F9DD75 /* stop.gif */; };
+		02AEFD522E11464400F9DD75 /* thank-you.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD4E2E11464400F9DD75 /* thank-you.mp4 */; };
+		02AEFD532E11464400F9DD75 /* goodbye.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD402E11464400F9DD75 /* goodbye.gif */; };
+		02AEFD542E11464400F9DD75 /* help.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD442E11464400F9DD75 /* help.gif */; };
+		02AEFD562E11464400F9DD75 /* what-is-your-name.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD4F2E11464400F9DD75 /* what-is-your-name.mp4 */; };
+		02AEFD572E11464400F9DD75 /* friend.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD3F2E11464400F9DD75 /* friend.gif */; };
+		02AEFD582E11464400F9DD75 /* all-night.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD3D2E11464400F9DD75 /* all-night.gif */; };
+		02AEFD592E11464400F9DD75 /* goodbye.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD412E11464400F9DD75 /* goodbye.mp4 */; };
+		02AEFD5A2E11464400F9DD75 /* i-cant-sleep-video.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD472E11464400F9DD75 /* i-cant-sleep-video.gif */; };
+		02AEFD5B2E11464400F9DD75 /* me.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD482E11464400F9DD75 /* me.gif */; };
+		02AEFD5C2E11464400F9DD75 /* please.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD492E11464400F9DD75 /* please.mp4 */; };
+		02AEFD5D2E11464400F9DD75 /* sleep.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD4B2E11464400F9DD75 /* sleep.gif */; };
+		02AEFD5E2E11464400F9DD75 /* can-not.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD3E2E11464400F9DD75 /* can-not.gif */; };
+		02AEFD5F2E11464400F9DD75 /* stand.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD4C2E11464400F9DD75 /* stand.gif */; };
+		02AEFD602E11464400F9DD75 /* hello.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD432E11464400F9DD75 /* hello.mp4 */; };
+		02AEFD612E11464400F9DD75 /* hello.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD422E11464400F9DD75 /* hello.gif */; };
+		02AEFD622E11464400F9DD75 /* holistic_test_data.csv in Resources */ = {isa = PBXBuildFile; fileRef = 02AEFD452E11464400F9DD75 /* holistic_test_data.csv */; };
 		02B5F25D2D9D927000B61D9F /* how-are-you.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02B5F25C2D9D927000B61D9F /* how-are-you.gif */; };
 		02C21CA92DC1480600E045CB /* Flwr in Frameworks */ = {isa = PBXBuildFile; productRef = 02C21CA82DC1480600E045CB /* Flwr */; };
 		02C21D322DC14F7A00E045CB /* Flwr in Frameworks */ = {isa = PBXBuildFile; productRef = 02C21D312DC14F7A00E045CB /* Flwr */; };
@@ -36,9 +52,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "what-is-your-name.mp4"; sourceTree = "<group>"; };
 		0260D1272DBBC94A00F2AF82 /* holistic_test_data.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = holistic_test_data.csv; sourceTree = "<group>"; };
-		026E445C2E112ABF00C917D0 /* goodbye.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = goodbye.gif; sourceTree = "<group>"; };
+		02AEFD3D2E11464400F9DD75 /* all-night.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "all-night.gif"; sourceTree = "<group>"; };
+		02AEFD3E2E11464400F9DD75 /* can-not.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "can-not.gif"; sourceTree = "<group>"; };
+		02AEFD3F2E11464400F9DD75 /* friend.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = friend.gif; sourceTree = "<group>"; };
+		02AEFD402E11464400F9DD75 /* goodbye.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = goodbye.gif; sourceTree = "<group>"; };
+		02AEFD412E11464400F9DD75 /* goodbye.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = goodbye.mp4; sourceTree = "<group>"; };
+		02AEFD422E11464400F9DD75 /* hello.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = hello.gif; sourceTree = "<group>"; };
+		02AEFD432E11464400F9DD75 /* hello.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = hello.mp4; sourceTree = "<group>"; };
+		02AEFD442E11464400F9DD75 /* help.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = help.gif; sourceTree = "<group>"; };
+		02AEFD452E11464400F9DD75 /* holistic_test_data.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = holistic_test_data.csv; sourceTree = "<group>"; };
+		02AEFD472E11464400F9DD75 /* i-cant-sleep-video.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "i-cant-sleep-video.gif"; sourceTree = "<group>"; };
+		02AEFD482E11464400F9DD75 /* me.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = me.gif; sourceTree = "<group>"; };
+		02AEFD492E11464400F9DD75 /* please.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = please.mp4; sourceTree = "<group>"; };
+		02AEFD4A2E11464400F9DD75 /* sit.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = sit.gif; sourceTree = "<group>"; };
+		02AEFD4B2E11464400F9DD75 /* sleep.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = sleep.gif; sourceTree = "<group>"; };
+		02AEFD4C2E11464400F9DD75 /* stand.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = stand.gif; sourceTree = "<group>"; };
+		02AEFD4D2E11464400F9DD75 /* stop.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = stop.gif; sourceTree = "<group>"; };
+		02AEFD4E2E11464400F9DD75 /* thank-you.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "thank-you.mp4"; sourceTree = "<group>"; };
+		02AEFD4F2E11464400F9DD75 /* what-is-your-name.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "what-is-your-name.mp4"; sourceTree = "<group>"; };
 		02B5F25C2D9D927000B61D9F /* how-are-you.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "how-are-you.gif"; sourceTree = "<group>"; };
 		03F33B210E48AEAF80E1EDF1 /* Pods-asl-mobile-appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-appTests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-appTests/Pods-asl-mobile-appTests.release.xcconfig"; sourceTree = "<group>"; };
 		18A39A6EFAEB837D5B2AFC9F /* Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -105,10 +137,26 @@
 		020DDF5F2D8369190004CE0E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				02AEFD3D2E11464400F9DD75 /* all-night.gif */,
+				02AEFD3E2E11464400F9DD75 /* can-not.gif */,
+				02AEFD3F2E11464400F9DD75 /* friend.gif */,
+				02AEFD402E11464400F9DD75 /* goodbye.gif */,
+				02AEFD412E11464400F9DD75 /* goodbye.mp4 */,
+				02AEFD422E11464400F9DD75 /* hello.gif */,
+				02AEFD432E11464400F9DD75 /* hello.mp4 */,
+				02AEFD442E11464400F9DD75 /* help.gif */,
+				02AEFD452E11464400F9DD75 /* holistic_test_data.csv */,
+				02AEFD472E11464400F9DD75 /* i-cant-sleep-video.gif */,
+				02AEFD482E11464400F9DD75 /* me.gif */,
+				02AEFD492E11464400F9DD75 /* please.mp4 */,
+				02AEFD4A2E11464400F9DD75 /* sit.gif */,
+				02AEFD4B2E11464400F9DD75 /* sleep.gif */,
+				02AEFD4C2E11464400F9DD75 /* stand.gif */,
+				02AEFD4D2E11464400F9DD75 /* stop.gif */,
+				02AEFD4E2E11464400F9DD75 /* thank-you.mp4 */,
+				02AEFD4F2E11464400F9DD75 /* what-is-your-name.mp4 */,
 				0260D1272DBBC94A00F2AF82 /* holistic_test_data.csv */,
 				02B5F25C2D9D927000B61D9F /* how-are-you.gif */,
-				026E445C2E112ABF00C917D0 /* goodbye.gif */,
-				020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -281,9 +329,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				026E445D2E112ABF00C917D0 /* goodbye.gif in Resources */,
+				02AEFD502E11464400F9DD75 /* sit.gif in Resources */,
+				02AEFD512E11464400F9DD75 /* stop.gif in Resources */,
+				02AEFD522E11464400F9DD75 /* thank-you.mp4 in Resources */,
+				02AEFD532E11464400F9DD75 /* goodbye.gif in Resources */,
+				02AEFD542E11464400F9DD75 /* help.gif in Resources */,
+				02AEFD562E11464400F9DD75 /* what-is-your-name.mp4 in Resources */,
+				02AEFD572E11464400F9DD75 /* friend.gif in Resources */,
+				02AEFD582E11464400F9DD75 /* all-night.gif in Resources */,
+				02AEFD592E11464400F9DD75 /* goodbye.mp4 in Resources */,
+				02AEFD5A2E11464400F9DD75 /* i-cant-sleep-video.gif in Resources */,
+				02AEFD5B2E11464400F9DD75 /* me.gif in Resources */,
+				02AEFD5C2E11464400F9DD75 /* please.mp4 in Resources */,
+				02AEFD5D2E11464400F9DD75 /* sleep.gif in Resources */,
+				02AEFD5E2E11464400F9DD75 /* can-not.gif in Resources */,
+				02AEFD5F2E11464400F9DD75 /* stand.gif in Resources */,
+				02AEFD602E11464400F9DD75 /* hello.mp4 in Resources */,
+				02AEFD612E11464400F9DD75 /* hello.gif in Resources */,
+				02AEFD622E11464400F9DD75 /* holistic_test_data.csv in Resources */,
 				02B5F25D2D9D927000B61D9F /* how-are-you.gif in Resources */,
-				020DDF5E2D8359D20004CE0E /* what-is-your-name.mp4 in Resources */,
 				0260D1282DBBC94A00F2AF82 /* holistic_test_data.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -582,7 +646,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"asl-mobile-app/Preview Content\"";
-				DEVELOPMENT_TEAM = SW8PV68P39;
+				DEVELOPMENT_TEAM = 3F74QMWA5M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ASLearning;
@@ -617,7 +681,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"asl-mobile-app/Preview Content\"";
-				DEVELOPMENT_TEAM = SW8PV68P39;
+				DEVELOPMENT_TEAM = 3F74QMWA5M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ASLearning;

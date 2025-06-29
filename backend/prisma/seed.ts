@@ -191,12 +191,12 @@ const quizData = [
       },
       {
         name: "Sit",
-        signGif: "Sit",
+        signGif: "sit",
         matchIndex: 1,
       },
       {
         name: "Stop",
-        signGif: "stand",
+        signGif: "stop",
         matchIndex: 2,
       },
       {
@@ -227,7 +227,7 @@ const phraseData = [
   {
     id: 1,
     name: "I can't sleep. I've been tossing and turning all night",
-    s3Url: 'how-are-you',
+    s3Url: 'i-cant-sleep-video',
     description: 'A common greeting',
     difficulty: Difficulty.Easy,
     meaning: "ME CAN'T SLEEP ME TOSS-AND-TURN ALL-NIGHT",
@@ -281,7 +281,7 @@ const phraseData = [
     signs: [
       {
         name: "Hello",
-        s3Url: 'how-are-you',
+        s3Url: 'hello',
         description: 'Hello sign',
         difficulty: Difficulty.Easy,
         explanation: "Make a waving gesture",

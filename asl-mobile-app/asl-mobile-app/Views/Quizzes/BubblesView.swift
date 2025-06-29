@@ -59,7 +59,7 @@ struct BubblesView: View {
                             showCompletionView = true
                         }
                     }
-                )
+                ).id(quiz.signs?[currentQuizIndex].s3Url ?? "") // Add this line
             } else {
                 // Completion view when all Quizes are done or lives are depleted
                 QuizCompletionView(
@@ -231,6 +231,13 @@ struct SignView: View {
         .onAppear {
             setupPlayer()
         }
+        .onChange(of: sign?.s3Url) { _ in
+            // Update player when sign changes
+            setupPlayer()
+            // Reset UI state for new sign
+            selectedWords = []
+            isPlaying = false
+        }
         .sheet(isPresented: $showFeedback) {
             // Feedback popup
             FeedbackView(
@@ -251,6 +258,10 @@ struct SignView: View {
         }
     
     private func setupPlayer() {
+        // Clean up previous player
+        player?.pause()
+        player = nil
+        
         guard let fileName = sign?.s3Url,
               let url = Bundle.main.url(forResource: fileName, withExtension: ".mp4") else {
             return
@@ -259,3 +270,4 @@ struct SignView: View {
         player = AVPlayer(url: url)
     }
 }
+
