@@ -27,7 +27,6 @@ export class AuthController {
         'No user was found with the provided credentials',
       );
     }
-
     return this.authService.login(user);
   }
 

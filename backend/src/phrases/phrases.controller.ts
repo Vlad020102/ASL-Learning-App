@@ -19,7 +19,7 @@ export class PhrasesController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(CacheInterceptor)
+    // @UseInterceptors(CacheInterceptor)
     findAll(@ReqUser() user) {
         this.phrasesService.populatePhrases(user.user.id);
         return this.phrasesService.findAll(user.user.id);

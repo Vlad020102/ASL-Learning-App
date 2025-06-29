@@ -19,7 +19,7 @@ export class QuizController {
   ) {}
   @Get()
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(CacheInterceptor)
+  // @UseInterceptors(CacheInterceptor)
   findAll(@ReqUser() user) { 
     this.quizesService.populateQuiz(user);
     return this.quizesService.findAllQuizesForUser(user);

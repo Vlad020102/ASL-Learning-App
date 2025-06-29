@@ -35,8 +35,9 @@ export class AuthService {
   }
 
   async login(user: any) {
-    await this.cacheManager.clear();
+    // await this.cacheManager.clear();
     const payload = { username: user.username, sub: user.id };
+    console.log('User logged in:', payload);
     return {
       accessToken: this.jwtService.sign(payload),
       user: user,

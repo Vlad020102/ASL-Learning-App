@@ -28,7 +28,7 @@ export class UsersController {
   }
   
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(CacheInterceptor)
+  // @UseInterceptors(CacheInterceptor)
   @Get('profile')
   findProfile(
     @ReqUser() user: User
@@ -38,7 +38,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(CacheInterceptor)
+  // @UseInterceptors(CacheInterceptor)
   @Get('streaks')
   getStreaks(
     @ReqUser() user: User

@@ -53,10 +53,14 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "API_URL"
-            value = "http://192.168.0.197:3001"
+            value = "http://192.168.0.122:3001"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
+      <LocationScenarioReference
+         identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
+         referenceType = "1">
+      </LocationScenarioReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

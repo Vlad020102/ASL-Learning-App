@@ -174,6 +174,7 @@ class SimpleCameraViewController: UIViewController, AVCaptureVideoDataOutputSamp
         processHandLandmarks(handLandmarkerResult, in: self)
         do{
             let config = MLModelConfiguration()
+            config.computeUnits = .all
             switch modelType {
             case "Simple":
                 let model = try ASLClassifier(configuration: config)

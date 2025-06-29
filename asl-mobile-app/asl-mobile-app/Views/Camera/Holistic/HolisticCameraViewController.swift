@@ -766,6 +766,7 @@ class HolisticCameraViewController: UIViewController, AVCaptureVideoDataOutputSa
             }
             
             let config = MLModelConfiguration()
+            config.computeUnits = .all
             
             // Use the holistic model
             let model = try ASLClassifierHolistic(configuration: config)

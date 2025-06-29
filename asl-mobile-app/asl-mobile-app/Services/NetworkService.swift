@@ -13,7 +13,7 @@ import KeychainAccess
 class NetworkService {
     static let shared = NetworkService()
     private let baseURL: String
-    init(baseURL: String = ProcessInfo.processInfo.environment["API_URL"] ?? "http://localhost:3001") {
+    init(baseURL: String = ProcessInfo.processInfo.environment["API_URL"] ?? "http://192.168.0.122:3001") {
         print(baseURL)
         self.baseURL = baseURL
     }

@@ -173,8 +173,6 @@ struct AlphabetExerciseView: View {
     
     private func calculateAccuracy() -> Float {
         guard !signTimes.isEmpty else { return 0.0 }
-        
-        // Calculate score for each sign based on completion time
         var totalScore: Float = 0.0
         
         for time in signTimes {
@@ -182,38 +180,28 @@ struct AlphabetExerciseView: View {
             
             switch time {
             case ...excellentThreshold:
-                // Excellent performance (1.0 - 0.9)
                 signScore = 1.0
             case excellentThreshold...goodThreshold:
-                // Good performance (0.9 - 0.7)
-                // Linear interpolation between excellent and good thresholds
                 let range = goodThreshold - excellentThreshold
                 let position = time - excellentThreshold
                 let percentage = Float(position / range)
                 signScore = 0.9 - percentage * 0.2
             case goodThreshold...fairThreshold:
-                // Fair performance (0.7 - 0.4)
-                // Linear interpolation between good and fair thresholds
                 let range = fairThreshold - goodThreshold
                 let position = time - goodThreshold
                 let percentage = Float(position / range)
                 signScore = 0.7 - percentage * 0.3
             case fairThreshold...maxScoreableTime:
-                // Poor but still scoreable performance (0.4 - 0.1)
-                // Linear interpolation between fair threshold and max scoreable time
                 let range = maxScoreableTime - fairThreshold
                 let position = time - fairThreshold
                 let percentage = Float(position / range)
                 signScore = 0.4 - percentage * 0.3
             default:
-                // Beyond max scoreable time
                 signScore = 0.1
             }
             
             totalScore += signScore
         }
-        
-        // Calculate average score across all signs
         let averageScore = totalScore / Float(signTimes.count)
         
         return averageScore
