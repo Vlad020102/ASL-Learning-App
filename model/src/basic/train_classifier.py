@@ -41,3 +41,4 @@ def train_model():
     # Convert to Core ML model and save
     core_ml_model = ct.converters.sklearn.convert(rfc)
     core_ml_model.save('ASLClassifier.mlmodel')
+    print("Model saved as ASLClassifier.mlmodel")

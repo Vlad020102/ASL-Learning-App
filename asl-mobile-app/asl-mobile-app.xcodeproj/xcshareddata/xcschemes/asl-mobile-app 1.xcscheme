@@ -53,7 +53,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "API_URL"
-            value = "http://127.0.0.1:3001"
+            value = "http://192.168.0.197:3001"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

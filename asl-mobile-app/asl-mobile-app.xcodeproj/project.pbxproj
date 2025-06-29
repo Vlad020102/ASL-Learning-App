@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		020DDF5E2D8359D20004CE0E /* what-is-your-name.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */; };
 		0260D1282DBBC94A00F2AF82 /* holistic_test_data.csv in Resources */ = {isa = PBXBuildFile; fileRef = 0260D1272DBBC94A00F2AF82 /* holistic_test_data.csv */; };
+		026E445D2E112ABF00C917D0 /* goodbye.gif in Resources */ = {isa = PBXBuildFile; fileRef = 026E445C2E112ABF00C917D0 /* goodbye.gif */; };
 		02B5F25D2D9D927000B61D9F /* how-are-you.gif in Resources */ = {isa = PBXBuildFile; fileRef = 02B5F25C2D9D927000B61D9F /* how-are-you.gif */; };
 		02C21CA92DC1480600E045CB /* Flwr in Frameworks */ = {isa = PBXBuildFile; productRef = 02C21CA82DC1480600E045CB /* Flwr */; };
 		02C21D322DC14F7A00E045CB /* Flwr in Frameworks */ = {isa = PBXBuildFile; productRef = 02C21D312DC14F7A00E045CB /* Flwr */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "what-is-your-name.mp4"; sourceTree = "<group>"; };
 		0260D1272DBBC94A00F2AF82 /* holistic_test_data.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = holistic_test_data.csv; sourceTree = "<group>"; };
+		026E445C2E112ABF00C917D0 /* goodbye.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = goodbye.gif; sourceTree = "<group>"; };
 		02B5F25C2D9D927000B61D9F /* how-are-you.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "how-are-you.gif"; sourceTree = "<group>"; };
 		03F33B210E48AEAF80E1EDF1 /* Pods-asl-mobile-appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-appTests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-appTests/Pods-asl-mobile-appTests.release.xcconfig"; sourceTree = "<group>"; };
 		18A39A6EFAEB837D5B2AFC9F /* Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; path = "Target Support Files/Pods-asl-mobile-app-asl-mobile-appUITests/Pods-asl-mobile-app-asl-mobile-appUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 			children = (
 				0260D1272DBBC94A00F2AF82 /* holistic_test_data.csv */,
 				02B5F25C2D9D927000B61D9F /* how-are-you.gif */,
+				026E445C2E112ABF00C917D0 /* goodbye.gif */,
 				020DDF5D2D8359D20004CE0E /* what-is-your-name.mp4 */,
 			);
 			path = Resources;
@@ -278,6 +281,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				026E445D2E112ABF00C917D0 /* goodbye.gif in Resources */,
 				02B5F25D2D9D927000B61D9F /* how-are-you.gif in Resources */,
 				020DDF5E2D8359D20004CE0E /* what-is-your-name.mp4 in Resources */,
 				0260D1282DBBC94A00F2AF82 /* holistic_test_data.csv in Resources */,

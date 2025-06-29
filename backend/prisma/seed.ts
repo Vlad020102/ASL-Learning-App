@@ -97,25 +97,25 @@ const quizData = [
       {
         difficulty: Difficulty.Easy,
         name: "Hello",
-        s3Url: "how-are-you",
+        s3Url: "hello",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
         name: "Goodbye",
-        s3Url: "how-are-you",
+        s3Url: "goodbye",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
         name: "Thank you",
-        s3Url: "how-are-you",
+        s3Url: "thank-you",
         options: "Hello, Goodbye, Thank you, Please"
       },
       {
         difficulty: Difficulty.Easy,
         name: "Please",
-        s3Url: "how-are-you",
+        s3Url: "please",
         options: "Hello, Goodbye, Thank you, Please"
       },
     ],
@@ -127,25 +127,25 @@ const quizData = [
       {
         difficulty: Difficulty.Moderate,
         name: "Good morning",
-        s3Url: "how-are-you",
+        s3Url: "good-monring",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
         name: "Good night",
-        s3Url: "how-are-you",
+        s3Url: "good-night",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
         name: "Good afternoon",
-        s3Url: "how-are-you",
+        s3Url: "good-afternoon",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
       {
         difficulty: Difficulty.Moderate,
         name: "Good evening",
-        s3Url: "how-are-you",
+        s3Url: "good-evening",
         options: "Good morning, Good night, Good afternoon, Good evening"
       },
     ],
@@ -185,19 +185,29 @@ const quizData = [
     title: 'Basic Signs Matching',
     pairs: [
       {
-        name: "Hello",
-        signGif: "how-are-you",
+        name: "Stand",
+        signGif: "stand",
         matchIndex: 0,
       },
       {
-        name: "Goodbye",
-        signGif: "how-are-you",
+        name: "Sit",
+        signGif: "Sit",
         matchIndex: 1,
       },
       {
-        name: "Thank you",
-        signGif: "how-are-you",
+        name: "Stop",
+        signGif: "stand",
         matchIndex: 2,
+      },
+      {
+        name: "Help",
+        signGif: "help",
+        matchIndex: 4,
+      },
+      {
+        name: "Friend",
+        signGif: "friend",
+        matchIndex: 3,
       }
     ]
   },
@@ -226,7 +236,7 @@ const phraseData = [
     signs: [
       {
         name: "Me",
-        s3Url: 'how-are-you',
+        s3Url: 'me',
         description: 'I ME',
         difficulty: Difficulty.Easy,
         explanation: "Move your index finger in a circular motion",
@@ -234,7 +244,7 @@ const phraseData = [
       },
       {
         name: "Can't",
-        s3Url: 'how-are-you',
+        s3Url: 'can-not',
         description: 'Cannot',
         difficulty: Difficulty.Easy,
         explanation: "Move your hand in a tossing motion",
@@ -243,7 +253,7 @@ const phraseData = [
       {
         id: 2,
         name: 'Sleep',
-        s3Url: 'how-are-you',
+        s3Url: 'sleep',
         description: 'Sleep',
         difficulty: Difficulty.Easy,  
         explanation: "Make a sleeping gesture",
@@ -251,7 +261,7 @@ const phraseData = [
       },
       {
         name: "All Night",
-        s3Url: 'how-are-you',
+        s3Url: 'all-night',
         description: 'All night',
         difficulty: Difficulty.Easy,
         explanation: "Move your hand in a tossing motion",
@@ -691,10 +701,10 @@ async function createExtras() {
 async function main() {
   console.log('Start seeding badges...');
 
-  // await createBadges();
-  // await createQuizes();
+  await createBadges();
+  await createQuizes();
   await createPhrases();
-  // await createExtras();
+  await createExtras();
 }
 
 main()

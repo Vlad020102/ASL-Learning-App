@@ -252,7 +252,7 @@ struct SignView: View {
     
     private func setupPlayer() {
         guard let fileName = sign?.s3Url,
-              let url = Bundle.main.url(forResource: "what-is-your-name", withExtension: ".mp4") else {
+              let url = Bundle.main.url(forResource: fileName, withExtension: ".mp4") else {
             return
         }
         
